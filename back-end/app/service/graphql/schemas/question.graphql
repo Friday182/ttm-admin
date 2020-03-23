@@ -1,0 +1,57 @@
+
+type KpDescription {
+	ID:          Int!
+	Kp:          String!
+	Title:       String!
+	Description: String!
+	Review:      Boolean!
+	Note:        String!
+}
+
+type Question {
+	ID:           Int!
+  QueIdx:       Int!
+	Kp:           String!
+	StdSec:       Int!
+	AnswerType:   String!
+	QuestionType: String!
+	UpTexts:      [String!]!
+  DownTexts:    [String!]!
+  Formula:      [String!]!
+	Options:      [String!]!
+	Answers:      [String!]! 
+	Tags:         [String!]! 
+	Charts:       [String!]!
+	Clocks:       [String!]!
+	Tables:       [String!]!
+  Shapes:       [String!]!
+	AnswerText:   String!
+	Helper:       Boolean!
+	Imgs:         [String!]!
+	Tips:         [String!]!
+}
+
+
+input AddQuestionInput {
+  QuizId:       String!
+  Gid:          String!
+  QueIdx:       Int!
+	Kp:           String!
+	StdSec:       Int!
+	AnswerType:   String!
+	QuestionType: String!
+	UpTexts:      [String!]!
+  DownTexts:    [String!]!
+  Formula:      [String!]!
+	Options:      [String!]!
+	Answers:      [String!]! 
+	Tags:         [String!]! 
+	Charts:       [String!]!
+	Clocks:       [String!]!
+	Tables:       [String!]!
+  Shapes:       [String!]!
+	AnswerText:   String!
+	Helper:       Boolean!
+	Imgs:         [String!]!
+	Tips:         [String!]!
+}

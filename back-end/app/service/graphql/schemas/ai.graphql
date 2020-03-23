@@ -1,0 +1,32 @@
+
+type TaskLog {
+	ID:           Int!
+  CreatedAt: 	  Time!
+	Gid:          String!
+  Subject:      Int!
+	Name:         String!
+	TotalQue:     Int!
+	TotalCorrect: Int!
+	TotalSec:     Int!
+	TotalScore:   Int!
+	Kps:          String!
+}
+
+input AddLogInput {
+	gid:          String!
+	totalQue:     Int!
+	totalCorrect: Int!
+	totalSec:     Int!
+	totalScore:   Int!
+  details:      [String!]!
+}
+
+input GetTaskLogInput {
+	gid:        String!
+	numLog:			Int!
+}
+
+type TaskLogOutput {
+  Logs:       [TaskLog!]
+  Override:   Boolean!
+}

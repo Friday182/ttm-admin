@@ -1,0 +1,25 @@
+scalar Time
+
+type Mentor {
+	ID:             Int!
+  Name:           String!
+  Gid:            String!
+  Email:          String!
+  Password:       String!
+  Role:           String!
+	Gender:         String!
+	Age:            Int!
+	Country:        String!
+	City:           String!
+	PromotionCode:  String!
+	StudentMax:     Int!
+	StudentNum:     Int!
+	Contacts:       [String!]!
+	VerifyCode:     String!
+  LastSigninTime: Time!
+	SigninCount:    Int!
+	Token:          String!
+  CreatedAt:      Time!
+  UpdatedAt:      Time
+  DeletedAt:      Time
+}

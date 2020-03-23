@@ -1,0 +1,44 @@
+# ttm-go gqlgen.yml file
+# Refer to https://gqlgen.com/config/
+# for detailed .gqlgen.yml documentation.
+# 1. Prepare your schema files with .graphql extension
+# 2. run gqlgen gqlgen.yml to generate below files
+# 3. copy resolver_gen.go content to your real implementation go files
+# Note that resolver_gen.go is just a templete, you need implement all those
+# resolve functions by yourself
+schema:
+  - schemas/*.graphql
+
+exec:
+  filename: generated/exec_gen.go
+  package: generated
+
+model:
+  filename: generated/model_gen.go
+  package: generated
+
+resolver:
+  filename: resolvers/generated/resolver_gen.go
+  type: Resolver
+  package: resolvers
+
+autobind: []
+models:
+  TaskLog:
+    model: github.com/friday182/ttm-go/app/model.TaskLog
+  Mentor:
+    model: github.com/friday182/ttm-go/app/model.Mentor
+  Student:
+    model: github.com/friday182/ttm-go/app/model.Student
+  Question:
+    model: github.com/friday182/ttm-go/app/model.Question
+  KpDescription:
+    model: github.com/friday182/ttm-go/app/model.KpDescription
+  Quiz:
+    model: github.com/friday182/ttm-go/app/model.Quiz
+  QuizLog:
+    model: github.com/friday182/ttm-go/app/model.QuizLog
+  QuizReport:
+    model: github.com/friday182/ttm-go/app/model.QuizReport
+  User:
+    model: github.com/friday182/ttm-go/app/model.User

@@ -1,0 +1,55 @@
+
+type Student {
+	ID:				      Int!
+  CreatedAt:      Time!
+  UpdatedAt:      Time!
+	Gid:            String!
+	MentorEmail:    String!
+  Name:           String!
+	Password:       String!
+	Gender:         String!
+	Age:            Int!
+	Country:        String!
+	City:           String!
+	School:         String!
+	Activity:       Int!
+	Stickers:       Int!
+	Stars:          Int!
+	TaskDoneCount:  Int!
+	TaskPassCount:  Int!
+  LogUpdated:     Boolean!
+	IsMember:       Boolean!
+	MembershipStart:Time!
+	MembershipStop: Time!
+	LastLoginTime:  Time!
+  Quiz:           QuizUnit!
+	StickerLog:     [String!]!
+	Contacts:       [String!]!
+	SubjectState:   String!
+}
+
+type KpAssignment {
+	Kp:     String!
+  QueIdx: Int!
+  NumQue: Int!
+	Done:   Boolean!
+	Pass:   Boolean!
+	Desc:   String!
+}
+
+type QuizUnit {
+	QuizId:  String!
+	Done:    Boolean!
+	Pass:    Boolean!
+	Desc:    String!
+  Percent: Int!
+}
+
+type Subject {
+	IsEnabled:    Boolean!
+	AiEnabled:    Boolean!
+	Level:        Int!
+	Assignment:   [KpAssignment]
+	LastDoneTime: Time
+}
+

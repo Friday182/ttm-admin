@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Transfer Test Master</title>
+
+    <meta charset="utf-8">
+    <meta name="description" content="<%= htmlWebpackPlugin.options.productDescription %>">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width<% if (htmlWebpackPlugin.options.ctx.mode.cordova || htmlWebpackPlugin.options.ctx.mode.capacitor) { %>, viewport-fit=cover<% } %>">
+
+    <link rel="icon" type="image/png" href="statics/128.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="statics/icons/16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="statics/icons/32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="statics/icons/96.png">
+    <link rel="icon" type="image/png" href="statics/icons/32.png">
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        CommonHTML: {
+          scale: 130
+        }
+      });
+      MathJax.Hub.processSectionDelay = 0
+      </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@4.1.0/dist/echarts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2"></script>
+  </head>
+  <body>
+    <!-- DO NOT touch the following DIV -->
+    <div id="q-app"></div>
+  </body>
+</html>

@@ -1,0 +1,58 @@
+
+type Quiz {
+	ID:        Int!
+	QuizId:    String!
+	UsedCount: Int!
+	Grade:     Int!
+  Desc:      String!
+	Comment:   String!
+	Status:    String!
+	Operator:  String!
+	Approver:  String!
+  CreatedAt: Time!
+	UpdatedAt: Time
+}
+
+input AddQuizInput {
+	QuizId:    String!
+	Grade:     Int!
+  Desc:      String!
+	Operator:  String!
+	Comment:   String!
+}
+
+type QuizLog {
+	ID:         Int!
+	CreatedAt:  Time
+  Name:       String!
+	Gid:        String!
+	QuizId:    String!
+	TotalQue:   Int!
+	DoneQue:    Int!
+	CorrectQue: Int!
+	WrongQue:   Int!
+  CorrectPer: Int!
+	StdSec:     Int!
+	UsedSec:    Int!
+	ResultList: [String!]!
+	WrongList:  [String!]!
+  WeightedKps:[String!]!
+	Feedback:   String!
+	Comment:    String!
+}
+
+type QuizReport {
+	ID:         Int!
+	CreatedAt:  Time
+	UpdatedAt:  Time
+  Name:       String!
+	Gid:        String!
+	TotalQuiz:  Int!
+	TotalQue:   Int!
+	DoneQue:    Int!
+	CorrectQue: Int!
+	TotalSec:   Int!
+  QuizList:   [String!]!
+	Feedback:   String!
+	Comment:    String!
+}

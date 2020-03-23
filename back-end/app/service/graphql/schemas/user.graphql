@@ -1,0 +1,25 @@
+
+type User {
+  ID:         Int!
+  Gid:        String!
+  Username:   String!
+  Password:   String!
+  Email:      String!
+  Role:       String!
+  Name:       String!
+  Mobile:     String!
+  Comment:    String!
+  LastLoginTime: Time!
+  CreatedAt:  Time!
+  UpdatedAt:  Time!
+}
+
+input AddUserInput {
+  Username:   String!
+  Password:   String!
+  Name:       String!
+  Email:      String!
+  Role:       String!
+  Mobile:     String!
+  Comment:    String!
+}

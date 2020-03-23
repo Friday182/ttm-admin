@@ -1,0 +1,26 @@
+type Mutation {
+  UserLogin(username: String!, password: String!): User!
+  AddUser(user: AddUserInput!): Boolean!
+  AddQuiz(quiz: AddQuizInput!): Boolean!
+  AddQuestion(que: AddQuestionInput!): Boolean!
+  AddStudent(mentorEmail: String!, name: String! age: Int!): Student!
+
+  DelUser(gid: String!): Boolean!
+  DelTaskLog(logID: Int!): Boolean!
+  DelMentor(email: String!): Boolean!
+  DelStudent(gid: String!): Boolean!
+}
+
+type Query {
+  GetUsers(role: String!): [User!]
+  GetTaskLogs(gid: String!, startDate: String!, startId: Int!, numLog: Int!): TaskLogOutput
+  GetStudents(mentorEmail: String!): [Student!]
+  Student(gid: String!, name: String!): Student!
+  Mentors(email: String!): [Mentor!]
+  GetQuestions(gid: String!, kp: String!): [Question!]
+  GetQuizLog(gid: String!): [QuizLog!]
+  QuizLog(gid: String!, quizIdx: String): QuizLog!
+  GetQuizReport(gid: String!): QuizReport!
+  GetQuiz: [Quiz!]
+  GetKpDescripitions: [KpDescription!]
+}
