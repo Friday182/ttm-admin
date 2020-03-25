@@ -1,14 +1,14 @@
 <template>
   <div class="q-px-sm">
     <q-table
-      title="quizTable"
+      title="Quiz Table"
       :data="tableData"
       :columns="columns"
       :visible-columns="visibleColumns"
       separator="cell"
+      wrap-cells
       row-key="id"
       :table-header-style="{ backgroundColor: 'lightblue' }"
-      no-data-label="You don't have any student."
       fixed-center
       bordered
       dense
@@ -35,19 +35,6 @@
           :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
           @click="props.toggleFullscreen"
         />
-      </template>
-      <template v-slot:body="props">
-        <q-tr
-          :props="props"
-          @mousedown.native.prevent="rowSelected(props.row.QuizId)"
-        >
-          <q-td
-            key="id"
-            :props="props"
-          >
-            {{ props.row.id }}
-          </q-td>
-        </q-tr>
       </template>
       <q-td
         slot="body-cell-action"
@@ -94,22 +81,14 @@ export default {
     'edit-quiz': require('components/quiz/EditQuiz.vue').default,
     'add-quiz': require('components/quiz/AddQuiz.vue').default
   },
-  props: {
-    loading: {
-      type: Boolean,
-      default: true
-    }
-  },
   data () {
     return {
+      loading: true,
       addQuizActive: false,
       editQuizActive: false,
       quizId: '',
       skipQueryGetQuiz: true,
-      tableData: [{
-        QuizId: 3
-      }],
-      visibleColumns: ['QuizId', 'grade', 'Desc', 'Operator', 'Status', 'Approver', 'action'],
+      visibleColumns: ['QuizId', 'Grade', 'Desc', 'Operator', 'Status', 'Approver', 'action'],
       columns: [
         {
           name: 'QuizId',
@@ -120,11 +99,11 @@ export default {
           sortable: true
         },
         {
-          name: 'grade',
+          name: 'Grade',
           required: true,
           align: 'center',
           label: 'Grade',
-          field: 'grade',
+          field: 'Grade',
           sortable: true
         },
         {
@@ -168,13 +147,9 @@ export default {
   computed: {
     // ...mapGetters('currentUser', ['currentUser']),
     ...mapGetters('quiz', ['getQuizList']),
-    tableDatatmp: function () {
-      let tmp = []
+    tableData: function () {
       console.log('quiz list = ', this.getQuizList)
-      tmp.push({
-        id: this.getQuizList.QuizId
-      })
-      return tmp
+      return this.getQuizList
     }
   },
   mounted () {
@@ -182,11 +157,8 @@ export default {
   },
   methods: {
     ...mapMutations('quiz', ['addQuiz', 'setQuizList']),
-    rowSelected (opt) {
-      console.log('row selected - ' + JSON.stringify(opt))
-      this.quizId = opt
-    },
     toEditQuiz (opt) {
+      this.quizId = opt
       this.editQuizActive = true
     },
     editQuizDone () {
@@ -202,6 +174,7 @@ export default {
     updateQuiz (newList) {
       console.log('in update quiz length - ', newList.length)
       if (newList.length > 0) {
+        this.loading = false
         this.setQuizList([])
         for (let i = 0; i < newList.length; i++) {
           this.addQuiz(newList[i])
