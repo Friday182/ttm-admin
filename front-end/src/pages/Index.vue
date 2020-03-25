@@ -151,8 +151,8 @@ export default {
           Role: obj.Role,
           Comment: obj.Comment
         })
-        if (this.$route.path !== '/Dashboard') {
-          this.$router.push('/Dashboard')
+        if (this.$route.path !== '/Navigator') {
+          this.$router.push('/Navigator')
         }
       } else {
         console.log('something wrong')

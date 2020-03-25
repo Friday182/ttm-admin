@@ -1,14 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import sessionPersistePlugin from './plugins/sessionPersistePlugin.js'
-import student from './store-student'
-import mentor from './store-mentor'
+import visitor from './store-visitor'
+import quiz from './store-quiz'
 import currentUser from './store-current-user'
-import localMentors from './store-local-mentors'
-import localStudents from './store-local-students'
-import questions from './store-questions'
-import logs from './store-logs'
-import desc from './store-desc'
+
 Vue.use(Vuex)
 
 const persistePlugin = sessionPersistePlugin()
@@ -21,14 +17,9 @@ const persistePlugin = sessionPersistePlugin()
 export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
-      student: student,
-      mentor: mentor,
+      quiz: quiz,
       currentUser: currentUser,
-      localMentors: localMentors,
-      localStudents: localStudents,
-      questions: questions,
-      logs: logs,
-      desc: desc
+      visitor: visitor
     },
     plugins: [persistePlugin],
 

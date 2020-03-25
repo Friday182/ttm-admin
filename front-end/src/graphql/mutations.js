@@ -14,3 +14,10 @@ mutation UserLogin($username: String!, $password: String!) {
     Comment
   }
 }`
+
+export const ADD_QUIZ_MUTATION = gql`
+mutation AddQuiz($quiz: Object!) {
+  AddQuiz(
+    quiz: $quiz
+  )
+}`

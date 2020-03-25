@@ -1,262 +1,236 @@
 <template>
-  <div class="q-mx-lg q-px-lg">
+  <div class="q-px-sm">
     <q-table
-      title="Math"
-      :data="assignmentData"
+      title="quizTable"
+      :data="tableData"
       :columns="columns"
       :visible-columns="visibleColumns"
       separator="cell"
-      hide-bottom
-      row-key="name"
+      row-key="id"
       :table-header-style="{ backgroundColor: 'lightblue' }"
+      no-data-label="You don't have any student."
       fixed-center
       bordered
       dense
-      rows-per-page-label="Page:"
-      :pagination.sync="pagination"
       :loading="loading"
     >
       <template v-slot:top="props">
-        <div class="col-4 text-blue q-table__title">
-          Math
+        <div class="col-2 q-table__title">
+          Avaialble Quizzes
         </div>
         <q-space />
         <q-btn
           flat
-          disable
-        >
-          Level: {{ mathLevel }}
-        </q-btn>
+          round
+          icon="add"
+          color="blue"
+          @click="addQuizActive=true"
+        />
+        <q-btn
+          class="q-ml-md"
+          flat
+          round
+          dense
+          color="blue"
+          :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+          @click="props.toggleFullscreen"
+        />
       </template>
-      <!-- slot name syntax: body-cell-<column_name> -->
       <template v-slot:body="props">
         <q-tr
           :props="props"
-          @mousedown.native.prevent="rowSelected(props.row.gid)"
+          @mousedown.native.prevent="rowSelected(props.row.QuizId)"
         >
           <q-td
-            key="task"
+            key="id"
             :props="props"
           >
-            {{ props.row.task }}
-          </q-td>
-          <q-td
-            key="description"
-            :props="props"
-          >
-            {{ props.row.description }}
-          </q-td>
-          <q-td
-            key="play"
-            :props="props"
-          >
-            <q-btn
-              flat
-              icon="play_circle_outline"
-              @click="toRunTask(props.row.task)"
-            />
-          </q-td>
-          <q-td
-            key="done"
-            :props="props"
-          >
-            <q-btn
-              v-if="props.row.done"
-              flat
-              color="green"
-              icon="done_outline"
-            />
-            <q-spinner-hourglass
-              v-else
-              color="grey"
-              size="sm"
-            />
+            {{ props.row.id }}
           </q-td>
         </q-tr>
       </template>
+      <q-td
+        slot="body-cell-action"
+        slot-scope="props"
+        :props="props"
+      >
+        <q-btn
+          flat
+          icon="edit"
+          @click="toEditQuiz(props.row.QuizId)"
+        />
+      </q-td>
+      <template v-slot:no-data="{ icon, message, filter }">
+        <div class="full-width row flex-center text-accent q-gutter-sm">
+          <span>
+            You don't have any student, add student by press
+          </span>
+          <q-icon
+            size="2em"
+            name="add"
+          />
+        </div>
+      </template>
     </q-table>
-    <task-log
-      :gid="currentStudent.gid"
-      :subject="0"
-      :num-log="numLog"
-      :new-log="newLog"
+    <edit-quiz
+      :active="editQuizActive"
+      :quiz="quizId"
+      @quizEditCompleted="editQuizDone"
     />
-    <run-task
-      :active="active"
-      :taskid="currentTaskId"
-      :subject="0"
-      @completed="processTaskClosed"
+    <add-quiz
+      :active="addQuizActive"
+      @quizAddCompleted="addQuizDone"
     />
-    <run-quiz
-      :active="quizActive"
-      :taskid="currentTaskId"
-      :subject="0"
-      @completed="processTaskClosed"
-    />
-    <div
-      v-if="devMode"
-      class="row"
-    >
-      <q-input
-        v-model="text1"
-        label="I"
-        style="width: 20px"
-      />
-      <q-input
-        v-model="text2"
-        label="has"
-        style="width: 40px"
-      />
-      <q-input
-        v-model="text4"
-        label="an"
-        style="width: 30px"
-      />
-      <q-input
-        v-model="text3"
-        label="dog."
-        style="width: 40px; font-size: 10pt"
-      />
-    </div>
   </div>
 </template>
 
 <script type="text/javascript">
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
+import { GET_QUIZ_QUERY } from '../../graphql/queries'
 
 export default {
-  name: 'MathAssignment',
+  name: 'StudentTable',
   components: {
-    'run-task': require('components/student/RunTask.vue').default,
-    'run-quiz': require('components/student/RunQuiz.vue').default,
-    'task-log': require('components/common/TasklogTable.vue').default
+    'edit-quiz': require('components/quiz/EditQuiz.vue').default,
+    'add-quiz': require('components/quiz/AddQuiz.vue').default
+  },
+  props: {
+    loading: {
+      type: Boolean,
+      default: true
+    }
   },
   data () {
     return {
-      devMode: false,
-      pagination: {
-        page: 0,
-        rowsPerPage: 10
-      },
-      text1: '',
-      text2: '',
-      text3: '',
-      text4: '',
-      active: false,
-      quizActive: false,
-      currentTaskId: 'NA',
-      loading: false,
-      newLog: 0,
-      numLog: 10,
-      visibleColumns: ['task', 'description', 'play', 'done'],
+      addQuizActive: false,
+      editQuizActive: false,
+      quizId: '',
+      skipQueryGetQuiz: true,
+      tableData: [{
+        QuizId: 3
+      }],
+      visibleColumns: ['QuizId', 'grade', 'Desc', 'Operator', 'Status', 'Approver', 'action'],
       columns: [
         {
-          name: 'task',
+          name: 'QuizId',
           required: true,
-          label: 'Task',
           align: 'center',
-          field: row => row.name,
-          format: val => `${val}`,
+          label: 'Quiz Id',
+          field: 'QuizId',
           sortable: true
         },
         {
-          name: 'description',
+          name: 'grade',
+          required: true,
+          align: 'center',
+          label: 'Grade',
+          field: 'grade',
+          sortable: true
+        },
+        {
+          name: 'Desc',
           align: 'center',
           label: 'Description',
-          field: 'description',
+          field: 'Desc',
           sortable: false
         },
         {
-          name: 'play',
+          name: 'Operator',
           align: 'center',
-          label: 'play',
-          field: 'play',
+          label: 'Operator',
+          field: 'Operator',
           sortable: false
         },
         {
-          name: 'done',
+          name: 'Status',
           align: 'center',
-          label: 'Done',
-          field: 'done',
+          label: 'Status',
+          field: 'Status',
+          sortable: true
+        },
+        {
+          name: 'Approver',
+          align: 'center',
+          label: 'Approver',
+          field: 'Approver',
+          sortable: true
+        },
+        {
+          name: 'action',
+          align: 'center',
+          label: 'Edit Quiz',
+          field: 'action',
           sortable: false
         }
       ]
     }
   },
   computed: {
-    ...mapGetters('student', ['currentStudent']),
-    assignmentData: {
-      // getter
-      get: function () {
-        let tmp = []
-        if (this.currentStudent.subjects[0].IsEnabled === false) {
-          return tmp
-        }
-        if (this.currentStudent.subjects[0].AiEnabled === true) {
-          for (let i = 0; i < this.currentStudent.subjects[0].Assignment.length; i++) {
-            if (i === 0) {
-              tmp.push({
-                task: this.currentStudent.subjects[0].Assignment[i].Kp,
-                description: this.currentStudent.subjects[0].Assignment[i].Desc,
-                done: this.currentStudent.subjects[0].Assignment[0].Done
-              })
-            } else {
-              tmp[0].task = tmp[0].task + ',' + this.currentStudent.subjects[0].Assignment[i].Kp
-              tmp[0].description = tmp[0].description + ' / ' + this.currentStudent.subjects[0].Assignment[i].Desc
-            }
-          }
-        } else {
-          for (let i = 0; i < this.currentStudent.subjects[0].Assignment.length; i++) {
-            tmp.push({
-              task: this.currentStudent.subjects[0].Assignment[i].Kp,
-              description: this.currentStudent.subjects[0].Assignment[i].Desc,
-              done: this.currentStudent.subjects[0].Assignment[i].Done
-            })
-          }
-        }
-        return tmp
-      },
-      // setter
-      set: function (newValue) {
-      }
-    },
-    mathLevel: function () {
-      return this.currentStudent.subjects[0].level
+    // ...mapGetters('currentUser', ['currentUser']),
+    ...mapGetters('quiz', ['getQuizList']),
+    tableDatatmp: function () {
+      let tmp = []
+      console.log('quiz list = ', this.getQuizList)
+      tmp.push({
+        id: this.getQuizList.QuizId
+      })
+      return tmp
     }
   },
   mounted () {
-    console.log('mounted MathTab')
+    this.fetchQuiz()
   },
   methods: {
-    ...mapActions('student', ['updateAssignmentDone']),
-
-    toRunTask (task) {
-      if (task.indexOf('MQ') !== -1) {
-        this.$q.fullscreen.request()
-        this.currentTaskId = task
-        this.quizActive = true
-        this.active = false
+    ...mapMutations('quiz', ['addQuiz', 'setQuizList']),
+    rowSelected (opt) {
+      console.log('row selected - ' + JSON.stringify(opt))
+      this.quizId = opt
+    },
+    toEditQuiz (opt) {
+      this.editQuizActive = true
+    },
+    editQuizDone () {
+      this.editQuizActive = false
+    },
+    addQuizDone () {
+      this.addQuizActive = false
+    },
+    fetchQuiz () {
+      this.skipQueryGetQuiz = false
+      this.$apollo.queries.GetQuiz.refetch()
+    },
+    updateQuiz (newList) {
+      console.log('in update quiz length - ', newList.length)
+      if (newList.length > 0) {
+        this.setQuizList([])
+        for (let i = 0; i < newList.length; i++) {
+          this.addQuiz(newList[i])
+        }
       } else {
-        this.$q.fullscreen.request()
-        this.currentTaskId = task
-        this.quizActive = false
-        this.active = true
+        console.log('NO enough quiz')
       }
-    },
-    processTaskClosed (opt) {
-      if (opt >= 2) {
-        this.newLog++
-        this.updateAssignmentDone({
-          Kp: this.currentTaskId,
-          Math: true
-        })
+    }
+  },
+  apollo: {
+    GetQuiz: {
+      query: GET_QUIZ_QUERY,
+      variables () {
+        return {}
+      },
+      error (error) {
+        console.error('We\'ve got an error!', error)
+      },
+      skip () {
+        return this.skipQueryGetQuiz
+      },
+      result (data, key) {
+        this.skipQueryGetQuiz = true
+        if (data.data.GetQuiz) {
+          this.updateQuiz(data.data.GetQuiz)
+        } else {
+          console.log('Get quiz failed')
+        }
       }
-      this.$q.fullscreen.exit()
-      this.currentTaskId = 'NA'
-      this.active = false
-      this.quizActive = false
-    },
-    rowSelected (gid) {
     }
   }
 }

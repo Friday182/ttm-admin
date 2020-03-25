@@ -8,6 +8,7 @@ module.exports = function (ctx) {
     boot: [
       'i18n',
       'axios',
+      'elementui',
       'apollo',
       'konva'
     ],
@@ -47,9 +48,6 @@ module.exports = function (ctx) {
         'QBadge',
         'QBtn',
         'QBtnToggle',
-        'QCarousel',
-        'QCarouselControl',
-        'QCarouselSlide',
         'QCard',
         'QCardSection',
         'QCardActions',
@@ -77,18 +75,14 @@ module.exports = function (ctx) {
         'QPopupEdit',
         'QPage',
         'QPageSticky',
-        'QPagination',
         'QRadio',
         'QRouteTab',
         'QScrollArea',
         'QSeparator',
+        'QSelect',
         'QSpace',
         'QSplitter',
         'QSpinnerHourglass',
-        'QSelect',
-        'QStepper',
-        'QStep',
-        'QStepperNavigation',
         'QToggle',
         'QTree',
         'QToolbar',
@@ -145,7 +139,7 @@ module.exports = function (ctx) {
     devServer: {
       // https: true,
       host: 'localhost',
-      port: 8080,
+      port: 8089,
       open: true // opens browser window automatically
     },
 
@@ -226,7 +220,7 @@ module.exports = function (ctx) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        // appId: 'ttm'
+        // appId: 'ttmAdmin'
       }
     }
   }

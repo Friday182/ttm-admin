@@ -2,81 +2,142 @@
   <q-layout view="hHh lpR fFf">
     <q-header elevated>
       <q-toolbar
-        class="bg-white text-red"
+        class="bg-blue-10 text-white"
       >
         <q-toolbar-title>
           <router-link to="/">
-            <q-img
-              spinner-color="white"
-              style="height: 45px; max-width: 62px"
-              src="statics/logo.jpg"
+            <q-icon
+              size="lg"
+              name="supervised_user_circle"
+              color="white"
             />
+            <q-chip
+              size="lg"
+              color="blue-10"
+              text-color="white"
+              style="font: bold 100% Cursive;"
+            >
+              TTM Administration Board
+            </q-chip>
           </router-link>
         </q-toolbar-title>
-        <q-chip
-          color="white"
-          text-color="blue"
-          style="font: bold 150% Cursive;"
-        >
-          TTM Administration Board
-        </q-chip>
         <q-space />
+        <div
+          v-if="loginRole!=''"
+          class="q-mx-sm"
+        >
+          <q-chip
+            size="sm"
+            color="blue-10"
+            text-color="red"
+            style="font: bold 150% Verdana;"
+          >
+            Welcom: {{ loginName }}
+          </q-chip>
+          <q-btn
+            flat
+            no-caps
+            text-color="white"
+            @click="signout()"
+          >
+            <q-icon name="exit_to_app" />
+          </q-btn>
+        </div>
       </q-toolbar>
     </q-header>
-
     <q-drawer
       v-model="leftDrawerOpen"
-      :width="250"
+      :width="180"
       bordered
-      content-class="bg-blue-1"
-      @mouseover="miniState = false"
-      @mouseout="miniState = true"
+      :content-style="{ backgroundColor: '#2020C0' }"
     >
-      <q-list>
-        <q-item-label header>
-          Management
-        </q-item-label>
-        <q-item
-          v-for="nav in navs"
-          :key="nav.label"
-          clickable
-          exact
-          :to="nav.to"
-        >
-          <q-item-section avatar>
-            <q-icon :name="nav.icon" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              {{ nav.label }}
-            </q-item-label>
-            <q-item-label caption>
-              {{ nav.description }}
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-list>
+      <el-menu
+        mode="vertical"
+        default-active="1"
+        class="el-menu-vertical-demo"
+        background-color="#2020C0"
+        text-color="#fff"
+        active-text-color="#ff804b"
+        @open="handleOpen"
+        @close="handleClose"
+        @select="handleSelect"
+      >
+        <el-menu-item index="1">
+          <i class="el-icon-document" />
+          <span slot="title"> Dashboard </span>
+        </el-menu-item>
+        <el-submenu index="2">
+          <template slot="title">
+            <i class="el-icon-location" />
+            <span> Management </span>
+          </template>
+          <el-menu-item-group>
+            <el-menu-item
+              index="2-1"
+            >
+              Staffs
+            </el-menu-item>
+            <el-menu-item
+              index="2-2"
+            >
+              Operators
+            </el-menu-item>
+          </el-menu-item-group>
+        </el-submenu>
+        <el-submenu index="3">
+          <template slot="title">
+            <i class="el-icon-location" />
+            <span> Quiz </span>
+          </template>
+          <el-menu-item-group>
+            <el-menu-item
+              index="3-1"
+            >
+              Math
+            </el-menu-item>
+            <el-menu-item
+              index="3-2"
+            >
+              English
+            </el-menu-item>
+          </el-menu-item-group>
+        </el-submenu>
+        <el-menu-item index="4">
+          <i class="el-icon-setting" />
+          <span slot="title"> Quiz Log </span>
+        </el-menu-item>
+        <el-menu-item index="5">
+          <i class="el-icon-edit" />
+          <span slot="title"> Task Log </span>
+        </el-menu-item>
+      </el-menu>
     </q-drawer>
     <q-page-container>
       <router-view />
     </q-page-container>
     <q-footer
       elevated
-      class="bg-blue text-white"
+      class="bg-blue-10 text-white"
     >
       <q-toolbar>
-        <q-toolbar-title
-          style="font: 120% Cursive;"
-        >
+        <q-toolbar-title>
           Copyright @DeCom Technology Ltd. 2020
         </q-toolbar-title>
+        <q-btn
+          outline
+          color="white"
+          icon-right="mail"
+          label="Contact Us"
+          class="q-mr-xl"
+          @click="sendMessage"
+        />
       </q-toolbar>
     </q-footer>
   </q-layout>
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'MyLayout',
@@ -84,75 +145,27 @@ export default {
   },
   data () {
     return {
-      leftDrawerOpen: false // this.$q.platform.is.desktop,
+      leftDrawerOpen: false, // this.$q.platform.is.desktop,
+      allTabs: [
+        { name: '1', title: 'Dashboard' },
+        { name: '2-1', title: 'Staffs' },
+        { name: '2-2', title: 'Operators' },
+        { name: '3', title: 'Quiz' },
+        { name: '3-1', title: 'Math' },
+        { name: '3-2', title: 'English' },
+        { name: '4', title: 'Quiz Log' },
+        { name: '5', title: 'Task Log' }
+      ]
     }
   },
   computed: {
     ...mapGetters('currentUser', ['currentUser']),
-    role: function () {
+
+    loginRole: function () {
       return this.currentUser.Role
     },
-    navs: function () {
-      if (this.role === 'admin') {
-        return [
-          {
-            label: 'Staffs',
-            icon: 'description',
-            to: '/StaffAdmin'
-          },
-          {
-            label: 'Operators',
-            icon: 'description',
-            to: '/OperatorAdmin'
-          },
-          {
-            label: 'Mentors',
-            icon: 'receipt',
-            to: '/MentorAdmin'
-          },
-          {
-            label: 'Students',
-            icon: 'receipt',
-            to: '/StudentAdmin'
-          },
-          {
-            label: 'Quizzes',
-            icon: 'receipt',
-            to: '/QuizAdmin'
-          }
-        ]
-      } else if (this.role === 'operator') {
-        return [
-          {
-            label: 'Quizzes',
-            icon: 'receipt',
-            to: '/QuizAdmin'
-          }
-        ]
-      } else { // staff
-        return [
-          {
-            label: 'Operators',
-            icon: 'description',
-            to: '/UserAdmin'
-          },
-          {
-            label: 'Mentors',
-            icon: 'receipt',
-            to: '/MentorAdmin'
-          },
-          {
-            label: 'Students',
-            icon: 'receipt',
-            to: '/StudentAdmin'
-          },
-          {
-            label: 'Quizzes',
-            icon: 'receipt',
-            to: '/QuizAdmin'
-          }
-        ]
-      }
+    loginName: function () {
+      return this.currentUser.Name
     }
   },
   watch: {
@@ -163,35 +176,42 @@ export default {
     }
   },
   beforeMount () {
-    console.log('layout before mounte - ' + this.$route.path + 'Role: ' + this.role)
-    // load local data into store
-    this.loadUserList()
+    console.log('layout before mounte - ' + this.$route.path + 'loginRole: ' + this.loginRole)
+    if (this.$route.path !== '/' && this.loginRole === 'na') {
+      this.$router.push('/')
+    }
   },
   mounted () {
-    console.log('layout mounted - ' + this.$route.path)
+    console.log('layout mounted')
     this.manageLayout()
-    this.loadDesc()
   },
   methods: {
-    ...mapMutations('currentUser', ['updateUser']),
-    ...mapActions('localMentors', ['updateLocalMentors']),
+    ...mapMutations('currentUser', ['updateUser', 'addTab']),
+
     manageLayout () {
-      if (this.role && this.role !== 'na') {
+      if (this.loginRole && this.loginRole !== 'na') {
         this.leftDrawerOpen = true
       } else {
         this.leftDrawerOpen = false
       }
     },
-    toSigninup () {
-      console.log('set signin to true')
-      this.signinDialog = true
+    handleOpen (index) {
+      console.log('open ...', index)
     },
-    closeSigninDialog (signinOk) {
-      console.log('close signin at - ' + signinOk)
-      if (signinOk === true) {
-        this.toMentorHome()
+    handleClose (index) {
+      console.log('close ...', index)
+    },
+    handleSelect (index, indexPath) {
+      console.log(index, indexPath)
+      // set current menu index into store
+      for (let i = 0; i < this.allTabs.length; i++) {
+        if (index === this.allTabs[i].name) {
+          this.addTab(this.allTabs[i])
+          break
+        }
       }
-      this.signinDialog = false
+    },
+    sendMessage () {
     },
     signout () {
       this.updateUser({
@@ -205,48 +225,6 @@ export default {
         this.$router.push('/')
       } else {
         this.$router.go(this.$router.currentRoute)
-      }
-    },
-    loadUserList () {
-      // localStorage.clear()
-      let tmpUser = localStorage.getItem('mentors')
-      console.log('localstorage Mentors - ' + tmpUser)
-      if (tmpUser) {
-        let localUser = JSON.parse(tmpUser)
-        for (let i = 0; i < localUser.length; i++) {
-          if (localUser[i].email === '' || localUser[i].token === '') {
-            localUser.splice(i, 1)
-          }
-        }
-        this.updateLocalMentors(localUser)
-        console.log('All Mentors - ' + localUser)
-      } else {
-        this.updateLocalMentors([])
-      }
-
-      tmpUser = localStorage.getItem('students')
-      console.log('localstorage students - ' + tmpUser)
-      if (tmpUser) {
-        let localUser = JSON.parse(tmpUser)
-        for (let i = 0; i < localUser.length; i++) {
-          if (localUser[i].name === '' || localUser[i].password === '') {
-            localUser.splice(i, 1)
-          }
-        }
-        this.updateLocalStudents(localUser)
-        console.log('All students - ' + localUser)
-      } else {
-        this.updateLocalStudents([])
-      }
-
-      let usedSpace = unescape(encodeURIComponent(JSON.stringify(localStorage))).length
-      // let remSpace = window.localStorage.remainingSpace // For IE
-      console.log('LocalStorage Used Bytes: ', usedSpace)
-    },
-    loadDesc () {
-      let tmpDesc = localStorage.getItem('kpDescriptions')
-      if (tmpDesc) {
-        this.copyDesc(JSON.parse(tmpDesc))
       }
     }
   }

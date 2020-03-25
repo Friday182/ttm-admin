@@ -1,7 +1,7 @@
 import Axios from 'axios'
-Axios.defaults.baseURL = 'http://127.0.0.1:8083/'
+Axios.defaults.baseURL = 'http://127.0.0.1:8082/'
 // Axios.defaults.baseURL = 'https://www.transfertestmaster.com/hywt/v1/'
-// Axios.defaults.baseURL = 'https://www.transfertestmaster.com/v06/'
+
 // Add requset pre-process
 Axios.interceptors.request.use(
   config => {
@@ -24,8 +24,23 @@ Axios.interceptors.request.use(
 /****************************************************************
  * Home page urls
  */
-// Run task
+
 // login
 export const login = (params) => {
   return Axios.post('/login', params)
+}
+
+// Signup
+export const signup = (params) => {
+  return Axios.post('/signup', params)
+}
+
+// Add visitor record
+export const addRecord = (params) => {
+  return Axios.post('/api/visitor', params)
+}
+
+// Drawer item: Latest News
+export const latestNews = (params) => {
+  return Axios.get('/latest-news/', params)
 }
