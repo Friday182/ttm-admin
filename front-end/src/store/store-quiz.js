@@ -3,7 +3,7 @@
 const state = {
   quiz: [{
     QuizId: '',
-    Grade: 0,
+    Grade: '',
     Desc: '',
     Status: '',
     Operator: '',
@@ -15,7 +15,7 @@ const state = {
 }
 
 const mutations = {
-  addQuiz (state, payload) {
+  addNewQuiz (state, payload) {
     state.quiz.push(payload)
   },
   setQuizList (state, payload) {

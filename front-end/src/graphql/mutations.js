@@ -16,8 +16,31 @@ mutation UserLogin($username: String!, $password: String!) {
 }`
 
 export const ADD_QUIZ_MUTATION = gql`
-mutation AddQuiz($quiz: Object!) {
+mutation AddQuiz($QuizId: String!, $Grade: Int!, $Desc: String!, $Operator: String!, $Comment: String!) {
   AddQuiz(
-    quiz: $quiz
+    quiz: {
+      QuizId: $QuizId,
+      Grade: $Grade,
+      Desc: $Desc,
+      Operator: $Operator,
+      Comment: $Comment
+    }
   )
+}`
+
+export const ADD_TASKLOG_MUTATION = gql`
+mutation AddTaskLog($gid: String!, $kps: String!, $totalQue: Int!, $totalCorrect: Int!, $totalSec: Int!, $totalScore: Int!, $details: String!) {
+  AddTaskLog(
+    gid: $gid
+    totalQue: $totalQue,
+    totalCorrect: $totalCorrect,
+    totalSec: $totalSec,
+    totalScore: $totalScore,
+    kps: $kps,
+    details: $details
+  ) {
+    Gid
+    Stickers
+    Stars
+  }
 }`

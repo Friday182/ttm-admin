@@ -4,6 +4,7 @@ package resolvers
 
 import (
 	"context"
+	"errors"
 	//"time"
 	"github.com/friday182/ttm-go/app/model"
 	"github.com/friday182/ttm-go/app/service/graphql/generated"
@@ -32,7 +33,7 @@ func (r *queryResolver) GetQuizReport(ctx context.Context, gid string) (*model.Q
 
 func (r *queryResolver) GetQuiz(ctx context.Context) ([]*model.Quiz, error) {
 	var logs []*model.Quiz
-	err := r.Db.Limit(100).Find(&logs).Error
+	err := r.Qdb.Limit(100).Find(&logs).Error
 	return logs, err
 }
 
@@ -40,7 +41,7 @@ func (r *queryResolver) GetQuiz(ctx context.Context) ([]*model.Quiz, error) {
 func (r *mutationResolver) AddQuiz(ctx context.Context, quiz generated.AddQuizInput) (bool, error) {
 	newQuiz := model.Quiz{}
 
-	err := r.Db.Where("quiz_id = ?", quiz.QuizID).Find(&newQuiz).Error
+	err := r.Qdb.Where("quiz_id = ?", quiz.QuizID).Find(&newQuiz).Error
 	if gorm.IsRecordNotFoundError(err) {
 		newQuiz.QuizId = quiz.QuizID
 		newQuiz.Grade = quiz.Grade
@@ -49,9 +50,9 @@ func (r *mutationResolver) AddQuiz(ctx context.Context, quiz generated.AddQuizIn
 		newQuiz.Status = "NA"
 		newQuiz.Operator = quiz.Operator
 		newQuiz.Approver = "NA"
-		err = r.Db.Save(&newQuiz).Error
+		err = r.Qdb.Save(&newQuiz).Error
 
 		return true, err
 	}
-	return false, err
+	return false, errors.New("Quiz already exist!")
 }

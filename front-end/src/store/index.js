@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import sessionPersistePlugin from './plugins/sessionPersistePlugin.js'
-import visitor from './store-visitor'
+import currentQuestion from './store-current-question'
 import quiz from './store-quiz'
+import questions from './store-questions'
 import currentUser from './store-current-user'
 
 Vue.use(Vuex)
@@ -19,7 +20,8 @@ export default function (/* { ssrContext } */) {
     modules: {
       quiz: quiz,
       currentUser: currentUser,
-      visitor: visitor
+      questions: questions,
+      currentQuestion: currentQuestion
     },
     plugins: [persistePlugin],
 

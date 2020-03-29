@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	createTtmDb()
+	//createTtmDb()
 	createQuestionDb()
 }
 

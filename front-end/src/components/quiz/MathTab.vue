@@ -1,5 +1,8 @@
 <template>
   <div class="q-px-sm">
+    <add-quiz
+      :active="addQuizActive"
+    />
     <q-table
       title="Quiz Table"
       :data="tableData"
@@ -19,13 +22,6 @@
           Avaialble Quizzes
         </div>
         <q-space />
-        <q-btn
-          flat
-          round
-          icon="add"
-          color="blue"
-          @click="addQuizActive=true"
-        />
         <q-btn
           class="q-ml-md"
           flat
@@ -61,12 +57,8 @@
     </q-table>
     <edit-quiz
       :active="editQuizActive"
-      :quiz="quizId"
+      :quizId="quizId"
       @quizEditCompleted="editQuizDone"
-    />
-    <add-quiz
-      :active="addQuizActive"
-      @quizAddCompleted="addQuizDone"
     />
   </div>
 </template>
@@ -76,7 +68,7 @@ import { mapGetters, mapMutations } from 'vuex'
 import { GET_QUIZ_QUERY } from '../../graphql/queries'
 
 export default {
-  name: 'StudentTable',
+  name: 'MathQuizTable',
   components: {
     'edit-quiz': require('components/quiz/EditQuiz.vue').default,
     'add-quiz': require('components/quiz/AddQuiz.vue').default
@@ -84,7 +76,6 @@ export default {
   data () {
     return {
       loading: true,
-      addQuizActive: false,
       editQuizActive: false,
       quizId: '',
       skipQueryGetQuiz: true,
@@ -145,27 +136,32 @@ export default {
     }
   },
   computed: {
-    // ...mapGetters('currentUser', ['currentUser']),
+    ...mapGetters('currentUser', ['currentUser']),
     ...mapGetters('quiz', ['getQuizList']),
     tableData: function () {
       console.log('quiz list = ', this.getQuizList)
       return this.getQuizList
+    },
+    addQuizActive: function () {
+      if (this.currentUser.Role) {
+        if (this.currentUser.Role === 'admin' || this.currentUser.Role === 'staff') {
+          return true
+        }
+      }
+      return false
     }
   },
   mounted () {
     this.fetchQuiz()
   },
   methods: {
-    ...mapMutations('quiz', ['addQuiz', 'setQuizList']),
+    ...mapMutations('quiz', ['addNewQuiz', 'setQuizList']),
     toEditQuiz (opt) {
       this.quizId = opt
       this.editQuizActive = true
     },
     editQuizDone () {
       this.editQuizActive = false
-    },
-    addQuizDone () {
-      this.addQuizActive = false
     },
     fetchQuiz () {
       this.skipQueryGetQuiz = false
@@ -177,7 +173,7 @@ export default {
         this.loading = false
         this.setQuizList([])
         for (let i = 0; i < newList.length; i++) {
-          this.addQuiz(newList[i])
+          this.addNewQuiz(newList[i])
         }
       } else {
         console.log('NO enough quiz')
