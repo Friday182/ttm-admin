@@ -134,7 +134,6 @@
       </div>
     </div>
     <div
-      v-if="option5"
       class="row"
     >
       <div class="col-3" />
@@ -162,7 +161,7 @@
 
 <script type="text/javascript">
 import { VueMathjax } from 'vue-mathjax'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'SignalChoiceAnswer',
@@ -185,38 +184,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('questions', ['allQuestions']),
+    ...mapGetters('currentQuestion', ['currentQuestion']),
     options: function () {
-      if (this.allQuestions[this.index]) {
-        console.log('options - ', this.allQuestions[this.index].Options)
-        if (this.allQuestions[this.index].Options.length >= 4) {
-          return this.allQuestions[this.index].Options
-        }
-      }
-      return ['', '', '', '', '']
-    },
-    option5: function () {
-      if (this.allQuestions[this.index]) {
-        if (this.allQuestions[this.index].Options.length === 5) {
-          return true
-        }
-      }
-      return false
+      return (this.currentQuestion) ? this.currentQuestion.Options : ['', '', '', '', '']
     }
   },
   methods: {
-    ...mapMutations('questions', ['setQueChoice']),
     selected (opt) {
-      if (opt === this.allQuestions[this.index].Answers[0]) {
-        this.ansCorrect = true
-      } else {
-        this.ansCorrect = false
-      }
-      this.setQueChoice({
-        index: this.index,
-        choice: opt }
-      )
-      this.$emit('ansCorrect', this.ansCorrect)
     }
   }
 }

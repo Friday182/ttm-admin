@@ -77,7 +77,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('questions', ['allQuestions']),
+    ...mapGetters('currentQuestion', ['currentQuestion']),
     answer1_text: function () {
       return (this.allQuestions[this.index]) ? this.allQuestions[this.index].Options[0] : ''
     },

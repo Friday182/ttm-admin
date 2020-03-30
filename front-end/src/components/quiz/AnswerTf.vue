@@ -6,20 +6,17 @@
       outlined
       color="green"
       class="q-mr-md"
-      @click="selected('1')"
     />
     <q-btn
       label="False"
       glossy
       outlined
       color="red"
-      @click="selected('0')"
     />
   </div>
 </template>
 
 <script type="text/javascript">
-import { mapGetters } from 'vuex'
 
 export default {
   name: 'TrueFalseAnswer',
@@ -32,19 +29,6 @@ export default {
   data () {
     return {
       ansCorrect: false
-    }
-  },
-  computed: {
-    ...mapGetters('questions', ['allQuestions'])
-  },
-  methods: {
-    selected (opt) {
-      if (opt === this.allQuestions[this.index].Answer[0]) {
-        this.ansCorrect = true
-      } else {
-        this.ansCorrect = false
-      }
-      this.$emit('ansCorrect', this.ansCorrect)
     }
   }
 }

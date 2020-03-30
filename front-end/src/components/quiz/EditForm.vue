@@ -38,6 +38,7 @@
             dense
             label="Answer Type"
             :options="ansTypeOptions"
+            @input="updateCurrentQuestion"
           />
         </div>
       </div>
@@ -48,16 +49,34 @@
         outlined
         type="textarea"
         label="Up Text"
-      />
+      >
+        <template v-slot:append>
+          <q-btn
+            round
+            dense
+            color="blue"
+            icon="send"
+            @click="updateCurrentQuestion"
+          />
+        </template>
+      </q-input>
     </q-card-section>
     <q-card-section class="q-ml-md">
       <q-input
         v-model="inFormula"
         outlined
         label="Formula"
+        @input="updateCurrentQuestion"
       />
     </q-card-section>
     <q-card-section class="q-ml-md">
+      <q-btn
+        class="q-mb-xs"
+        color="blue"
+        icon="send"
+        label="Save"
+        @click="updateCurrentQuestion"
+      />
       <v-jsoneditor
         v-model="inJsonText"
         :plus="false"
@@ -70,37 +89,53 @@
         outlined
         type="textarea"
         label="Down Text"
-      />
+        @input="updateCurrentQuestion"
+      >
+        <template v-slot:append>
+          <q-btn
+            round
+            dense
+            color="blue"
+            icon="send"
+            @click="updateCurrentQuestion"
+          />
+        </template>
+      </q-input>
     </q-card-section>
     <q-card-section class="q-ml-md">
       <q-input
         v-model="inOption1"
         outlined
         label="Option A"
+        @input="updateCurrentQuestion"
       />
       <q-input
         v-model="inOption2"
         class="q-mt-xs"
         outlined
         label="Option B"
+        @input="updateCurrentQuestion"
       />
       <q-input
         v-model="inOption3"
         class="q-mt-xs"
         outlined
         label="Option C"
+        @input="updateCurrentQuestion"
       />
       <q-input
         v-model="inOption4"
         class="q-mt-xs"
         outlined
         label="Option D"
+        @input="updateCurrentQuestion"
       />
       <q-input
         v-model="inOption5"
         class="q-mt-xs"
         outlined
         label="Option E"
+        @input="updateCurrentQuestion"
       />
     </q-card-section>
     <q-card-section class="q-ml-md">
@@ -112,6 +147,7 @@
             dense
             label="Answer"
             :options="answerOptions"
+            @input="updateCurrentQuestion"
           />
         </div>
       </div>
@@ -125,6 +161,7 @@
         use-chips
         stack-label
         label="KP Dependency"
+        @input="updateCurrentQuestion"
       />
     </q-card-section>
     <q-card-section class="q-ml-md">
@@ -212,13 +249,22 @@ export default {
   },
   watch: {
     editQuestion: function (newVal, oldVal) {
+      console.log('uptext objects - ', newVal.UpTexts.length)
+      let tmpUpText = ''
+      for (let i = 0; i < newVal.UpTexts.length; i++) {
+        tmpUpText += newVal.UpTexts[i] + '\n'
+      }
+      let tmpDownText = ''
+      for (let i = 0; i < newVal.DownTexts.length; i++) {
+        tmpDownText += newVal.DownTexts[i] + '\n'
+      }
       this.inQueIdx = newVal.QueIdx
       this.inStdSec = newVal.StdSec
       this.inQueType = newVal.QuestionType
       this.inAnsType = newVal.AnswerType
       this.inComment = newVal.Tips
-      this.inUpText = newVal.UpTexts
-      this.inDownText = newVal.DownTexts
+      this.inUpText = tmpUpText
+      this.inDownText = tmpDownText
       this.inFormula = newVal.Formula
       this.inOption1 = newVal.Options[0]
       this.inOption2 = newVal.Options[1]
@@ -292,7 +338,7 @@ export default {
     },
     updateCurrentQuestion: function () {
       // save in current question, this should be done in editform
-      console.log('write new data', this.inQueIdx)
+      console.log('write new data', this.inUpText)
       let tmp = []
       tmp.push(this.inOption1)
       tmp.push(this.inOption2)
@@ -304,6 +350,8 @@ export default {
       let tmpClk = []
       let tmpTables = []
       let tmpShapes = []
+      let tmpUpText = this.inUpText.split('\n')
+      let tmpDownText = this.inDownText.split('\n')
       if (this.inQueType === 'M_TABLE') {
         tmpTables.push(this.inJsonText)
       } else if (this.inQueType === 'M_CHART') {
@@ -313,6 +361,7 @@ export default {
       } else if (this.inQueType === 'M_CLK') {
         tmpClk.push(this.inJsonText)
       }
+      console.log('Save to current question')
       this.doSetCurrentQuestion(
         {
           Kp: this.QuizId,
@@ -320,8 +369,8 @@ export default {
           StdSec: this.inStdSec,
           QuestionType: this.inQueType,
           AnswerType: this.inAnsType,
-          UpTexts: this.inUpText,
-          DownTexts: this.inDownText,
+          UpTexts: tmpUpText,
+          DownTexts: tmpDownText,
           Formula: this.inFormula,
           Options: tmp,
           Tags: this.inTags,
