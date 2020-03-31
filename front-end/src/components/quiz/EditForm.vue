@@ -81,6 +81,7 @@
         v-model="inJsonText"
         :plus="false"
         height="600px"
+        :options="vjsonOptions"
       />
     </q-card-section>
     <q-card-section class="q-ml-md">
@@ -219,6 +220,8 @@ export default {
       inAnswer: '',
       inTags: ['MA24'],
       usedSeconds: 0,
+      vjsonOptions: {
+      },
       skipQueryAddQuiz: true,
       queTypeOptions: ['M_COM', 'M_TABLE', 'M_SHAPE', 'M_CLK', 'M_CHART', 'M_MONEY', 'M_IMG'],
       ansTypeOptions: ['SC', 'IT', 'TF', 'MC'],
@@ -272,17 +275,23 @@ export default {
       this.inOption4 = newVal.Options[3]
       this.inOption5 = newVal.Options[4]
       this.inTags = newVal.Tags
+      let tmpJson = []
+      let tmpOrgJson = []
       if (newVal.QuestionType === 'M_TABLE') {
-        this.inJsonText = newVal.Tables
+        tmpOrgJson = newVal.Tables
       } else if (newVal.QuestionType === 'M_CHART') {
-        this.inJsonText = newVal.Charts
+        tmpOrgJson = newVal.Charts
       } else if (newVal.QuestionType === 'M_SHAPE') {
-        this.inJsonText = JSON.parse(newVal.Shapes[0])
+        tmpOrgJson = newVal.Shapes
       } else if (newVal.QuestionType === 'M_COM') {
-        this.inJsonText = newVal.Formula
+        tmpOrgJson = newVal.Formula
       } else {
-        this.inJsonText = ''
+        tmpOrgJson = ['']
       }
+      for (let i = 0; i < tmpOrgJson.length; i++) {
+        tmpJson.push(JSON.parse(tmpOrgJson[i]))
+      }
+      this.inJsonText = tmpJson
     }
   },
   components: {
@@ -336,9 +345,12 @@ export default {
     updateSecs: function () {
       this.usedSeconds++
     },
+    jsonChanged: function (opt) {
+      console.log('write new data', opt)
+    },
     updateCurrentQuestion: function () {
       // save in current question, this should be done in editform
-      console.log('write new data', this.inUpText)
+      console.log('write new data')
       let tmp = []
       tmp.push(this.inOption1)
       tmp.push(this.inOption2)
@@ -356,10 +368,12 @@ export default {
         tmpTables.push(this.inJsonText)
       } else if (this.inQueType === 'M_CHART') {
         tmpCharts.push(this.inJsonText)
-      } else if (this.inQueType === 'M_SHAPE') {
-        tmpShapes.push(this.inJsonText)
       } else if (this.inQueType === 'M_CLK') {
         tmpClk.push(this.inJsonText)
+      } else if (this.inQueType === 'M_SHAPE') {
+        for (let i = 0; i < this.inJsonText.length; i++) {
+          tmpShapes.push(JSON.stringify(this.inJsonText[i]))
+        }
       }
       console.log('Save to current question')
       this.doSetCurrentQuestion(

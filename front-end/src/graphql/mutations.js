@@ -28,6 +28,28 @@ mutation AddQuiz($QuizId: String!, $Grade: Int!, $Desc: String!, $Operator: Stri
   )
 }`
 
+export const ADD_QUESTION_MUTATION = gql`
+mutation AddQuestion($QuizId: String!, $Gid: String!, $QueIdx: Int!, $Kp: String!, $StdSec: Int!, $AnswerType: String!, $QuestionType: String!,
+  $UpTexts: Array!, $DownTexts: String!, $Formula: String!, $Options: String!, $Answers: String!, $Tips: String!) {
+  AddQuestion(
+    que: {
+      QuizId: $QuizId,
+      Gid: $Gid,
+      QueIdx: $QueIdx,
+      Kp: $Kp,
+      StdSec: $StdSec,
+      AnswerType: $AnswerType,
+      QuestionType: $QuestionType,
+      UpTexts: $UpTexts,
+      DownTexts: $DownTexts,
+      Formula: $Formula,
+      Options: $Options,
+      Answers: $Answers,
+      Tips: $Tips
+    }
+  )
+}`
+
 export const ADD_TASKLOG_MUTATION = gql`
 mutation AddTaskLog($gid: String!, $kps: String!, $totalQue: Int!, $totalCorrect: Int!, $totalSec: Int!, $totalScore: Int!, $details: String!) {
   AddTaskLog(
