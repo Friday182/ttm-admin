@@ -169,7 +169,7 @@
       <div class="row">
         <q-space />
         <q-btn
-          label="Save Quiz"
+          label="Save Question"
           no-caps
           color="primary"
           style="font: 120% Arial bold"
@@ -190,7 +190,7 @@
 
 <script>
 import VJsoneditor from 'v-jsoneditor'
-import { ADD_QUIZ_MUTATION } from '../../graphql/mutations'
+import { ADD_QUESTION_MUTATION } from '../../graphql/mutations'
 import { mapMutations, mapGetters } from 'vuex'
 
 export default {
@@ -304,21 +304,47 @@ export default {
     ...mapMutations('currentQuestion', ['doSetCurrentQuestion']),
     // ...mapActions('currentQuestion', ['setCurrentQuestion']),
     saveQuestion () {
+      console.log('start save question by graphql-', this.inUpText)
+      let tmpOption = ''
+      tmpOption += this.inOption1 + '||'
+      tmpOption += this.inOption2 + '||'
+      tmpOption += this.inOption3 + '||'
+      tmpOption += this.inOption4 + '||'
+      /* tmpOption.push(this.inOption1)
+      tmpOption.push(this.inOption2)
+      tmpOption.push(this.inOption3)
+      tmpOption.push(this.inOption4) */
+      let tmpCharts = ['LINE1', 'LINE2']
+      let tmpShapes = ['LINE1', 'LINE2']
+      let tmpTables = ['LINE1', 'LINE2']
+      let tmpClocks = ['LINE1', 'LINE2']
+      let tmpTags = ['LINE1', 'LINE2']
       this.$apollo
         .mutate({
-          mutation: ADD_QUIZ_MUTATION,
+          mutation: ADD_QUESTION_MUTATION,
           variables: {
-            QuizId: this.inId.trim().toUpperCase(),
-            Grade: parseInt(this.inGrade),
-            Desc: this.inDesc,
-            Operator: this.inOperator,
-            Comment: this.inComment
+            Gid: 'testGid',
+            QueIdx: parseInt(this.inQueIdx),
+            Kp: this.editQuestion.Kp,
+            StdSec: this.inStdSec,
+            AnswerType: this.inAnsType,
+            QuestionType: this.inQueType,
+            UpTexts: this.inUpText,
+            DownTexts: 'test', // this.inDownTexts,
+            Formula: 'test', // this.inFormula,
+            Charts: JSON.stringify(tmpCharts),
+            Shapes: JSON.stringify(tmpShapes),
+            Tables: JSON.stringify(tmpTables),
+            Clocks: JSON.stringify(tmpClocks),
+            Options: tmpOption,
+            Answers: 'test', // this.inAnswer,
+            Tags: JSON.stringify(tmpTags)
           }
         })
         .then(response => {
           if (!response.errors) {
-            if (response.data.AddQuiz) {
-              this.updateAddQuiz()
+            if (response.data.AddQuestion) {
+              console.log('Add question successful')
             }
           } else {
             console.log('reponse error', response.errors)
@@ -327,17 +353,6 @@ export default {
         .catch(error => {
           console.log(error)
         })
-    },
-    updateAddQuiz () {
-      console.log('add quiz')
-      this.addNewQuiz({
-        QuizId: this.inId.trim().toUpperCase(),
-        Grade: parseInt(this.inGrade),
-        Desc: this.inDesc,
-        Operator: this.inOperator,
-        Comment: this.inComment
-      })
-      this.clearForm()
     },
     onJsonChange (value) {
       console.log('value:', value)
@@ -402,11 +417,6 @@ export default {
       )
     },
     clearForm () {
-      this.inId = ''
-      this.inGrade = ''
-      this.inDesc = ''
-      this.inOperator = ''
-      this.inSubject = ''
     }
   }
 }

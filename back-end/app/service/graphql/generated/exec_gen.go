@@ -1804,27 +1804,22 @@ type Question {
 
 
 input AddQuestionInput {
-  QuizId:       String!
   Gid:          String!
   QueIdx:       Int!
 	Kp:           String!
 	StdSec:       Int!
 	AnswerType:   String!
 	QuestionType: String!
-	UpTexts:      [String!]!
-  DownTexts:    [String!]!
-  Formula:      [String!]!
-	Options:      [String!]!
-	Answers:      [String!]! 
-	Tags:         [String!]! 
-	Charts:       [String!]!
-	Clocks:       [String!]!
-	Tables:       [String!]!
-  Shapes:       [String!]!
-	AnswerText:   String!
-	Helper:       Boolean!
-	Imgs:         [String!]!
-	Tips:         [String!]!
+	UpTexts:      String!
+  DownTexts:    String!
+  Formula:      String!
+	Options:      String!
+	Answers:      String! 
+	Charts:       String!
+	Clocks:       String!
+	Tables:       String!
+  Shapes:       String!
+  Tags:         String! 
 }
 `},
 	&ast.Source{Name: "schemas/quiz.graphql", Input: `
@@ -10168,12 +10163,6 @@ func (ec *executionContext) unmarshalInputAddQuestionInput(ctx context.Context, 
 
 	for k, v := range asMap {
 		switch k {
-		case "QuizId":
-			var err error
-			it.QuizID, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "Gid":
 			var err error
 			it.Gid, err = ec.unmarshalNString2string(ctx, v)
@@ -10212,85 +10201,61 @@ func (ec *executionContext) unmarshalInputAddQuestionInput(ctx context.Context, 
 			}
 		case "UpTexts":
 			var err error
-			it.UpTexts, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.UpTexts, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "DownTexts":
 			var err error
-			it.DownTexts, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.DownTexts, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "Formula":
 			var err error
-			it.Formula, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.Formula, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "Options":
 			var err error
-			it.Options, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.Options, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "Answers":
 			var err error
-			it.Answers, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "Tags":
-			var err error
-			it.Tags, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.Answers, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "Charts":
 			var err error
-			it.Charts, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.Charts, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "Clocks":
 			var err error
-			it.Clocks, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.Clocks, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "Tables":
 			var err error
-			it.Tables, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.Tables, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "Shapes":
 			var err error
-			it.Shapes, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.Shapes, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "AnswerText":
+		case "Tags":
 			var err error
-			it.AnswerText, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "Helper":
-			var err error
-			it.Helper, err = ec.unmarshalNBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "Imgs":
-			var err error
-			it.Imgs, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "Tips":
-			var err error
-			it.Tips, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.Tags, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

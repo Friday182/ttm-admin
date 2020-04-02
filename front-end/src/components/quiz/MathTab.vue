@@ -66,6 +66,7 @@
 <script type="text/javascript">
 import { mapGetters, mapMutations } from 'vuex'
 import { GET_QUIZ_QUERY } from '../../graphql/queries'
+// import gql from 'graphql-tag'
 
 export default {
   name: 'MathQuizTable',

@@ -29,11 +29,11 @@ mutation AddQuiz($QuizId: String!, $Grade: Int!, $Desc: String!, $Operator: Stri
 }`
 
 export const ADD_QUESTION_MUTATION = gql`
-mutation AddQuestion($QuizId: String!, $Gid: String!, $QueIdx: Int!, $Kp: String!, $StdSec: Int!, $AnswerType: String!, $QuestionType: String!,
-  $UpTexts: Array!, $DownTexts: String!, $Formula: String!, $Options: String!, $Answers: String!, $Tips: String!) {
+mutation AddQuestion($Gid: String!, $QueIdx: Int!, $Kp: String!, $StdSec: Int!, $AnswerType: String!, $QuestionType: String!,
+  $UpTexts: String!, $DownTexts: String!, $Formula: String!, $Charts: String!, $Shapes: String!, $Tables: String!, $Clocks: String!,
+  $Options: String!, $Answers: String!, $Tags: String!) {
   AddQuestion(
     que: {
-      QuizId: $QuizId,
       Gid: $Gid,
       QueIdx: $QueIdx,
       Kp: $Kp,
@@ -43,9 +43,13 @@ mutation AddQuestion($QuizId: String!, $Gid: String!, $QueIdx: Int!, $Kp: String
       UpTexts: $UpTexts,
       DownTexts: $DownTexts,
       Formula: $Formula,
+      Charts: $Charts,
+      Shapes: $Shapes,
+      Tables: $Tables,
+      Clocks: $Clocks,
       Options: $Options,
       Answers: $Answers,
-      Tips: $Tips
+      Tags: $Tags
     }
   )
 }`

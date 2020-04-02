@@ -18,27 +18,22 @@ type AddLogInput struct {
 }
 
 type AddQuestionInput struct {
-	QuizID       string   `json:"QuizId"`
-	Gid          string   `json:"Gid"`
-	QueIdx       int      `json:"QueIdx"`
-	Kp           string   `json:"Kp"`
-	StdSec       int      `json:"StdSec"`
-	AnswerType   string   `json:"AnswerType"`
-	QuestionType string   `json:"QuestionType"`
-	UpTexts      []string `json:"UpTexts"`
-	DownTexts    []string `json:"DownTexts"`
-	Formula      []string `json:"Formula"`
-	Options      []string `json:"Options"`
-	Answers      []string `json:"Answers"`
-	Tags         []string `json:"Tags"`
-	Charts       []string `json:"Charts"`
-	Clocks       []string `json:"Clocks"`
-	Tables       []string `json:"Tables"`
-	Shapes       []string `json:"Shapes"`
-	AnswerText   string   `json:"AnswerText"`
-	Helper       bool     `json:"Helper"`
-	Imgs         []string `json:"Imgs"`
-	Tips         []string `json:"Tips"`
+	Gid          string `json:"Gid"`
+	QueIdx       int    `json:"QueIdx"`
+	Kp           string `json:"Kp"`
+	StdSec       int    `json:"StdSec"`
+	AnswerType   string `json:"AnswerType"`
+	QuestionType string `json:"QuestionType"`
+	UpTexts      string `json:"UpTexts"`
+	DownTexts    string `json:"DownTexts"`
+	Formula      string `json:"Formula"`
+	Options      string `json:"Options"`
+	Answers      string `json:"Answers"`
+	Charts       string `json:"Charts"`
+	Clocks       string `json:"Clocks"`
+	Tables       string `json:"Tables"`
+	Shapes       string `json:"Shapes"`
+	Tags         string `json:"Tags"`
 }
 
 type AddQuizInput struct {
