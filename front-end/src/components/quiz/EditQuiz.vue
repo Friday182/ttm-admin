@@ -56,7 +56,9 @@
           style="height: 100%"
         >
           <template v-slot:before>
-            <edit-form />
+            <edit-form
+              :kp="quizId"
+            />
           </template>
           <template v-slot:after>
             <render-quiz />

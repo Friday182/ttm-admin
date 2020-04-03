@@ -90,7 +90,6 @@
         outlined
         type="textarea"
         label="Down Text"
-        @input="updateCurrentQuestion"
       >
         <template v-slot:append>
           <q-btn
@@ -196,9 +195,9 @@ import { mapMutations, mapGetters } from 'vuex'
 export default {
   name: 'AddQuiz',
   props: {
-    index: {
-      type: Number,
-      default: 0
+    kp: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -246,6 +245,7 @@ export default {
   },
   computed: {
     ...mapGetters('currentQuestion', ['currentQuestion']),
+    ...mapGetters('currentUser', ['currentUser']),
     editQuestion: function () {
       return this.currentQuestion
     }
@@ -292,6 +292,11 @@ export default {
         tmpJson.push(JSON.parse(tmpOrgJson[i]))
       }
       this.inJsonText = tmpJson
+      if (this.inAnsType === 'SC') {
+        this.inAnswer = this.answerOptions[parseInt(newVal.Answers) - 1]
+      } else if (this.inAnsType === 'IT') {
+        this.inAnswer = newVal.Answers
+      }
     }
   },
   components: {
@@ -304,41 +309,55 @@ export default {
     ...mapMutations('currentQuestion', ['doSetCurrentQuestion']),
     // ...mapActions('currentQuestion', ['setCurrentQuestion']),
     saveQuestion () {
-      console.log('start save question by graphql-', this.inUpText)
+      console.log('start save question by graphql-', this.inJsonText)
       let tmpOption = ''
       tmpOption += this.inOption1 + '||'
       tmpOption += this.inOption2 + '||'
       tmpOption += this.inOption3 + '||'
       tmpOption += this.inOption4 + '||'
+      tmpOption += this.inOption5 + '||'
       /* tmpOption.push(this.inOption1)
       tmpOption.push(this.inOption2)
       tmpOption.push(this.inOption3)
       tmpOption.push(this.inOption4) */
-      let tmpCharts = ['LINE1', 'LINE2']
-      let tmpShapes = ['LINE1', 'LINE2']
-      let tmpTables = ['LINE1', 'LINE2']
-      let tmpClocks = ['LINE1', 'LINE2']
-      let tmpTags = ['LINE1', 'LINE2']
+      let tmpCharts = []
+      let tmpShapes = []
+      let tmpTables = []
+      let tmpClocks = []
+      if (this.inQueType === 'M_CHART') {
+        tmpCharts.push('test chart')
+      } else if (this.inQueType === 'M_SHAPE') {
+        tmpCharts.push(this.inJsonText)
+      } else if (this.inQueType === 'M_TABLE') {
+        tmpCharts.push('test table')
+      } else if (this.inQueType === 'M_CLK') {
+        tmpCharts.push('test clock')
+      }
+      let tmpFormula = []
+      tmpFormula.push(this.inFormula)
+      let tmpAns = []
+      tmpAns.push(this.inAnswer)
+
       this.$apollo
         .mutate({
           mutation: ADD_QUESTION_MUTATION,
           variables: {
-            Gid: 'testGid',
+            Gid: this.currentUser.Gid,
             QueIdx: parseInt(this.inQueIdx),
-            Kp: this.editQuestion.Kp,
+            Kp: this.kp,
             StdSec: this.inStdSec,
             AnswerType: this.inAnsType,
             QuestionType: this.inQueType,
             UpTexts: this.inUpText,
-            DownTexts: 'test', // this.inDownTexts,
-            Formula: 'test', // this.inFormula,
+            DownTexts: this.inDownText,
+            Formula: JSON.stringify(tmpFormula),
             Charts: JSON.stringify(tmpCharts),
             Shapes: JSON.stringify(tmpShapes),
             Tables: JSON.stringify(tmpTables),
             Clocks: JSON.stringify(tmpClocks),
             Options: tmpOption,
-            Answers: 'test', // this.inAnswer,
-            Tags: JSON.stringify(tmpTags)
+            Answers: JSON.stringify(tmpAns),
+            Tags: JSON.stringify(this.inTags)
           }
         })
         .then(response => {
@@ -371,6 +390,7 @@ export default {
       tmp.push(this.inOption2)
       tmp.push(this.inOption3)
       tmp.push(this.inOption4)
+      tmp.push(this.inOption5)
       let tmp1 = []
       tmp1.push(this.inAnswer)
       let tmpCharts = []
