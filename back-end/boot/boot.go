@@ -1,7 +1,7 @@
 package boot
 
 import (
-	"github.com/friday182/ttm-go/app/model"
+	"github.com/friday182/ttm-admin/app/model"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/gfile"
 	"github.com/gogf/gf/os/glog"
@@ -27,7 +27,7 @@ func init() {
 	glog.SetFile("stdout.log")
 	glog.Println("设置日志输出文件名称格式为同一个文件")
 	glog.Println("---------- glog start ----------")
-	
+
 	// 链式操作设置文件名称格式
 	//glog.File("stderr.log").Println("支持链式操作")
 	//glog.File("error-{Ymd}.log").Println("文件名称支持带gtime日期格式")

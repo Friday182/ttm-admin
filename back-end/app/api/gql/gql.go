@@ -4,10 +4,11 @@ import (
 	"github.com/99designs/gqlgen/handler"
 	//"github.com/jinzhu/gorm"
 	//"net/http"
-	"github.com/friday182/ttm-go/app/model"
-	gen "github.com/friday182/ttm-go/app/service/graphql/generated"
-	res "github.com/friday182/ttm-go/app/service/graphql/resolvers"
-	//"github.com/friday182/ttm-go/app/service/middleware"
+	"github.com/friday182/ttm-admin/app/model"
+	gen "github.com/friday182/ttm-admin/app/service/graphql/generated"
+	res "github.com/friday182/ttm-admin/app/service/graphql/resolvers"
+
+	//"github.com/friday182/ttm-admin/app/service/middleware"
 	"github.com/gogf/gf/net/ghttp"
 )
 

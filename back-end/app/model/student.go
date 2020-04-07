@@ -2,9 +2,10 @@ package model
 
 import (
 	"errors"
-	//ws "github.com/friday182/ttm-go/app/api/websocket"
-	"github.com/gogf/gf/util/grand"
+	//ws "github.com/friday182/ttm-admin/app/api/websocket"
 	"time"
+
+	"github.com/gogf/gf/util/grand"
 )
 
 type Student struct {

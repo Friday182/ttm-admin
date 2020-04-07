@@ -1,14 +1,16 @@
 package middleware
 
 import (
+	"net/http"
+	"time"
+
 	jwt "github.com/gogf/gf-jwt"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/os/glog"
-	"net/http"
-	"time"
+
 	// "github.com/gogf/gf/util/gvalid"
-	"github.com/friday182/ttm-go/app/model"
+	"github.com/friday182/ttm-admin/app/model"
 	"github.com/jinzhu/gorm"
 )
 

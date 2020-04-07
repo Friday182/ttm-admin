@@ -10,8 +10,8 @@ import (
 	"time"
 
 	//"time"
-	"github.com/friday182/ttm-go/app/model"
-	//"github.com/friday182/ttm-go/app/service/graphql/generated"
+	"github.com/friday182/ttm-admin/app/model"
+	//"github.com/friday182/ttm-admin/app/service/graphql/generated"
 	"github.com/gogf/gf/container/garray"
 	"github.com/gogf/gf/util/grand"
 	"github.com/gogf/gf/util/gvalid"

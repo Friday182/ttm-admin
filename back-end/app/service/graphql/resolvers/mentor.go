@@ -6,8 +6,8 @@ import (
 	"context"
 	//"strings"
 	"github.com/jinzhu/gorm"
-	//"github.com/friday182/ttm-go/app/service/graphql/generated"
-	"github.com/friday182/ttm-go/app/model"
+	//"github.com/friday182/ttm-admin/app/service/graphql/generated"
+	"github.com/friday182/ttm-admin/app/model"
 )
 
 // Query

@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/friday182/ttm-go/app/model"
-	"github.com/friday182/ttm-go/app/service/graphql/generated"
+	"github.com/friday182/ttm-admin/app/model"
+	"github.com/friday182/ttm-admin/app/service/graphql/generated"
 	"github.com/jinzhu/gorm"
 )
 
@@ -72,15 +72,15 @@ func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQue
 
 	tmpArray = strings.Split(que.Tables, "||")
 	tmp, err = json.Marshal(tmpArray)
-	newQue.Tables = tmp	
+	newQue.Tables = tmp
 
 	tmpArray = strings.Split(que.Shapes, "||")
 	tmp, err = json.Marshal(tmpArray)
-	newQue.Shapes = tmp	
+	newQue.Shapes = tmp
 
 	tmpArray = strings.Split(que.Clocks, "||")
 	tmp, err = json.Marshal(tmpArray)
-	newQue.Clocks = tmp	
+	newQue.Clocks = tmp
 
 	err = r.Qdb.Where("kp = ? AND que_idx = ?", que.Kp, que.QueIdx).Find(&user).Error
 	if gorm.IsRecordNotFoundError(err) {

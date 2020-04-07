@@ -1,9 +1,9 @@
 package main
 
 import (
-	_ "github.com/friday182/ttm-go/app/service/setting"
-	_ "github.com/friday182/ttm-go/boot"
-	_ "github.com/friday182/ttm-go/router"
+	_ "github.com/friday182/ttm-admin/app/service/setting"
+	_ "github.com/friday182/ttm-admin/boot"
+	_ "github.com/friday182/ttm-admin/router"
 	"github.com/gogf/gf/frame/g"
 )
 

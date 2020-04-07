@@ -1,4 +1,4 @@
-# ttm-go gqlgen.yml file
+# ttm-admin gqlgen.yml file
 # Refer to https://gqlgen.com/config/
 # for detailed .gqlgen.yml documentation.
 # 1. Prepare your schema files with .graphql extension
@@ -25,20 +25,20 @@ resolver:
 autobind: []
 models:
   TaskLog:
-    model: github.com/friday182/ttm-go/app/model.TaskLog
+    model: github.com/friday182/ttm-admin/app/model.TaskLog
   Mentor:
-    model: github.com/friday182/ttm-go/app/model.Mentor
+    model: github.com/friday182/ttm-admin/app/model.Mentor
   Student:
-    model: github.com/friday182/ttm-go/app/model.Student
+    model: github.com/friday182/ttm-admin/app/model.Student
   Question:
-    model: github.com/friday182/ttm-go/app/model.Question
+    model: github.com/friday182/ttm-admin/app/model.Question
   KpDescription:
-    model: github.com/friday182/ttm-go/app/model.KpDescription
+    model: github.com/friday182/ttm-admin/app/model.KpDescription
   Quiz:
-    model: github.com/friday182/ttm-go/app/model.Quiz
+    model: github.com/friday182/ttm-admin/app/model.Quiz
   QuizLog:
-    model: github.com/friday182/ttm-go/app/model.QuizLog
+    model: github.com/friday182/ttm-admin/app/model.QuizLog
   QuizReport:
-    model: github.com/friday182/ttm-go/app/model.QuizReport
+    model: github.com/friday182/ttm-admin/app/model.QuizReport
   User:
-    model: github.com/friday182/ttm-go/app/model.User
+    model: github.com/friday182/ttm-admin/app/model.User

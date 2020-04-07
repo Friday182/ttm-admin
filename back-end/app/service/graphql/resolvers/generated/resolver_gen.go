@@ -3,8 +3,8 @@ package resolvers
 import (
 	"context"
 
-	"github.com/friday182/ttm-go/app/model"
-	"github.com/friday182/ttm-go/app/service/graphql/generated"
+	"github.com/friday182/ttm-admin/app/model"
+	"github.com/friday182/ttm-admin/app/service/graphql/generated"
 )
 
 // THIS CODE IS A STARTING POINT ONLY. IT WILL NOT BE UPDATED WITH SCHEMA CHANGES.

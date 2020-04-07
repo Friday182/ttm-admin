@@ -1,11 +1,10 @@
 package websocket
 
 import (
-	"testing"
-	"github.com/gogf/gf/net/ghttp"
 	"net/http"
-	"net/http/httptest"
-	ws "github.com/friday182/ttm-go/app/api/websocket"
+	"testing"
+
+	"github.com/gogf/gf/net/ghttp"
 )
 
 func Benchmark(t *testing.B) {

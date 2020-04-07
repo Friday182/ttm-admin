@@ -8,7 +8,7 @@ const httpLink = createHttpLink({
   // You should use an absolute URL here
   uri: 'http://localhost:8085/query'
   // uri: 'https://ttm2020.pythonanywhere.com/graphql'
-  // uri: 'https://www.transfertestmaster.com/v06/graphql/'
+  // uri: 'https://www.transfertestmaster.com/admin/graphql/'
 })
 
 // Cache implementation

@@ -1,9 +1,9 @@
 package router
 
 import (
-	"github.com/friday182/ttm-go/app/api/gql"
-	ws "github.com/friday182/ttm-go/app/api/websocket"
-	"github.com/friday182/ttm-go/app/service/middleware"
+	"github.com/friday182/ttm-admin/app/api/gql"
+	ws "github.com/friday182/ttm-admin/app/api/websocket"
+	"github.com/friday182/ttm-admin/app/service/middleware"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 )

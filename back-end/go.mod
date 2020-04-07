@@ -1,4 +1,4 @@
-module github.com/friday182/ttm-go
+module github.com/friday182/ttm-admin
 
 go 1.13
 
@@ -8,5 +8,5 @@ require (
 	github.com/gogf/gf-jwt v1.1.0
 	github.com/jinzhu/gorm v1.9.12
 	github.com/vektah/gqlparser v1.2.0
-	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
+	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df // indirect
 )

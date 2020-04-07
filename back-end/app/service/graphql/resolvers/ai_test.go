@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"testing"
 	//"time"
-	"github.com/friday182/ttm-go/app/service/graphql/resolvers"
-	//"github.com/friday182/ttm-go/app/model"
+	"github.com/friday182/ttm-admin/app/service/graphql/resolvers"
+	//"github.com/friday182/ttm-admin/app/model"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 

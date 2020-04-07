@@ -7,11 +7,11 @@ import (
 	// _ "github.com/jinzhu/gorm/dialects/mysql"
 	// _ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	//"github.com/friday182/ttm-go/app/service/setting"
+	//"github.com/friday182/ttm-admin/app/service/setting"
 )
 
 var (
-	db *gorm.DB
+	db  *gorm.DB
 	qdb *gorm.DB
 	err error
 )
@@ -22,7 +22,7 @@ func ConnectDb() error {
 	if err != nil {
 		log.Println("[ORM] Error: ", err)
 		panic("[ORM] Connect Database Failed ")
-	}else{
+	} else {
 		db = d
 	}
 
@@ -31,7 +31,7 @@ func ConnectDb() error {
 	if err != nil {
 		log.Println("[ORM] Error: ", err)
 		panic("[ORM] Connect Database Failed ")
-	}else{
+	} else {
 		qdb = q
 	}
 

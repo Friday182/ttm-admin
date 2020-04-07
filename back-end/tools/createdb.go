@@ -5,7 +5,7 @@ import (
 	// _ "github.com/jinzhu/gorm/dialects/mysql"
 	// _ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/friday182/ttm-go/app/model"
+	"github.com/friday182/ttm-admin/app/model"
 )
 
 func main() {

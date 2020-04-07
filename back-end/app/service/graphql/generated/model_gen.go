@@ -5,7 +5,7 @@ package generated
 import (
 	"time"
 
-	"github.com/friday182/ttm-go/app/model"
+	"github.com/friday182/ttm-admin/app/model"
 )
 
 type AddLogInput struct {
