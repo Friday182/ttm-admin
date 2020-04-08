@@ -142,14 +142,20 @@ export default {
     },
     setCurrentUser (obj) {
       if (obj.Gid !== '') {
-        console.log('Write current user to store - ' + obj)
+        console.log('Write current user to store - ' + obj.Role)
         this.updateUser({
           Gid: obj.Gid,
           Name: obj.Name,
           Username: obj.Username,
           LastLoginTime: '',
           Role: obj.Role,
-          Comment: obj.Comment
+          Comment: obj.Comment,
+          tabs: [{
+            name: '1',
+            title: 'Dashboard'
+          }],
+          activeTab: '1',
+          wsOk: false
         })
         if (this.$route.path !== '/Navigator') {
           this.$router.push('/Navigator')

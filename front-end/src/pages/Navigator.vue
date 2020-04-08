@@ -72,6 +72,7 @@ export default {
     }
   },
   mounted () {
+    console.log('mounted Navigator')
     // createSocket()
     // listen incoming message
     // window.addEventListener('onmessageWS', this.processData)
