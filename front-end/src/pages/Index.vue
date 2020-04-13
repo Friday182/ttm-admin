@@ -1,8 +1,9 @@
 <template>
-  <q-page class="flex-center" style="background: lightblue;">
+  <q-page class="flex-center" style="background: white;">
     <q-card
       class="absolute-center"
-      style="width: 450px; max-width: 80vw;background: lightblue;"
+      style="width: 450px; max-width: 80vw;background: white;"
+      flat
     >
       <q-card-section align="center">
         <q-btn

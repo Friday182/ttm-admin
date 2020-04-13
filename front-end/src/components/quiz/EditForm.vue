@@ -28,7 +28,7 @@
             dense
             label="Question Type"
             :options="queTypeOptions"
-            @input="updateCurrentQuestion"
+            @input="updateQuestionType"
           />
         </div>
         <div class="col-3 q-mr-sm">
@@ -147,7 +147,6 @@
             dense
             label="Answer"
             :options="answerOptions"
-            @input="updateCurrentQuestion"
           />
         </div>
       </div>
@@ -202,15 +201,15 @@ export default {
   },
   data () {
     return {
-      inQueIdx: '',
-      inStdSec: '',
-      inQueType: '',
-      inAnsType: '',
+      inQueIdx: '1',
+      inStdSec: '30',
+      inQueType: 'M_COM',
+      inAnsType: 'SC',
       inComment: '',
       inUpText: '',
       inDownText: '',
       inFormula: '',
-      inJsonText: '',
+      inJsonText: [],
       inOption1: '',
       inOption2: '',
       inOption3: '',
@@ -222,9 +221,9 @@ export default {
       vjsonOptions: {
       },
       skipQueryAddQuiz: true,
-      queTypeOptions: ['M_COM', 'M_TABLE', 'M_SHAPE', 'M_CLK', 'M_CHART', 'M_MONEY', 'M_IMG'],
+      queTypeOptions: ['M_COM', 'M_TABLE', 'M_SHAPE', 'M_CHART'],
       ansTypeOptions: ['SC', 'IT', 'TF', 'MC'],
-      answerOptions: ['A', 'B', 'C', 'D', 'E'],
+      answerOptions: ['Option A', 'Option B', 'Option C', 'Option D', 'Option E'],
       kpOptions: ['MA24', 'MC16', 'MF5'],
       exampleTable: [{
         tableTitle: '',
@@ -309,34 +308,47 @@ export default {
     ...mapMutations('currentQuestion', ['doSetCurrentQuestion']),
     // ...mapActions('currentQuestion', ['setCurrentQuestion']),
     saveQuestion () {
-      console.log('start save question by graphql-', this.inJsonText)
+      console.log('start save question by graphql-')
       let tmpOption = ''
       tmpOption += this.inOption1 + '||'
       tmpOption += this.inOption2 + '||'
       tmpOption += this.inOption3 + '||'
       tmpOption += this.inOption4 + '||'
-      tmpOption += this.inOption5 + '||'
+      tmpOption += this.inOption5
       /* tmpOption.push(this.inOption1)
       tmpOption.push(this.inOption2)
       tmpOption.push(this.inOption3)
       tmpOption.push(this.inOption4) */
-      let tmpCharts = []
-      let tmpShapes = []
-      let tmpTables = []
-      let tmpClocks = []
+      let tmpCharts = ''
+      let tmpShapes = ''
+      let tmpTables = ''
+      let tmpClocks = ''
+      let tmpTags = ''
       if (this.inQueType === 'M_CHART') {
-        tmpCharts.push('test chart')
+        for (let i = 0; i < this.inJsonText.length; i++) {
+          tmpCharts += JSON.stringify(this.inJsonText[i]) + '||'
+        }
       } else if (this.inQueType === 'M_SHAPE') {
-        tmpCharts.push(this.inJsonText)
+        console.log('shapes- ', this.inJsonText)
+        for (let i = 0; i < this.inJsonText.length; i++) {
+          tmpShapes += JSON.stringify(this.inJsonText[i]) + '||'
+        }
       } else if (this.inQueType === 'M_TABLE') {
-        tmpCharts.push('test table')
+        for (let i = 0; i < this.inJsonText.length; i++) {
+          tmpTables += JSON.stringify(this.inJsonText[i]) + '||'
+        }
       } else if (this.inQueType === 'M_CLK') {
-        tmpCharts.push('test clock')
+        for (let i = 0; i < this.inJsonText.length; i++) {
+          tmpClocks += JSON.stringify(this.inJsonText[i]) + '||'
+        }
       }
-      let tmpFormula = []
-      tmpFormula.push(this.inFormula)
-      let tmpAns = []
-      tmpAns.push(this.inAnswer)
+      for (let i = 0; i < this.inTags.length; i++) {
+        tmpTags += this.inTags[i] + '||'
+      }
+      console.log('tmpTags - ', tmpTags)
+      // let tmpFormula = []
+      // tmpFormula.push(this.inFormula)
+      let tmpAnswer = this.answerOptions.indexOf(this.inAnswer) + 1
 
       this.$apollo
         .mutate({
@@ -348,16 +360,16 @@ export default {
             StdSec: this.inStdSec,
             AnswerType: this.inAnsType,
             QuestionType: this.inQueType,
-            UpTexts: this.inUpText,
-            DownTexts: this.inDownText,
-            Formula: JSON.stringify(tmpFormula),
-            Charts: JSON.stringify(tmpCharts),
-            Shapes: JSON.stringify(tmpShapes),
-            Tables: JSON.stringify(tmpTables),
-            Clocks: JSON.stringify(tmpClocks),
+            UpTexts: this.inUpText.replace(/\n$/, ''),
+            DownTexts: this.inDownText.replace(/\n$/, ''),
+            Formula: 'this.inFormula',
+            Charts: tmpCharts,
+            Shapes: tmpShapes,
+            Tables: tmpTables,
+            Clocks: tmpClocks,
             Options: tmpOption,
-            Answers: JSON.stringify(tmpAns),
-            Tags: JSON.stringify(this.inTags)
+            Answers: tmpAnswer.toString(),
+            Tags: tmpTags
           }
         })
         .then(response => {
@@ -382,6 +394,73 @@ export default {
     jsonChanged: function (opt) {
       console.log('write new data', opt)
     },
+    updateQuestionType: function () {
+      // set json text example
+      if (this.inQueType === 'M_TABLE') {
+        this.inJsonText = []
+        this.inJsonText.push({
+          'tableTitle': 'Table Example',
+          'style': 'width: 40%',
+          'separator': 'cell',
+          'columns': [
+            { 'name': 'na', 'label': '', 'field': 'na' },
+            { 'name': 'square', 'label': 'Square', 'field': 'square' },
+            { 'name': 'circle', 'label': 'Circle', 'field': 'circle' }
+          ],
+          'tableData': [
+            { 'na': 'Black', 'square': '4', 'circle': '6' },
+            { 'na': 'White', 'square': '7', 'circle': '5' }
+          ]
+        })
+      } else if (this.inQueType === 'M_CHART') {
+        this.inJsonText = []
+        this.inJsonText.push({
+          'xAxis': {
+            'type': 'value',
+            'min': 0,
+            'max': 5,
+            'splitNumber': 5,
+            'name': 'Cups of flour',
+            'nameLocation': 'middle',
+            'nameGap': 40
+          },
+          'yAxis': {
+            'type': 'value',
+            'min': 0,
+            'max': 800,
+            'splitNumber': 4,
+            'name': 'Weight of flour (g)',
+            'nameLocation': 'middle',
+            'nameGap': 40
+          },
+          'series': {
+            'type': 'line',
+            'data': [ [0, 0], [5, 800] ]
+          }
+        })
+      } else if (this.inQueType === 'M_CLK') {
+        this.inJsonText[0] = [{
+          'type': 'Not Available'
+        }]
+      } else if (this.inQueType === 'M_SHAPE') {
+        this.inJsonText = []
+        this.inJsonText.push({
+          'type': 'line',
+          'config': {
+            'points': [350, 50, 330, 200, 520, 150, 350, 50],
+            'stroke': 'black',
+            'strokeWidth': 2
+          }
+        })
+        this.inJsonText.push({
+          'type': 'circle',
+          'config': { 'x': 100, 'y': 30, 'radius': 15, 'stroke': 'black' }
+        })
+      } else if (this.inQueType === 'M_COM') {
+        this.inJsonText = []
+      }
+      this.updateCurrentQuestion()
+    },
     updateCurrentQuestion: function () {
       // save in current question, this should be done in editform
       console.log('write new data')
@@ -391,20 +470,28 @@ export default {
       tmp.push(this.inOption3)
       tmp.push(this.inOption4)
       tmp.push(this.inOption5)
-      let tmp1 = []
-      tmp1.push(this.inAnswer)
+      let tmpAnsInt = this.answerOptions.indexOf(this.inAnswer) + 1
+      let tmp1 = [tmpAnsInt.toString()]
       let tmpCharts = []
       let tmpClk = []
       let tmpTables = []
       let tmpShapes = []
-      let tmpUpText = this.inUpText.split('\n')
-      let tmpDownText = this.inDownText.split('\n')
+      let tmpStr = this.inUpText.replace(/\n$/, '')
+      let tmpUpText = tmpStr.split('\n')
+      tmpStr = this.inDownText.replace(/\n$/, '')
+      let tmpDownText = tmpStr.split('\n')
       if (this.inQueType === 'M_TABLE') {
-        tmpTables.push(this.inJsonText)
+        for (let i = 0; i < this.inJsonText.length; i++) {
+          tmpTables.push(JSON.stringify(this.inJsonText[i]))
+        }
       } else if (this.inQueType === 'M_CHART') {
-        tmpCharts.push(this.inJsonText)
+        for (let i = 0; i < this.inJsonText.length; i++) {
+          tmpCharts.push(JSON.stringify(this.inJsonText[i]))
+        }
       } else if (this.inQueType === 'M_CLK') {
-        tmpClk.push(this.inJsonText)
+        for (let i = 0; i < this.inJsonText.length; i++) {
+          tmpClk.push(JSON.stringify(this.inJsonText[i]))
+        }
       } else if (this.inQueType === 'M_SHAPE') {
         for (let i = 0; i < this.inJsonText.length; i++) {
           tmpShapes.push(JSON.stringify(this.inJsonText[i]))

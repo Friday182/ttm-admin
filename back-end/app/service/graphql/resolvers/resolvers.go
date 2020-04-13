@@ -147,10 +147,6 @@ func (r *questionResolver) Tags(ctx context.Context, obj *model.Question) ([]str
 }
 func (r *questionResolver) Charts(ctx context.Context, obj *model.Question) ([]string, error) {
 	tmp := []string{}
-	tmp1 := string(obj.Charts)
-	if tmp1 != "" {
-		tmp1 = "xxx"
-	}
 	err := json.Unmarshal(obj.Charts, &tmp)
 	return tmp, err
 }
