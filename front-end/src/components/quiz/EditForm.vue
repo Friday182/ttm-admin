@@ -66,8 +66,17 @@
         v-model="inFormula"
         outlined
         label="Formula"
-        @input="updateCurrentQuestion"
-      />
+      >
+        <template v-slot:append>
+          <q-btn
+            round
+            dense
+            color="blue"
+            icon="send"
+            @click="updateCurrentQuestion"
+          />
+        </template>
+      </q-input>
     </q-card-section>
     <q-card-section class="q-ml-md">
       <q-btn
@@ -189,7 +198,7 @@
 <script>
 import VJsoneditor from 'v-jsoneditor'
 import { ADD_QUESTION_MUTATION } from '../../graphql/mutations'
-import { mapMutations, mapGetters } from 'vuex'
+import { mapMutations, mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'AddQuiz',
@@ -256,10 +265,18 @@ export default {
       for (let i = 0; i < newVal.UpTexts.length; i++) {
         tmpUpText += newVal.UpTexts[i] + '\n'
       }
+      tmpUpText.replace(/\n$/, '')
       let tmpDownText = ''
       for (let i = 0; i < newVal.DownTexts.length; i++) {
         tmpDownText += newVal.DownTexts[i] + '\n'
       }
+      tmpDownText.replace(/\n$/, '')
+      let tmpFormula = ''
+      for (let i = 0; i < newVal.Formula.length; i++) {
+        tmpFormula += newVal.Formula[i] + '\n'
+      }
+      tmpFormula.replace(/\n$/, '')
+
       this.inQueIdx = newVal.QueIdx
       this.inStdSec = newVal.StdSec
       this.inQueType = newVal.QuestionType
@@ -267,7 +284,7 @@ export default {
       this.inComment = newVal.Tips
       this.inUpText = tmpUpText
       this.inDownText = tmpDownText
-      this.inFormula = newVal.Formula
+      this.inFormula = tmpFormula
       this.inOption1 = newVal.Options[0]
       this.inOption2 = newVal.Options[1]
       this.inOption3 = newVal.Options[2]
@@ -306,7 +323,7 @@ export default {
   },
   methods: {
     ...mapMutations('currentQuestion', ['doSetCurrentQuestion']),
-    // ...mapActions('currentQuestion', ['setCurrentQuestion']),
+    ...mapActions('questions', ['addNewQuestion']),
     saveQuestion () {
       console.log('start save question by graphql-')
       let tmpOption = ''
@@ -362,7 +379,7 @@ export default {
             QuestionType: this.inQueType,
             UpTexts: this.inUpText.replace(/\n$/, ''),
             DownTexts: this.inDownText.replace(/\n$/, ''),
-            Formula: 'this.inFormula',
+            Formula: this.inFormula.replace(/\n$/, ''),
             Charts: tmpCharts,
             Shapes: tmpShapes,
             Tables: tmpTables,
@@ -376,6 +393,7 @@ export default {
           if (!response.errors) {
             if (response.data.AddQuestion) {
               console.log('Add question successful')
+              this.updateCurrentQuestion(true)
             }
           } else {
             console.log('reponse error', response.errors)
@@ -459,9 +477,9 @@ export default {
       } else if (this.inQueType === 'M_COM') {
         this.inJsonText = []
       }
-      this.updateCurrentQuestion()
+      this.updateCurrentQuestion(false)
     },
-    updateCurrentQuestion: function () {
+    updateCurrentQuestion: function (opt) {
       // save in current question, this should be done in editform
       console.log('write new data')
       let tmp = []
@@ -480,6 +498,9 @@ export default {
       let tmpUpText = tmpStr.split('\n')
       tmpStr = this.inDownText.replace(/\n$/, '')
       let tmpDownText = tmpStr.split('\n')
+      tmpStr = this.inFormula.replace(/\n$/, '')
+      let tmpFormula = tmpStr.split('\n')
+      console.log('tmpFormula - ', tmpFormula)
       if (this.inQueType === 'M_TABLE') {
         for (let i = 0; i < this.inJsonText.length; i++) {
           tmpTables.push(JSON.stringify(this.inJsonText[i]))
@@ -507,7 +528,7 @@ export default {
           AnswerType: this.inAnsType,
           UpTexts: tmpUpText,
           DownTexts: tmpDownText,
-          Formula: this.inFormula,
+          Formula: tmpFormula,
           Options: tmp,
           Tags: this.inTags,
           Answers: tmp1,
@@ -522,6 +543,32 @@ export default {
           Choice: ''
         }
       )
+      if (opt === true) {
+        this.addNewQuestion(
+          {
+            Kp: this.QuizId,
+            QueIdx: this.inQueIdx,
+            StdSec: this.inStdSec,
+            QuestionType: this.inQueType,
+            AnswerType: this.inAnsType,
+            UpTexts: tmpUpText,
+            DownTexts: tmpDownText,
+            Formula: tmpFormula,
+            Options: tmp,
+            Tags: this.inTags,
+            Answers: tmp1,
+            Charts: tmpCharts,
+            Clocks: tmpClk,
+            Tables: tmpTables,
+            Shapes: tmpShapes,
+            AnswerText: '',
+            Helper: false,
+            Imgs: [],
+            Tips: this.inComment,
+            Choice: ''
+          }
+        )
+      }
     },
     clearForm () {
     }

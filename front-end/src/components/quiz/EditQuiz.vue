@@ -144,9 +144,9 @@ export default {
       this.addNewQuestion({
         QueIdx: 0,
         Kp: '',
-        StdSec: 0,
-        AnswerType: '',
-        QuestionType: '',
+        StdSec: 30,
+        AnswerType: 'SC',
+        QuestionType: 'M_COM',
         UpTexts: [],
         DownTexts: [],
         Formula: [],
