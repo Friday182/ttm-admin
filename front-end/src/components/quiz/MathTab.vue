@@ -2,6 +2,7 @@
   <div class="q-px-sm">
     <add-quiz
       :active="addQuizActive"
+      @addQuizDone="fetchQuiz"
     />
     <q-table
       title="Quiz Table"
@@ -33,7 +34,7 @@
         />
       </template>
       <q-td
-        slot="body-cell-action"
+        slot="body-cell-edit"
         slot-scope="props"
         :props="props"
       >
@@ -41,6 +42,18 @@
           flat
           icon="edit"
           @click="toEditQuiz(props.row.QuizId)"
+        />
+      </q-td>
+      <q-td
+        slot="body-cell-delete"
+        slot-scope="props"
+        :props="props"
+      >
+        <q-btn
+          v-if="props.row.Status=='NA'"
+          flat
+          icon="delete"
+          @click="toDeleteQuiz(props.row.QuizId)"
         />
       </q-td>
       <template v-slot:no-data="{ icon, message, filter }">
@@ -66,6 +79,8 @@
 <script type="text/javascript">
 import { mapGetters, mapMutations } from 'vuex'
 import { GET_QUIZ_QUERY } from '../../graphql/queries'
+import { DEL_QUIZ_MUTATION } from '../../graphql/mutations'
+import { apolloProvider } from '../../boot/apollo'
 // import gql from 'graphql-tag'
 
 export default {
@@ -80,7 +95,6 @@ export default {
       editQuizActive: false,
       quizId: '',
       skipQueryGetQuiz: true,
-      visibleColumns: ['QuizId', 'Grade', 'Desc', 'Operator', 'Status', 'Approver', 'action'],
       columns: [
         {
           name: 'QuizId',
@@ -127,10 +141,17 @@ export default {
           sortable: true
         },
         {
-          name: 'action',
+          name: 'edit',
           align: 'center',
           label: 'Edit Quiz',
-          field: 'action',
+          field: 'edit',
+          sortable: false
+        },
+        {
+          name: 'delete',
+          align: 'center',
+          label: 'Delete Quiz',
+          field: 'delete',
           sortable: false
         }
       ]
@@ -150,13 +171,20 @@ export default {
         }
       }
       return false
+    },
+    visibleColumns: function () {
+      if (this.addQuizActive === true) {
+        return ['QuizId', 'Grade', 'Desc', 'Operator', 'Status', 'Approver', 'edit', 'delete']
+      } else {
+        return ['QuizId', 'Grade', 'Desc', 'Operator', 'Status', 'Approver', 'edit']
+      }
     }
   },
   mounted () {
     this.fetchQuiz()
   },
   methods: {
-    ...mapMutations('quiz', ['addNewQuiz', 'setQuizList']),
+    ...mapMutations('quiz', ['addNewQuiz', 'setQuizList', 'removeQuiz']),
     toEditQuiz (opt) {
       this.quizId = opt
       this.editQuizActive = true
@@ -165,8 +193,27 @@ export default {
       this.editQuizActive = false
     },
     fetchQuiz () {
-      this.skipQueryGetQuiz = false
-      this.$apollo.queries.GetQuiz.refetch()
+      // this.skipQueryGetQuiz = false
+      // this.$apollo.queries.GetQuiz.refetch()
+      console.log('Get quiz list')
+      this.$apollo
+        .query({
+          query: GET_QUIZ_QUERY,
+          variables: {}
+        })
+        .then(response => {
+          if (response.data.GetQuiz) {
+            this.updateQuiz(response.data.GetQuiz)
+            console.log('Read quiz list complete')
+          } else {
+            console.log('Get quiz failed')
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
+
+      apolloProvider.defaultClient.cache.reset()
     },
     updateQuiz (newList) {
       console.log('in update quiz length - ', newList.length)
@@ -179,28 +226,31 @@ export default {
       } else {
         console.log('NO enough quiz')
       }
-    }
-  },
-  apollo: {
-    GetQuiz: {
-      query: GET_QUIZ_QUERY,
-      variables () {
-        return {}
-      },
-      error (error) {
-        console.error('We\'ve got an error!', error)
-      },
-      skip () {
-        return this.skipQueryGetQuiz
-      },
-      result (data, key) {
-        this.skipQueryGetQuiz = true
-        if (data.data.GetQuiz) {
-          this.updateQuiz(data.data.GetQuiz)
-        } else {
-          console.log('Get quiz failed')
-        }
-      }
+    },
+    toDeleteQuiz (opt) {
+      this.$apollo
+        .mutate({
+          mutation: DEL_QUIZ_MUTATION,
+          variables: {
+            Gid: this.currentUser.Gid,
+            QuizId: opt
+          }
+        })
+        .then(response => {
+          if (!response.errors) {
+            if (response.data.DelQuiz) {
+              console.log('Del quiz successful')
+              this.removeQuiz({
+                QuizId: opt
+              })
+            }
+          } else {
+            console.log('reponse error', response.errors)
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
     }
   }
 }

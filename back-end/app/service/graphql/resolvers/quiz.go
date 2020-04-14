@@ -57,3 +57,25 @@ func (r *mutationResolver) AddQuiz(ctx context.Context, quiz generated.AddQuizIn
 	}
 	return false, errors.New("Quiz already exist!")
 }
+
+func (r *mutationResolver) DelQuiz(ctx context.Context, gid string, quizID string) (bool, error) {
+	q := model.Quiz{}
+	user := model.User{}
+
+	err := r.Db.Where("gid = ?", gid).First(&user).Error
+	if gorm.IsRecordNotFoundError(err) {
+		return false, err
+	}
+	if user.Role != "admin" && user.Role != "staff" {
+		return false, errors.New("No right to delete quiz")
+	}
+	err = r.Qdb.Where("quiz_id=?", quizID).First(&q).Error
+	if err == nil {
+		if err = r.Qdb.Delete(&q).Error; err != nil {
+			return false, err
+		} else {
+			return true, nil
+		}
+	}
+	return false, err
+}

@@ -19,6 +19,11 @@ const apolloClient = new ApolloClient({
   link: httpLink,
   cache,
   connectToDevTools: true,
+  defaultOptions: {
+    query: {
+      fetchPolicy: 'network-only'
+    }
+  },
   request: (operation) => {
     operation.setContext({
       ContentType: 'application/x-www-form-urlencoded;charset=UTF-8',

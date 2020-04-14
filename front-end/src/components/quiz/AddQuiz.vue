@@ -1,71 +1,58 @@
 <template>
   <div>
-    <div class="row">
-        <div class="col-1 q-mr-sm">
-          <el-input
-            v-model="inId"
-            class="myClass"
-            placeholder="Quiz Id"
-            clearable
-          />
-        </div>
-        <div class="col-1 q-mr-sm">
-          <el-input
-            v-model="inGrade"
-            class="myClass"
-            placeholder="Grade"
-            clearable
-          />
-        </div>
-        <el-select
-          v-model="inOperator"
-          class="myClass q-ml-sm"
-          filterable
-          placeholder="Operator"
-        >
-          <el-option
-            v-for="item in operatorOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-        <div class="col-6 q-mr-sm">
-          <el-input
-            v-model="inDesc"
-            class="myClass"
-            placeholder="Description"
-            clearable
-          />
-        </div>
+    <div class="row q-mb-md">
+      <div class="col-1 q-mr-sm">
+        <el-input
+          v-model="inId"
+          class="myClass"
+          placeholder="Quiz Id"
+          clearable
+        />
       </div>
-    <div class="row q-my-sm">
-      <div class="col-7 q-mr-sm">
+      <div class="col-1 q-mr-sm">
+        <el-input
+          v-model="inGrade"
+          class="myClass"
+          placeholder="Grade"
+          clearable
+        />
+      </div>
+      <el-select
+        v-model="inOperator"
+        class="myClass q-mr-sm"
+        filterable
+        placeholder="Operator"
+      >
+        <el-option
+          v-for="item in operatorOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.label"
+        />
+      </el-select>
+      <div class="col-4 q-mr-sm">
+        <el-input
+          v-model="inDesc"
+          class="myClass"
+          placeholder="Description"
+          clearable
+        />
+      </div>
+      <div class="col-3 q-mr-sm">
         <el-input
           v-model="inComment"
           class="myClass"
           placeholder="Any Comment?"
-          clearable
         />
       </div>
-      <q-space />
-      <div class="col-2">
-        <q-btn
-          label="Add Quiz"
-          no-caps
-          color="primary"
-          style="font: 100% Arial bold"
-          @click="addQuiz()"
-        />
-        <q-btn
-          class="q-ml-xl"
-          label="Clear"
-          no-caps
-          color="primary"
-          style="font: 100% Arial bold"
-          @click="clearForm()"
-        />
-      </div>
+      <q-btn
+        class="q-ml-lg"
+        label="Add Quiz"
+        no-caps
+        color="primary"
+        style="font: 100% Arial bold"
+        @click="addQuiz()"
+      />
     </div>
   </div>
 </template>
@@ -83,7 +70,6 @@ export default {
       inDesc: '',
       inOperator: '',
       inComment: '',
-      skipQueryAddQuiz: true,
       operatorOptions: [
         { value: '1', label: 'Lucas' },
         { value: '2', label: 'Jamie' },
@@ -96,6 +82,9 @@ export default {
     ...mapGetters('currentUser', ['currentUser']),
     loginRole: function () {
       return this.currentUser.Role
+    },
+    creator: function () {
+      return this.currentUser.Username
     }
   },
   methods: {
@@ -118,7 +107,7 @@ export default {
         .then(response => {
           if (!response.errors) {
             if (response.data.AddQuiz) {
-              this.updateAddQuiz()
+              this.$emit('addQuizDone')
             }
           } else {
             console.log('reponse error', response.errors)
@@ -127,16 +116,7 @@ export default {
         .catch(error => {
           console.log(error)
         })
-    },
-    updateAddQuiz () {
-      console.log('add quiz')
-      this.addNewQuiz({
-        QuizId: this.inId.trim().toUpperCase(),
-        Grade: parseInt(this.inGrade),
-        Desc: this.inDesc,
-        Operator: this.inOperator,
-        Comment: this.inComment
-      })
+
       this.clearForm()
     },
     clearForm () {

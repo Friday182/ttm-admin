@@ -38,7 +38,7 @@ func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQue
 	newQue := model.Question{}
 	var user model.User
 
-	err := r.Db.Where("gid = ?", que.Gid).Find(&user).Error
+	err := r.Db.Where("gid = ?", que.Gid).First(&user).Error
 	if gorm.IsRecordNotFoundError(err) {
 		return false, err
 	}

@@ -20,6 +20,14 @@ const mutations = {
   },
   setQuizList (state, payload) {
     state.quiz = payload
+  },
+  removeQuiz (state, payload) {
+    for (let i = 0; i < state.quiz.length; i++) {
+      if (state.quiz[i].QuizId === payload.QuizId) {
+        state.quiz.splice(i, 1)
+        break
+      }
+    }
   }
 }
 

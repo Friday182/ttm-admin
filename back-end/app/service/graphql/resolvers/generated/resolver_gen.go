@@ -47,10 +47,13 @@ func (r *mutationResolver) UserLogin(ctx context.Context, username string, passw
 func (r *mutationResolver) AddUser(ctx context.Context, user generated.AddUserInput) (bool, error) {
 	panic("not implemented")
 }
-func (r *mutationResolver) AddQuiz(ctx context.Context, quiz generated.QuizInput) (bool, error) {
+func (r *mutationResolver) AddQuiz(ctx context.Context, quiz generated.AddQuizInput) (bool, error) {
 	panic("not implemented")
 }
-func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.QuestionInput) (bool, error) {
+func (r *mutationResolver) DelQuiz(ctx context.Context, gid string, quizID string) (bool, error) {
+	panic("not implemented")
+}
+func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQuestionInput) (bool, error) {
 	panic("not implemented")
 }
 func (r *mutationResolver) AddStudent(ctx context.Context, mentorEmail string, name string, age int) (*model.Student, error) {
@@ -86,7 +89,7 @@ func (r *queryResolver) Student(ctx context.Context, gid string, name string) (*
 func (r *queryResolver) Mentors(ctx context.Context, email string) ([]*model.Mentor, error) {
 	panic("not implemented")
 }
-func (r *queryResolver) GetQuestions(ctx context.Context, gid string, subIdx int, kp string, numQues int) ([]*model.Question, error) {
+func (r *queryResolver) GetQuestions(ctx context.Context, gid string, kp string) ([]*model.Question, error) {
 	panic("not implemented")
 }
 func (r *queryResolver) GetQuizLog(ctx context.Context, gid string) ([]*model.QuizLog, error) {
@@ -98,7 +101,7 @@ func (r *queryResolver) QuizLog(ctx context.Context, gid string, quizIdx *string
 func (r *queryResolver) GetQuizReport(ctx context.Context, gid string) (*model.QuizReport, error) {
 	panic("not implemented")
 }
-func (r *queryResolver) GetQuizDesc(ctx context.Context) ([]*model.Quiz, error) {
+func (r *queryResolver) GetQuiz(ctx context.Context) ([]*model.Quiz, error) {
 	panic("not implemented")
 }
 func (r *queryResolver) GetKpDescripitions(ctx context.Context) ([]*model.KpDescription, error) {

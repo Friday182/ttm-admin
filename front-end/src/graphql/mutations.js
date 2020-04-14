@@ -28,6 +28,14 @@ mutation AddQuiz($QuizId: String!, $Grade: Int!, $Desc: String!, $Operator: Stri
   )
 }`
 
+export const DEL_QUIZ_MUTATION = gql`
+mutation DelQuiz($Gid: String!, $QuizId: String!) {
+  DelQuiz(
+    gid: $Gid,
+    quizId: $QuizId,
+  )
+}`
+
 export const ADD_QUESTION_MUTATION = gql`
 mutation AddQuestion($Gid: String!, $QueIdx: Int!, $Kp: String!, $StdSec: Int!, $AnswerType: String!, $QuestionType: String!,
   $UpTexts: String!, $DownTexts: String!, $Formula: String!, $Charts: String!, $Shapes: String!, $Tables: String!, $Clocks: String!,

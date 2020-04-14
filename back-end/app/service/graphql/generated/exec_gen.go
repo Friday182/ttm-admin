@@ -97,6 +97,7 @@ type ComplexityRoot struct {
 		AddStudent  func(childComplexity int, mentorEmail string, name string, age int) int
 		AddUser     func(childComplexity int, user AddUserInput) int
 		DelMentor   func(childComplexity int, email string) int
+		DelQuiz     func(childComplexity int, gid string, quizID string) int
 		DelStudent  func(childComplexity int, gid string) int
 		DelTaskLog  func(childComplexity int, logID int) int
 		DelUser     func(childComplexity int, gid string) int
@@ -276,6 +277,7 @@ type MutationResolver interface {
 	UserLogin(ctx context.Context, username string, password string) (*model.User, error)
 	AddUser(ctx context.Context, user AddUserInput) (bool, error)
 	AddQuiz(ctx context.Context, quiz AddQuizInput) (bool, error)
+	DelQuiz(ctx context.Context, gid string, quizID string) (bool, error)
 	AddQuestion(ctx context.Context, que AddQuestionInput) (bool, error)
 	AddStudent(ctx context.Context, mentorEmail string, name string, age int) (*model.Student, error)
 	DelUser(ctx context.Context, gid string) (bool, error)
@@ -631,6 +633,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DelMentor(childComplexity, args["email"].(string)), true
+
+	case "Mutation.DelQuiz":
+		if e.complexity.Mutation.DelQuiz == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_DelQuiz_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DelQuiz(childComplexity, args["gid"].(string), args["quizId"].(string)), true
 
 	case "Mutation.DelStudent":
 		if e.complexity.Mutation.DelStudent == nil {
@@ -1885,6 +1899,7 @@ type QuizReport {
   UserLogin(username: String!, password: String!): User!
   AddUser(user: AddUserInput!): Boolean!
   AddQuiz(quiz: AddQuizInput!): Boolean!
+  DelQuiz(gid: String!, quizId: String!): Boolean!
   AddQuestion(que: AddQuestionInput!): Boolean!
   AddStudent(mentorEmail: String!, name: String! age: Int!): Student!
 
@@ -2001,7 +2016,7 @@ func (ec *executionContext) field_Mutation_AddQuestion_args(ctx context.Context,
 	args := map[string]interface{}{}
 	var arg0 AddQuestionInput
 	if tmp, ok := rawArgs["que"]; ok {
-		arg0, err = ec.unmarshalNAddQuestionInput2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐAddQuestionInput(ctx, tmp)
+		arg0, err = ec.unmarshalNAddQuestionInput2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐAddQuestionInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2015,7 +2030,7 @@ func (ec *executionContext) field_Mutation_AddQuiz_args(ctx context.Context, raw
 	args := map[string]interface{}{}
 	var arg0 AddQuizInput
 	if tmp, ok := rawArgs["quiz"]; ok {
-		arg0, err = ec.unmarshalNAddQuizInput2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐAddQuizInput(ctx, tmp)
+		arg0, err = ec.unmarshalNAddQuizInput2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐAddQuizInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2059,7 +2074,7 @@ func (ec *executionContext) field_Mutation_AddUser_args(ctx context.Context, raw
 	args := map[string]interface{}{}
 	var arg0 AddUserInput
 	if tmp, ok := rawArgs["user"]; ok {
-		arg0, err = ec.unmarshalNAddUserInput2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐAddUserInput(ctx, tmp)
+		arg0, err = ec.unmarshalNAddUserInput2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐAddUserInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2079,6 +2094,28 @@ func (ec *executionContext) field_Mutation_DelMentor_args(ctx context.Context, r
 		}
 	}
 	args["email"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_DelQuiz_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["gid"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["gid"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["quizId"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["quizId"] = arg1
 	return args, nil
 }
 
@@ -3626,7 +3663,7 @@ func (ec *executionContext) _Mutation_UserLogin(ctx context.Context, field graph
 	res := resTmp.(*model.User)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNUser2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_AddUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3700,6 +3737,50 @@ func (ec *executionContext) _Mutation_AddQuiz(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().AddQuiz(rctx, args["quiz"].(AddQuizInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_DelQuiz(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_DelQuiz_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DelQuiz(rctx, args["gid"].(string), args["quizId"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3802,7 +3883,7 @@ func (ec *executionContext) _Mutation_AddStudent(ctx context.Context, field grap
 	res := resTmp.(*model.Student)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNStudent2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐStudent(ctx, field.Selections, res)
+	return ec.marshalNStudent2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐStudent(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_DelUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4019,7 +4100,7 @@ func (ec *executionContext) _Query_GetUsers(ctx context.Context, field graphql.C
 	res := resTmp.([]*model.User)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOUser2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐUserᚄ(ctx, field.Selections, res)
+	return ec.marshalOUser2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_GetTaskLogs(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4060,7 +4141,7 @@ func (ec *executionContext) _Query_GetTaskLogs(ctx context.Context, field graphq
 	res := resTmp.(*TaskLogOutput)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOTaskLogOutput2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐTaskLogOutput(ctx, field.Selections, res)
+	return ec.marshalOTaskLogOutput2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐTaskLogOutput(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_GetStudents(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4101,7 +4182,7 @@ func (ec *executionContext) _Query_GetStudents(ctx context.Context, field graphq
 	res := resTmp.([]*model.Student)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOStudent2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐStudentᚄ(ctx, field.Selections, res)
+	return ec.marshalOStudent2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐStudentᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_Student(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4145,7 +4226,7 @@ func (ec *executionContext) _Query_Student(ctx context.Context, field graphql.Co
 	res := resTmp.(*model.Student)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNStudent2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐStudent(ctx, field.Selections, res)
+	return ec.marshalNStudent2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐStudent(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_Mentors(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4186,7 +4267,7 @@ func (ec *executionContext) _Query_Mentors(ctx context.Context, field graphql.Co
 	res := resTmp.([]*model.Mentor)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOMentor2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐMentorᚄ(ctx, field.Selections, res)
+	return ec.marshalOMentor2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐMentorᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_GetQuestions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4227,7 +4308,7 @@ func (ec *executionContext) _Query_GetQuestions(ctx context.Context, field graph
 	res := resTmp.([]*model.Question)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOQuestion2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuestionᚄ(ctx, field.Selections, res)
+	return ec.marshalOQuestion2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuestionᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_GetQuizLog(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4268,7 +4349,7 @@ func (ec *executionContext) _Query_GetQuizLog(ctx context.Context, field graphql
 	res := resTmp.([]*model.QuizLog)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOQuizLog2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuizLogᚄ(ctx, field.Selections, res)
+	return ec.marshalOQuizLog2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuizLogᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_QuizLog(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4312,7 +4393,7 @@ func (ec *executionContext) _Query_QuizLog(ctx context.Context, field graphql.Co
 	res := resTmp.(*model.QuizLog)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNQuizLog2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuizLog(ctx, field.Selections, res)
+	return ec.marshalNQuizLog2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuizLog(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_GetQuizReport(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4356,7 +4437,7 @@ func (ec *executionContext) _Query_GetQuizReport(ctx context.Context, field grap
 	res := resTmp.(*model.QuizReport)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNQuizReport2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuizReport(ctx, field.Selections, res)
+	return ec.marshalNQuizReport2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuizReport(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_GetQuiz(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4390,7 +4471,7 @@ func (ec *executionContext) _Query_GetQuiz(ctx context.Context, field graphql.Co
 	res := resTmp.([]*model.Quiz)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOQuiz2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuizᚄ(ctx, field.Selections, res)
+	return ec.marshalOQuiz2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuizᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_GetKpDescripitions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4424,7 +4505,7 @@ func (ec *executionContext) _Query_GetKpDescripitions(ctx context.Context, field
 	res := resTmp.([]*model.KpDescription)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOKpDescription2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐKpDescriptionᚄ(ctx, field.Selections, res)
+	return ec.marshalOKpDescription2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐKpDescriptionᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -7780,7 +7861,7 @@ func (ec *executionContext) _Student_Quiz(ctx context.Context, field graphql.Col
 	res := resTmp.(*QuizUnit)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNQuizUnit2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐQuizUnit(ctx, field.Selections, res)
+	return ec.marshalNQuizUnit2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐQuizUnit(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Student_StickerLog(ctx context.Context, field graphql.CollectedField, obj *model.Student) (ret graphql.Marshaler) {
@@ -8036,7 +8117,7 @@ func (ec *executionContext) _Subject_Assignment(ctx context.Context, field graph
 	res := resTmp.([]*KpAssignment)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOKpAssignment2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐKpAssignment(ctx, field.Selections, res)
+	return ec.marshalOKpAssignment2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐKpAssignment(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Subject_LastDoneTime(ctx context.Context, field graphql.CollectedField, obj *Subject) (ret graphql.Marshaler) {
@@ -8474,7 +8555,7 @@ func (ec *executionContext) _TaskLogOutput_Logs(ctx context.Context, field graph
 	res := resTmp.([]*model.TaskLog)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOTaskLog2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐTaskLogᚄ(ctx, field.Selections, res)
+	return ec.marshalOTaskLog2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐTaskLogᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _TaskLogOutput_Override(ctx context.Context, field graphql.CollectedField, obj *TaskLogOutput) (ret graphql.Marshaler) {
@@ -10657,6 +10738,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "DelQuiz":
+			out.Values[i] = ec._Mutation_DelQuiz(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "AddQuestion":
 			out.Values[i] = ec._Mutation_AddQuestion(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -12087,15 +12173,15 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) unmarshalNAddQuestionInput2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐAddQuestionInput(ctx context.Context, v interface{}) (AddQuestionInput, error) {
+func (ec *executionContext) unmarshalNAddQuestionInput2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐAddQuestionInput(ctx context.Context, v interface{}) (AddQuestionInput, error) {
 	return ec.unmarshalInputAddQuestionInput(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNAddQuizInput2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐAddQuizInput(ctx context.Context, v interface{}) (AddQuizInput, error) {
+func (ec *executionContext) unmarshalNAddQuizInput2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐAddQuizInput(ctx context.Context, v interface{}) (AddQuizInput, error) {
 	return ec.unmarshalInputAddQuizInput(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNAddUserInput2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐAddUserInput(ctx context.Context, v interface{}) (AddUserInput, error) {
+func (ec *executionContext) unmarshalNAddUserInput2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐAddUserInput(ctx context.Context, v interface{}) (AddUserInput, error) {
 	return ec.unmarshalInputAddUserInput(ctx, v)
 }
 
@@ -12127,11 +12213,11 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNKpDescription2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐKpDescription(ctx context.Context, sel ast.SelectionSet, v model.KpDescription) graphql.Marshaler {
+func (ec *executionContext) marshalNKpDescription2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐKpDescription(ctx context.Context, sel ast.SelectionSet, v model.KpDescription) graphql.Marshaler {
 	return ec._KpDescription(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNKpDescription2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐKpDescription(ctx context.Context, sel ast.SelectionSet, v *model.KpDescription) graphql.Marshaler {
+func (ec *executionContext) marshalNKpDescription2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐKpDescription(ctx context.Context, sel ast.SelectionSet, v *model.KpDescription) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -12141,11 +12227,11 @@ func (ec *executionContext) marshalNKpDescription2ᚖgithubᚗcomᚋfriday182ᚋ
 	return ec._KpDescription(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNMentor2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐMentor(ctx context.Context, sel ast.SelectionSet, v model.Mentor) graphql.Marshaler {
+func (ec *executionContext) marshalNMentor2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐMentor(ctx context.Context, sel ast.SelectionSet, v model.Mentor) graphql.Marshaler {
 	return ec._Mentor(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNMentor2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐMentor(ctx context.Context, sel ast.SelectionSet, v *model.Mentor) graphql.Marshaler {
+func (ec *executionContext) marshalNMentor2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐMentor(ctx context.Context, sel ast.SelectionSet, v *model.Mentor) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -12155,11 +12241,11 @@ func (ec *executionContext) marshalNMentor2ᚖgithubᚗcomᚋfriday182ᚋttmᚑg
 	return ec._Mentor(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNQuestion2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuestion(ctx context.Context, sel ast.SelectionSet, v model.Question) graphql.Marshaler {
+func (ec *executionContext) marshalNQuestion2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuestion(ctx context.Context, sel ast.SelectionSet, v model.Question) graphql.Marshaler {
 	return ec._Question(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNQuestion2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuestion(ctx context.Context, sel ast.SelectionSet, v *model.Question) graphql.Marshaler {
+func (ec *executionContext) marshalNQuestion2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuestion(ctx context.Context, sel ast.SelectionSet, v *model.Question) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -12169,11 +12255,11 @@ func (ec *executionContext) marshalNQuestion2ᚖgithubᚗcomᚋfriday182ᚋttm�
 	return ec._Question(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNQuiz2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuiz(ctx context.Context, sel ast.SelectionSet, v model.Quiz) graphql.Marshaler {
+func (ec *executionContext) marshalNQuiz2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuiz(ctx context.Context, sel ast.SelectionSet, v model.Quiz) graphql.Marshaler {
 	return ec._Quiz(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNQuiz2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuiz(ctx context.Context, sel ast.SelectionSet, v *model.Quiz) graphql.Marshaler {
+func (ec *executionContext) marshalNQuiz2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuiz(ctx context.Context, sel ast.SelectionSet, v *model.Quiz) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -12183,11 +12269,11 @@ func (ec *executionContext) marshalNQuiz2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgo�
 	return ec._Quiz(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNQuizLog2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuizLog(ctx context.Context, sel ast.SelectionSet, v model.QuizLog) graphql.Marshaler {
+func (ec *executionContext) marshalNQuizLog2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuizLog(ctx context.Context, sel ast.SelectionSet, v model.QuizLog) graphql.Marshaler {
 	return ec._QuizLog(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNQuizLog2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuizLog(ctx context.Context, sel ast.SelectionSet, v *model.QuizLog) graphql.Marshaler {
+func (ec *executionContext) marshalNQuizLog2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuizLog(ctx context.Context, sel ast.SelectionSet, v *model.QuizLog) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -12197,11 +12283,11 @@ func (ec *executionContext) marshalNQuizLog2ᚖgithubᚗcomᚋfriday182ᚋttmᚑ
 	return ec._QuizLog(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNQuizReport2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuizReport(ctx context.Context, sel ast.SelectionSet, v model.QuizReport) graphql.Marshaler {
+func (ec *executionContext) marshalNQuizReport2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuizReport(ctx context.Context, sel ast.SelectionSet, v model.QuizReport) graphql.Marshaler {
 	return ec._QuizReport(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNQuizReport2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuizReport(ctx context.Context, sel ast.SelectionSet, v *model.QuizReport) graphql.Marshaler {
+func (ec *executionContext) marshalNQuizReport2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuizReport(ctx context.Context, sel ast.SelectionSet, v *model.QuizReport) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -12211,11 +12297,11 @@ func (ec *executionContext) marshalNQuizReport2ᚖgithubᚗcomᚋfriday182ᚋttm
 	return ec._QuizReport(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNQuizUnit2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐQuizUnit(ctx context.Context, sel ast.SelectionSet, v QuizUnit) graphql.Marshaler {
+func (ec *executionContext) marshalNQuizUnit2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐQuizUnit(ctx context.Context, sel ast.SelectionSet, v QuizUnit) graphql.Marshaler {
 	return ec._QuizUnit(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNQuizUnit2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐQuizUnit(ctx context.Context, sel ast.SelectionSet, v *QuizUnit) graphql.Marshaler {
+func (ec *executionContext) marshalNQuizUnit2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐQuizUnit(ctx context.Context, sel ast.SelectionSet, v *QuizUnit) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -12268,11 +12354,11 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	return ret
 }
 
-func (ec *executionContext) marshalNStudent2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐStudent(ctx context.Context, sel ast.SelectionSet, v model.Student) graphql.Marshaler {
+func (ec *executionContext) marshalNStudent2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐStudent(ctx context.Context, sel ast.SelectionSet, v model.Student) graphql.Marshaler {
 	return ec._Student(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNStudent2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐStudent(ctx context.Context, sel ast.SelectionSet, v *model.Student) graphql.Marshaler {
+func (ec *executionContext) marshalNStudent2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐStudent(ctx context.Context, sel ast.SelectionSet, v *model.Student) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -12282,11 +12368,11 @@ func (ec *executionContext) marshalNStudent2ᚖgithubᚗcomᚋfriday182ᚋttmᚑ
 	return ec._Student(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNTaskLog2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐTaskLog(ctx context.Context, sel ast.SelectionSet, v model.TaskLog) graphql.Marshaler {
+func (ec *executionContext) marshalNTaskLog2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐTaskLog(ctx context.Context, sel ast.SelectionSet, v model.TaskLog) graphql.Marshaler {
 	return ec._TaskLog(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTaskLog2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐTaskLog(ctx context.Context, sel ast.SelectionSet, v *model.TaskLog) graphql.Marshaler {
+func (ec *executionContext) marshalNTaskLog2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐTaskLog(ctx context.Context, sel ast.SelectionSet, v *model.TaskLog) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -12310,11 +12396,11 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalNUser2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -12573,11 +12659,11 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return ec.marshalOBoolean2bool(ctx, sel, *v)
 }
 
-func (ec *executionContext) marshalOKpAssignment2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐKpAssignment(ctx context.Context, sel ast.SelectionSet, v KpAssignment) graphql.Marshaler {
+func (ec *executionContext) marshalOKpAssignment2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐKpAssignment(ctx context.Context, sel ast.SelectionSet, v KpAssignment) graphql.Marshaler {
 	return ec._KpAssignment(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOKpAssignment2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐKpAssignment(ctx context.Context, sel ast.SelectionSet, v []*KpAssignment) graphql.Marshaler {
+func (ec *executionContext) marshalOKpAssignment2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐKpAssignment(ctx context.Context, sel ast.SelectionSet, v []*KpAssignment) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -12604,7 +12690,7 @@ func (ec *executionContext) marshalOKpAssignment2ᚕᚖgithubᚗcomᚋfriday182�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOKpAssignment2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐKpAssignment(ctx, sel, v[i])
+			ret[i] = ec.marshalOKpAssignment2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐKpAssignment(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -12617,14 +12703,14 @@ func (ec *executionContext) marshalOKpAssignment2ᚕᚖgithubᚗcomᚋfriday182�
 	return ret
 }
 
-func (ec *executionContext) marshalOKpAssignment2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐKpAssignment(ctx context.Context, sel ast.SelectionSet, v *KpAssignment) graphql.Marshaler {
+func (ec *executionContext) marshalOKpAssignment2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐKpAssignment(ctx context.Context, sel ast.SelectionSet, v *KpAssignment) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._KpAssignment(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOKpDescription2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐKpDescriptionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.KpDescription) graphql.Marshaler {
+func (ec *executionContext) marshalOKpDescription2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐKpDescriptionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.KpDescription) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -12651,7 +12737,7 @@ func (ec *executionContext) marshalOKpDescription2ᚕᚖgithubᚗcomᚋfriday182
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNKpDescription2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐKpDescription(ctx, sel, v[i])
+			ret[i] = ec.marshalNKpDescription2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐKpDescription(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -12664,7 +12750,7 @@ func (ec *executionContext) marshalOKpDescription2ᚕᚖgithubᚗcomᚋfriday182
 	return ret
 }
 
-func (ec *executionContext) marshalOMentor2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐMentorᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Mentor) graphql.Marshaler {
+func (ec *executionContext) marshalOMentor2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐMentorᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Mentor) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -12691,7 +12777,7 @@ func (ec *executionContext) marshalOMentor2ᚕᚖgithubᚗcomᚋfriday182ᚋttm�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNMentor2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐMentor(ctx, sel, v[i])
+			ret[i] = ec.marshalNMentor2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐMentor(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -12704,7 +12790,7 @@ func (ec *executionContext) marshalOMentor2ᚕᚖgithubᚗcomᚋfriday182ᚋttm�
 	return ret
 }
 
-func (ec *executionContext) marshalOQuestion2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuestionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Question) graphql.Marshaler {
+func (ec *executionContext) marshalOQuestion2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuestionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Question) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -12731,7 +12817,7 @@ func (ec *executionContext) marshalOQuestion2ᚕᚖgithubᚗcomᚋfriday182ᚋtt
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNQuestion2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuestion(ctx, sel, v[i])
+			ret[i] = ec.marshalNQuestion2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuestion(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -12744,7 +12830,7 @@ func (ec *executionContext) marshalOQuestion2ᚕᚖgithubᚗcomᚋfriday182ᚋtt
 	return ret
 }
 
-func (ec *executionContext) marshalOQuiz2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuizᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Quiz) graphql.Marshaler {
+func (ec *executionContext) marshalOQuiz2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuizᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Quiz) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -12771,7 +12857,7 @@ func (ec *executionContext) marshalOQuiz2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNQuiz2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuiz(ctx, sel, v[i])
+			ret[i] = ec.marshalNQuiz2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuiz(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -12784,7 +12870,7 @@ func (ec *executionContext) marshalOQuiz2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑ
 	return ret
 }
 
-func (ec *executionContext) marshalOQuizLog2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuizLogᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.QuizLog) graphql.Marshaler {
+func (ec *executionContext) marshalOQuizLog2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuizLogᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.QuizLog) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -12811,7 +12897,7 @@ func (ec *executionContext) marshalOQuizLog2ᚕᚖgithubᚗcomᚋfriday182ᚋttm
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNQuizLog2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐQuizLog(ctx, sel, v[i])
+			ret[i] = ec.marshalNQuizLog2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuizLog(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -12847,7 +12933,7 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return ec.marshalOString2string(ctx, sel, *v)
 }
 
-func (ec *executionContext) marshalOStudent2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐStudentᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Student) graphql.Marshaler {
+func (ec *executionContext) marshalOStudent2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐStudentᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Student) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -12874,7 +12960,7 @@ func (ec *executionContext) marshalOStudent2ᚕᚖgithubᚗcomᚋfriday182ᚋttm
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNStudent2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐStudent(ctx, sel, v[i])
+			ret[i] = ec.marshalNStudent2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐStudent(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -12887,7 +12973,7 @@ func (ec *executionContext) marshalOStudent2ᚕᚖgithubᚗcomᚋfriday182ᚋttm
 	return ret
 }
 
-func (ec *executionContext) marshalOTaskLog2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐTaskLogᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.TaskLog) graphql.Marshaler {
+func (ec *executionContext) marshalOTaskLog2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐTaskLogᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.TaskLog) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -12914,7 +13000,7 @@ func (ec *executionContext) marshalOTaskLog2ᚕᚖgithubᚗcomᚋfriday182ᚋttm
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNTaskLog2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐTaskLog(ctx, sel, v[i])
+			ret[i] = ec.marshalNTaskLog2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐTaskLog(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -12927,11 +13013,11 @@ func (ec *executionContext) marshalOTaskLog2ᚕᚖgithubᚗcomᚋfriday182ᚋttm
 	return ret
 }
 
-func (ec *executionContext) marshalOTaskLogOutput2githubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐTaskLogOutput(ctx context.Context, sel ast.SelectionSet, v TaskLogOutput) graphql.Marshaler {
+func (ec *executionContext) marshalOTaskLogOutput2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐTaskLogOutput(ctx context.Context, sel ast.SelectionSet, v TaskLogOutput) graphql.Marshaler {
 	return ec._TaskLogOutput(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOTaskLogOutput2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋserviceᚋgraphqlᚋgeneratedᚐTaskLogOutput(ctx context.Context, sel ast.SelectionSet, v *TaskLogOutput) graphql.Marshaler {
+func (ec *executionContext) marshalOTaskLogOutput2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐTaskLogOutput(ctx context.Context, sel ast.SelectionSet, v *TaskLogOutput) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -12961,7 +13047,7 @@ func (ec *executionContext) marshalOTime2ᚖtimeᚐTime(ctx context.Context, sel
 	return ec.marshalOTime2timeᚐTime(ctx, sel, *v)
 }
 
-func (ec *executionContext) marshalOUser2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.User) graphql.Marshaler {
+func (ec *executionContext) marshalOUser2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.User) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -12988,7 +13074,7 @@ func (ec *executionContext) marshalOUser2ᚕᚖgithubᚗcomᚋfriday182ᚋttmᚑ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNUser2ᚖgithubᚗcomᚋfriday182ᚋttmᚑgoᚋappᚋmodelᚐUser(ctx, sel, v[i])
+			ret[i] = ec.marshalNUser2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐUser(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
