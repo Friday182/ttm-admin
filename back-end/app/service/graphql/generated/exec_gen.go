@@ -107,7 +107,7 @@ type ComplexityRoot struct {
 	Query struct {
 		GetKpDescripitions func(childComplexity int) int
 		GetQuestions       func(childComplexity int, gid string, kp string) int
-		GetQuiz            func(childComplexity int) int
+		GetQuiz            func(childComplexity int, gid string) int
 		GetQuizLog         func(childComplexity int, gid string) int
 		GetQuizReport      func(childComplexity int, gid string) int
 		GetStudents        func(childComplexity int, mentorEmail string) int
@@ -295,7 +295,7 @@ type QueryResolver interface {
 	GetQuizLog(ctx context.Context, gid string) ([]*model.QuizLog, error)
 	QuizLog(ctx context.Context, gid string, quizIdx *string) (*model.QuizLog, error)
 	GetQuizReport(ctx context.Context, gid string) (*model.QuizReport, error)
-	GetQuiz(ctx context.Context) ([]*model.Quiz, error)
+	GetQuiz(ctx context.Context, gid string) ([]*model.Quiz, error)
 	GetKpDescripitions(ctx context.Context) ([]*model.KpDescription, error)
 }
 type QuestionResolver interface {
@@ -718,7 +718,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.GetQuiz(childComplexity), true
+		args, err := ec.field_Query_GetQuiz_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetQuiz(childComplexity, args["gid"].(string)), true
 
 	case "Query.GetQuizLog":
 		if e.complexity.Query.GetQuizLog == nil {
@@ -1919,7 +1924,7 @@ type Query {
   GetQuizLog(gid: String!): [QuizLog!]
   QuizLog(gid: String!, quizIdx: String): QuizLog!
   GetQuizReport(gid: String!): QuizReport!
-  GetQuiz: [Quiz!]
+  GetQuiz(gid: String!): [Quiz!]
   GetKpDescripitions: [KpDescription!]
 }
 `},
@@ -2220,6 +2225,20 @@ func (ec *executionContext) field_Query_GetQuizLog_args(ctx context.Context, raw
 }
 
 func (ec *executionContext) field_Query_GetQuizReport_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["gid"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["gid"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_GetQuiz_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -4456,10 +4475,17 @@ func (ec *executionContext) _Query_GetQuiz(ctx context.Context, field graphql.Co
 		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_GetQuiz_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetQuiz(rctx)
+		return ec.resolvers.Query().GetQuiz(rctx, args["gid"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

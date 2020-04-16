@@ -22,6 +22,6 @@ type Query {
   GetQuizLog(gid: String!): [QuizLog!]
   QuizLog(gid: String!, quizIdx: String): QuizLog!
   GetQuizReport(gid: String!): QuizReport!
-  GetQuiz: [Quiz!]
+  GetQuiz(gid: String!): [Quiz!]
   GetKpDescripitions: [KpDescription!]
 }

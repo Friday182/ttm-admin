@@ -32,16 +32,25 @@ func (r *queryResolver) GetQuizReport(ctx context.Context, gid string) (*model.Q
 	return &log, err
 }
 
-func (r *queryResolver) GetQuiz(ctx context.Context) ([]*model.Quiz, error) {
+func (r *queryResolver) GetQuiz(ctx context.Context, gid string) ([]*model.Quiz, error) {
 	var logs []*model.Quiz
-	err := r.Qdb.Limit(100).Find(&logs).Error
+	user := model.User{}
+	err := r.Db.Where("gid = ?", gid).First(&user).Error
+	if gorm.IsRecordNotFoundError(err) {
+		return logs, err
+	}
+	if user.Role == "operator" {
+		err = r.Qdb.Where("operator=?",user.Username).Find(&logs).Error
+	} else {
+		err = r.Qdb.Order("id desc").Limit(100).Find(&logs).Error
+	}
+
 	return logs, err
 }
 
 // Mutation
 func (r *mutationResolver) AddQuiz(ctx context.Context, quiz generated.AddQuizInput) (bool, error) {
 	newQuiz := model.Quiz{}
-
 	err := r.Qdb.Where("quiz_id = ?", quiz.QuizID).Find(&newQuiz).Error
 	if gorm.IsRecordNotFoundError(err) {
 		newQuiz.QuizId = quiz.QuizID

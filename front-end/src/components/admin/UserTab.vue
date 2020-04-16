@@ -148,8 +148,14 @@ export default {
     ...mapGetters('currentUser', ['currentUser']),
     ...mapGetters('users', ['getUserList']),
     tableData: function () {
-      console.log('user list = ', this.getUserList)
-      return this.getUserList
+      console.log('user list = ', this.getUserList.length)
+      let tmp = []
+      for (let i = 0; i < this.getUserList.length; i++) {
+        if (this.getUserList[i].Role === this.role) {
+          tmp.push(this.getUserList[i])
+        }
+      }
+      return tmp
     },
     activeTab: function () {
       return this.currentUser.activeTab
@@ -183,8 +189,11 @@ export default {
       }
     }
   },
+  mounted () {
+    this.fetchUser()
+  },
   methods: {
-    ...mapMutations('users', ['addNewUser', 'setUserList', 'removeUser']),
+    ...mapMutations('users', ['addNewUser', 'removeUser']),
     toEditQuiz (opt) {
       this.quizId = opt
     },
@@ -210,10 +219,9 @@ export default {
         })
     },
     updateUser (newList) {
-      console.log('in update users length - ', newList.length)
+      console.log('in update users length - ', newList)
       if (newList.length > 0) {
         this.loading = false
-        this.setUserList([])
         for (let i = 0; i < newList.length; i++) {
           this.addNewUser(newList[i])
         }

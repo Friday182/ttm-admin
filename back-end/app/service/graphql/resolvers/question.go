@@ -29,7 +29,7 @@ func (r *queryResolver) GetQuestions(ctx context.Context, gid string, kp string)
 		return queList, err
 	}
 
-	err = r.Qdb.Where("kp=?", kp).Limit(50).Find(&queList).Error
+	err = r.Qdb.Where("kp=?", kp).Order("que_idx").Limit(50).Find(&queList).Error
 	return queList, err
 }
 
@@ -109,13 +109,21 @@ func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQue
 	tmpQue := model.Question{}
 	err = r.Qdb.Where("kp = ? AND que_idx = ?", que.Kp, que.QueIdx).Find(&tmpQue).Error
 	if gorm.IsRecordNotFoundError(err) {
-		r.Qdb.Save(&newQue)
-		return true, nil
+		err = r.Qdb.Save(&newQue).Error
 	} else {
 		newQue.ID = tmpQue.ID
-		r.Qdb.Save(&newQue)
-		return true, nil
+		err = r.Qdb.Save(&newQue).Error
 	}
+
+	quiz := model.Quiz{}
+	err = r.Qdb.Where("quiz_id = ?", que.Kp).Find(&quiz).Error
+	if err == nil {
+		if quiz.Status != "WIP" {
+			quiz.Status = "WIP"
+			r.Qdb.Save(&quiz)
+		}
+	}
+	return true, nil
 }
 
 func remove_empty (s []string) []string {

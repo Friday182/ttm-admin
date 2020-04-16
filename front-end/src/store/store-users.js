@@ -16,7 +16,22 @@ const state = {
 
 const mutations = {
   addNewUser (state, payload) {
-    state.users.push(payload)
+    let newOne = true
+    for (let i = 0; i < state.users.length; i++) {
+      if (state.users[i].Gid === '') {
+        state.users.splice(i, 1)
+      }
+    }
+    for (let i = 0; i < state.users.length; i++) {
+      if (state.users[i].Gid === payload.Gid) {
+        newOne = false
+        break
+      }
+    }
+
+    if (newOne === true) {
+      state.users.push(payload)
+    }
   },
   setUserList (state, payload) {
     state.users = payload

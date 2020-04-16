@@ -66,7 +66,9 @@
           <i class="el-icon-document" />
           <span slot="title"> Dashboard </span>
         </el-menu-item>
-        <el-submenu index="2">
+        <el-submenu
+          v-if="loginRole !== 'operator'"
+          index="2">
           <template slot="title">
             <i class="el-icon-location" />
             <span> Management </span>

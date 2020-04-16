@@ -195,7 +195,9 @@ export default {
       this.$apollo
         .query({
           query: GET_QUIZ_QUERY,
-          variables: {}
+          variables: {
+            gid: this.currentUser.Gid
+          }
         })
         .then(response => {
           if (response.data.GetQuiz) {

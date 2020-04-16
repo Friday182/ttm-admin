@@ -101,7 +101,7 @@ func (r *queryResolver) QuizLog(ctx context.Context, gid string, quizIdx *string
 func (r *queryResolver) GetQuizReport(ctx context.Context, gid string) (*model.QuizReport, error) {
 	panic("not implemented")
 }
-func (r *queryResolver) GetQuiz(ctx context.Context) ([]*model.Quiz, error) {
+func (r *queryResolver) GetQuiz(ctx context.Context, gid string) ([]*model.Quiz, error) {
 	panic("not implemented")
 }
 func (r *queryResolver) GetKpDescripitions(ctx context.Context) ([]*model.KpDescription, error) {

@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
-export const GET_QUIZ_QUERY = gql`query GetQuizMsg{
-  GetQuiz {
+export const GET_QUIZ_QUERY = gql`query GetQuizMsg($gid: String!){
+  GetQuiz (gid: $gid){
     QuizId
     UsedCount
     Grade
