@@ -15,6 +15,20 @@ export const GET_QUIZ_QUERY = gql`query GetQuizMsg{
   }
 }`
 
+export const GET_USERS_QUERY = gql`query GetUsers($role: String!){
+  GetUsers(role: $role) {
+    Gid
+    Username
+    Password
+    Name
+    Role
+    Email
+    Mobile
+    Comment
+    LastLoginTime
+  }
+}`
+
 export const TASK_QUESTIONS_QUERY = gql`query GetQuestions($gid: String!, $kp: String!){
   GetQuestions(gid: $gid, kp: $kp) {
     QueIdx

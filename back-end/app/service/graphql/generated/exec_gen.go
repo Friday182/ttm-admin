@@ -1999,8 +1999,8 @@ input AddUserInput {
   Username:   String!
   Password:   String!
   Name:       String!
-  Email:      String!
   Role:       String!
+  Email:      String!
   Mobile:     String!
   Comment:    String!
 }
@@ -10412,15 +10412,15 @@ func (ec *executionContext) unmarshalInputAddUserInput(ctx context.Context, obj 
 			if err != nil {
 				return it, err
 			}
-		case "Email":
-			var err error
-			it.Email, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "Role":
 			var err error
 			it.Role, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Email":
+			var err error
+			it.Email, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

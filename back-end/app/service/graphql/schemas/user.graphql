@@ -18,8 +18,8 @@ input AddUserInput {
   Username:   String!
   Password:   String!
   Name:       String!
-  Email:      String!
   Role:       String!
+  Email:      String!
   Mobile:     String!
   Comment:    String!
 }

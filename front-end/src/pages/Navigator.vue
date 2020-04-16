@@ -15,10 +15,14 @@
         <dashboard />
       </div>
       <div v-else-if="item.name==='2-1'">
-        <not-available />
+        <user-tab
+          role="staff"
+        />
       </div>
       <div v-else-if="item.name==='2-2'">
-        <not-available />
+        <user-tab
+          role="operator"
+        />
       </div>
       <div v-else-if="item.name==='3-1'">
         <math-tab />
@@ -46,7 +50,7 @@ export default {
     'dashboard': require('components/admin/Dashboard.vue').default,
     'math-tab': require('components/quiz/MathTab.vue').default,
     'english-tab': require('components/quiz/EnglishTab.vue').default,
-    'not-available': require('components/admin/NotAvailable.vue').default
+    'user-tab': require('components/admin/UserTab.vue').default
   },
   data () {
     return {

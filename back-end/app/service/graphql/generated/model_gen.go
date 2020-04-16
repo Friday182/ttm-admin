@@ -48,8 +48,8 @@ type AddUserInput struct {
 	Username string `json:"Username"`
 	Password string `json:"Password"`
 	Name     string `json:"Name"`
-	Email    string `json:"Email"`
 	Role     string `json:"Role"`
+	Email    string `json:"Email"`
 	Mobile   string `json:"Mobile"`
 	Comment  string `json:"Comment"`
 }

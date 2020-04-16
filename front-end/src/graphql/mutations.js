@@ -15,6 +15,28 @@ mutation UserLogin($username: String!, $password: String!) {
   }
 }`
 
+export const ADD_USER_MUTATION = gql`
+mutation AddUser($name: String!, $role: String!, $email: String!, $mobile: String!, $comment: String!) {
+  AddUser(
+    user: {
+      Username: $role,
+      Password: $role,
+      Name: $name,
+      Role: $role,
+      Email: $email,
+      Mobile: $mobile,
+      Comment: $comment
+    }
+  )
+}`
+
+export const DEL_USER_MUTATION = gql`
+mutation DelUser($Gid: String!) {
+  DelUser(
+    gid: $Gid
+  )
+}`
+
 export const ADD_QUIZ_MUTATION = gql`
 mutation AddQuiz($QuizId: String!, $Grade: Int!, $Desc: String!, $Operator: String!, $Comment: String!) {
   AddQuiz(

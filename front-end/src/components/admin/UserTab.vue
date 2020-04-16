@@ -1,11 +1,12 @@
 <template>
   <div class="q-px-sm">
-    <add-quiz
-      :active="addQuizActive"
-      @addQuizDone="fetchQuiz"
+    <add-user
+      :active="addUserActive"
+      :role="role"
+      @addUserDone="fetchUser"
     />
     <q-table
-      title="Quiz Table"
+      title="Users Table"
       :data="tableData"
       :columns="columns"
       :visible-columns="visibleColumns"
@@ -20,7 +21,7 @@
     >
       <template v-slot:top="props">
         <div class="col-2 q-table__title">
-          Avaialble Quizzes
+          Avaialble Users
         </div>
         <q-space />
         <q-btn
@@ -34,26 +35,14 @@
         />
       </template>
       <q-td
-        slot="body-cell-edit"
-        slot-scope="props"
-        :props="props"
-      >
-        <q-btn
-          flat
-          icon="edit"
-          @click="toEditQuiz(props.row.QuizId)"
-        />
-      </q-td>
-      <q-td
         slot="body-cell-delete"
         slot-scope="props"
         :props="props"
       >
         <q-btn
-          v-if="props.row.Status=='NA'"
           flat
           icon="delete"
-          @click="toDeleteQuiz(props.row.QuizId)"
+          @click="toDeleteUser(props.row.Gid)"
         />
       </q-td>
       <template v-slot:no-data="{ icon, message, filter }">
@@ -68,87 +57,87 @@
         </div>
       </template>
     </q-table>
-    <edit-quiz
-      :active="editQuizActive"
-      :quizId="quizId"
-      @quizEditCompleted="editQuizDone"
-    />
   </div>
 </template>
 
 <script type="text/javascript">
 import { mapGetters, mapMutations } from 'vuex'
-import { GET_QUIZ_QUERY } from '../../graphql/queries'
-import { DEL_QUIZ_MUTATION } from '../../graphql/mutations'
+import { GET_USERS_QUERY } from '../../graphql/queries'
+import { DEL_USER_MUTATION } from '../../graphql/mutations'
 
 export default {
-  name: 'MathQuizTable',
+  name: 'UserTab',
   components: {
-    'edit-quiz': require('components/quiz/EditQuiz.vue').default,
-    'add-quiz': require('components/quiz/AddQuiz.vue').default
+    'add-user': require('components/admin/AddUser.vue').default
+  },
+  props: {
+    role: {
+      type: String,
+      default: ''
+    }
   },
   data () {
     return {
       loading: true,
-      editQuizActive: false,
       quizId: '',
-      skipQueryGetQuiz: true,
+      inRole: 'operator',
+      roleOptions: ['operator', 'staff'],
       columns: [
         {
-          name: 'QuizId',
+          name: 'Gid',
           required: true,
           align: 'center',
-          label: 'Quiz Id',
-          field: 'QuizId',
+          label: 'User GId',
+          field: 'Gid',
           sortable: true
         },
         {
-          name: 'Grade',
+          name: 'Username',
           required: true,
           align: 'center',
-          label: 'Grade',
-          field: 'Grade',
+          label: 'Username',
+          field: 'Username',
           sortable: true
         },
         {
-          name: 'Desc',
+          name: 'Password',
           align: 'center',
-          label: 'Description',
-          field: 'Desc',
+          label: 'Password',
+          field: 'Password',
           sortable: false
         },
         {
-          name: 'Operator',
+          name: 'Name',
           align: 'center',
-          label: 'Operator',
-          field: 'Operator',
-          sortable: false
-        },
-        {
-          name: 'Status',
-          align: 'center',
-          label: 'Status',
-          field: 'Status',
+          label: 'Name',
+          field: 'Name',
           sortable: true
         },
         {
-          name: 'Approver',
+          name: 'Role',
           align: 'center',
-          label: 'Approver',
-          field: 'Approver',
-          sortable: true
+          label: 'Role',
+          field: 'Role',
+          sortable: false
         },
         {
-          name: 'edit',
+          name: 'Email',
           align: 'center',
-          label: 'Edit Quiz',
-          field: 'edit',
+          label: 'Email',
+          field: 'Email',
           sortable: false
+        },
+        {
+          name: 'Mobile',
+          align: 'center',
+          label: 'Mobile',
+          field: 'Mobile',
+          sortable: true
         },
         {
           name: 'delete',
           align: 'center',
-          label: 'Delete Quiz',
+          label: 'Delete',
           field: 'delete',
           sortable: false
         }
@@ -157,12 +146,15 @@ export default {
   },
   computed: {
     ...mapGetters('currentUser', ['currentUser']),
-    ...mapGetters('quiz', ['getQuizList']),
+    ...mapGetters('users', ['getUserList']),
     tableData: function () {
-      console.log('quiz list = ', this.getQuizList)
-      return this.getQuizList
+      console.log('user list = ', this.getUserList)
+      return this.getUserList
     },
-    addQuizActive: function () {
+    activeTab: function () {
+      return this.currentUser.activeTab
+    },
+    addUserActive: function () {
       if (this.currentUser.Role) {
         if (this.currentUser.Role === 'admin' || this.currentUser.Role === 'staff') {
           return true
@@ -170,72 +162,79 @@ export default {
       }
       return false
     },
+    userRole: function () {
+      return this.currentUser.Role
+    },
     visibleColumns: function () {
-      if (this.addQuizActive === true) {
-        return ['QuizId', 'Grade', 'Desc', 'Operator', 'Status', 'Approver', 'edit', 'delete']
+      if (this.addUserActive === true) {
+        return ['Username', 'Password', 'Role', 'Name', 'Email', 'Mobile', 'delete']
       } else {
-        return ['QuizId', 'Grade', 'Desc', 'Operator', 'Status', 'Approver', 'edit']
+        return ['Username', 'Password', 'Role', 'Name', 'Email', 'Mobile']
       }
     }
   },
-  mounted () {
-    this.fetchQuiz()
+  watch: {
+    activeTab: function (newVal) {
+      console.log('newvalue userTab role - ', newVal)
+      if (newVal === '2-1' && this.role === 'staff') {
+        this.fetchUser()
+      } else if (newVal === '2-2' && this.role === 'operator') {
+        this.fetchUser()
+      }
+    }
   },
   methods: {
-    ...mapMutations('quiz', ['addNewQuiz', 'setQuizList', 'removeQuiz']),
+    ...mapMutations('users', ['addNewUser', 'setUserList', 'removeUser']),
     toEditQuiz (opt) {
       this.quizId = opt
-      this.editQuizActive = true
     },
-    editQuizDone () {
-      this.editQuizActive = false
-    },
-    fetchQuiz () {
-      console.log('Get quiz list')
+    fetchUser () {
+      console.log('Get user list', this.role)
       this.$apollo
         .query({
-          query: GET_QUIZ_QUERY,
-          variables: {}
+          query: GET_USERS_QUERY,
+          variables: {
+            role: this.role
+          }
         })
         .then(response => {
-          if (response.data.GetQuiz) {
-            this.updateQuiz(response.data.GetQuiz)
-            console.log('Read quiz list complete')
+          if (response.data.GetUsers) {
+            this.updateUser(response.data.GetUsers)
+            console.log('Read user list complete')
           } else {
-            console.log('Get quiz failed')
+            console.log('Get users failed')
           }
         })
         .catch(error => {
           console.log(error)
         })
     },
-    updateQuiz (newList) {
-      console.log('in update quiz length - ', newList.length)
+    updateUser (newList) {
+      console.log('in update users length - ', newList.length)
       if (newList.length > 0) {
         this.loading = false
-        this.setQuizList([])
+        this.setUserList([])
         for (let i = 0; i < newList.length; i++) {
-          this.addNewQuiz(newList[i])
+          this.addNewUser(newList[i])
         }
       } else {
-        console.log('NO enough quiz')
+        console.log('NO User Available')
       }
     },
-    toDeleteQuiz (opt) {
+    toDeleteUser (opt) {
       this.$apollo
         .mutate({
-          mutation: DEL_QUIZ_MUTATION,
+          mutation: DEL_USER_MUTATION,
           variables: {
-            Gid: this.currentUser.Gid,
-            QuizId: opt
+            Gid: opt
           }
         })
         .then(response => {
           if (!response.errors) {
-            if (response.data.DelQuiz) {
+            if (response.data.DelUser) {
               console.log('Del quiz successful')
-              this.removeQuiz({
-                QuizId: opt
+              this.removeUser({
+                Gid: opt
               })
             }
           } else {
