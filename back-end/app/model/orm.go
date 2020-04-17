@@ -29,9 +29,9 @@ func ConnectDb() error {
 		db = d
 	}
 
-	q, err := gorm.Open("sqlite3", "../../ttm-go/qdb.sqlite3")
+	q, err := gorm.Open("sqlite3", "./quiz.sqlite3")
 	if err != nil {
-		q, err = gorm.Open("sqlite3", "../ttmnow/qdb.sqlite3")
+		q, err = gorm.Open("sqlite3", "./quiz.sqlite3")
 	}
 	// db, err := gorm.Open("postgres", "host=127.0.0.1 port=5432 user=postgres dbname=ttm password=123456 sslmode=disable")
 	if err != nil {

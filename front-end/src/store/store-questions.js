@@ -1,28 +1,7 @@
 
 const getDefaultState = () => {
   return {
-    questions: [{
-      QueIdx: 0,
-      Kp: '',
-      StdSec: 0,
-      AnswerType: '',
-      QuestionType: '',
-      UpTexts: [],
-      DownTexts: [],
-      Formula: [],
-      Options: [],
-      Answers: [],
-      Tags: [],
-      Charts: [],
-      Clocks: [],
-      Tables: [],
-      Shapes: [],
-      AnswerText: '',
-      Helper: false,
-      Imgs: [],
-      Tips: [],
-      Choice: ''
-    }]
+    questions: []
   }
 }
 
@@ -42,7 +21,16 @@ const mutations = {
     }
   },
   doAddNewQuestion (state, payload) {
-    state.questions.push(payload)
+    let newQue = true
+    for (let i = 0; i < state.questions.length; i++) {
+      if (state.questions[i].QueIdx === payload.QueIdx) {
+        state.questions[i] = payload
+        newQue = false
+      }
+    }
+    if (newQue === true) {
+      state.questions.push(payload)
+    }
   }
 }
 

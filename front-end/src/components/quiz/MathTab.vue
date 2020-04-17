@@ -1,7 +1,7 @@
 <template>
   <div class="q-px-sm">
     <add-quiz
-      :active="addQuizActive"
+      v-if="addQuizActive"
       @addQuizDone="fetchQuiz"
     />
     <q-table
@@ -184,6 +184,7 @@ export default {
   methods: {
     ...mapMutations('quiz', ['addNewQuiz', 'setQuizList', 'removeQuiz']),
     toEditQuiz (opt) {
+      console.log('set editquiz true - ', opt)
       this.quizId = opt
       this.editQuizActive = true
     },

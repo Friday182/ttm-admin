@@ -70,16 +70,24 @@ export default {
       inDesc: '',
       inOperator: '',
       inComment: '',
-      operatorOptions: [
-        { value: '1', label: 'Lucas' },
-        { value: '2', label: 'Jamie' },
-        { value: '3', label: 'Annie' }
-      ],
       period: ''
     }
   },
   computed: {
     ...mapGetters('currentUser', ['currentUser']),
+    ...mapGetters('users', ['getUserList']),
+    operatorOptions: function () {
+      let tmp = []
+      for (let i = 0; i < this.getUserList.length; i++) {
+        if (this.getUserList[i].Role === 'operator') {
+          tmp.push({
+            value: i,
+            label: this.getUserList[i].Username
+          })
+        }
+      }
+      return tmp
+    },
     loginRole: function () {
       return this.currentUser.Role
     },

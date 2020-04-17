@@ -141,8 +141,9 @@ export default {
       this.setCurrentQuestion(que)
     },
     addQuestion () {
+      console.log('add question, current length = ', this.allQuestions.length)
       this.addNewQuestion({
-        QueIdx: 0,
+        QueIdx: this.allQuestions.length + 1,
         Kp: '',
         StdSec: 30,
         AnswerType: 'SC',
@@ -192,8 +193,8 @@ export default {
       this.usedSeconds++
     },
     closeTask () {
-      console.log('close quiz edit?')
-      this.active = false
+      console.log('close quiz edit')
+      this.$emit('quizEditCompleted')
     }
   }
 }

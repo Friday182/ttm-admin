@@ -7,8 +7,8 @@
             v-model="inQueIdx"
             outlined
             dense
+            disable
             label="Question Index"
-            @input="updateCurrentQuestion"
           />
         </div>
         <div class="col-2 q-mr-sm">
@@ -302,7 +302,7 @@ export default {
       } else if (newVal.QuestionType === 'M_COM') {
         tmpOrgJson = newVal.Formula
       } else {
-        tmpOrgJson = ['']
+        tmpOrgJson = [{}]
       }
       for (let i = 0; i < tmpOrgJson.length; i++) {
         tmpJson.push(JSON.parse(tmpOrgJson[i]))
@@ -414,8 +414,8 @@ export default {
     },
     updateQuestionType: function () {
       // set json text example
+      this.inJsonText = []
       if (this.inQueType === 'M_TABLE') {
-        this.inJsonText = []
         this.inJsonText.push({
           'tableTitle': 'Table Example',
           'style': 'width: 40%',
@@ -431,7 +431,6 @@ export default {
           ]
         })
       } else if (this.inQueType === 'M_CHART') {
-        this.inJsonText = []
         this.inJsonText.push({
           'xAxis': {
             'type': 'value',
@@ -461,7 +460,6 @@ export default {
           'type': 'Not Available'
         }]
       } else if (this.inQueType === 'M_SHAPE') {
-        this.inJsonText = []
         this.inJsonText.push({
           'type': 'line',
           'config': {
@@ -494,10 +492,16 @@ export default {
       let tmpClk = []
       let tmpTables = []
       let tmpShapes = []
+      let tmpUpText = []
       let tmpStr = this.inUpText.replace(/\n$/, '')
-      let tmpUpText = tmpStr.split('\n')
+      if (tmpStr !== '') {
+        tmpUpText = tmpStr.split('\n')
+      }
+      let tmpDownText = []
       tmpStr = this.inDownText.replace(/\n$/, '')
-      let tmpDownText = tmpStr.split('\n')
+      if (tmpStr !== '') {
+        tmpDownText = tmpStr.split('\n')
+      }
       tmpStr = this.inFormula.replace(/\n$/, '')
       let tmpFormula = tmpStr.split('\n')
       console.log('tmpFormula - ', tmpFormula)

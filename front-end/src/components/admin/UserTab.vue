@@ -1,7 +1,7 @@
 <template>
   <div class="q-px-sm">
     <add-user
-      :active="addUserActive"
+      v-if="addUserActive"
       :role="role"
       @addUserDone="fetchUser"
     />
