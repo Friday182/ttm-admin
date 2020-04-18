@@ -24,7 +24,7 @@ type Student struct {
 	Stars           int
 	TaskDoneCount   int
 	TaskPassCount   int
-	LogUpdated		  bool
+	LogUpdated      bool
 	IsMember        bool
 	MembershipStart time.Time
 	MembershipStop  time.Time
@@ -82,7 +82,7 @@ func (u *KpUnit) GetWeight() int {
 func AddStudent(new *Student) (*Student, error) {
 	u := Student{}
 	if new.MentorEmail != "" && len(new.Name) > 1 && new.Age > 4 && new.Age < 12 {
-		if db.Where(Student{MentorEmail: new.MentorEmail, Name: new.Name, Age: new.Age}).Find(&u).RecordNotFound() {
+		if ttmDb.Where(Student{MentorEmail: new.MentorEmail, Name: new.Name, Age: new.Age}).Find(&u).RecordNotFound() {
 			var tmp string
 			if len(new.Name) > 3 {
 				tmp = new.Name[:3]
@@ -90,7 +90,7 @@ func AddStudent(new *Student) (*Student, error) {
 				tmp = new.Name
 			}
 			new.Password = tmp + grand.Digits(3)
-			err := db.Save(new).Error
+			err := ttmDb.Save(new).Error
 			return new, err
 		}
 		return &u, errors.New("Duplicated Student")
@@ -100,22 +100,22 @@ func AddStudent(new *Student) (*Student, error) {
 
 func DelStudent(gid string) error {
 	u := Student{}
-	db := db.New().Begin()
+	ttmDb := ttmDb.New().Begin()
 
-	if db.Where(Student{Gid: gid}).Find(&u).RecordNotFound() {
+	if ttmDb.Where(Student{Gid: gid}).Find(&u).RecordNotFound() {
 		return errors.New("Not Found Student")
 	}
-	if err := db.Delete(u).Error; err != nil {
-		db.RollbackUnlessCommitted()
-		return db.Error
+	if err := ttmDb.Delete(u).Error; err != nil {
+		ttmDb.RollbackUnlessCommitted()
+		return ttmDb.Error
 	}
-	db = db.Commit()
+	ttmDb = ttmDb.Commit()
 	return nil
 }
 
 func ValidStudent(user string, pw string) bool {
 	u := Student{}
-	if db.Where(Student{Name: user, Password: pw}).Find(&u).RecordNotFound() {
+	if ttmDb.Where(Student{Name: user, Password: pw}).Find(&u).RecordNotFound() {
 		return false
 	}
 	return true

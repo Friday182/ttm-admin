@@ -3,6 +3,7 @@ package resolvers_test
 import (
 	"context"
 	"testing"
+
 	//"encoding/json"
 	//"time"
 	"github.com/friday182/ttm-admin/app/service/graphql/resolvers"
@@ -20,11 +21,11 @@ var studentName string = "testStudent"
 var studentGid string = ""
 
 func TestMain(m *testing.M) {
-	db, err := gorm.Open("sqlite3", "../../../../ttm.sqlite3")
+	ttmDb, err := gorm.Open("sqlite3", "../../../../ttm.sqlite3")
 	if err != nil {
 		return
 	}
-	q.Db = db
+	q.TtmDb = ttmDb
 	_, err = q.Query().Mentor(c, mentorEmail)
 	student, err := q.Mutation().AddStudent(c, mentorEmail, studentName, 9)
 	if err != nil {

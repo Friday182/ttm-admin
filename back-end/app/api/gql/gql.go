@@ -30,8 +30,8 @@ func GraphqlHandler(r *ghttp.Request) {
 
 	cfg := gen.Config{
 		Resolvers: &res.Resolver{
-			Db: model.GetDb(),
-			Qdb: model.GetQdb(),
+			TtmDb: model.GetTtmDb(),
+			QuizDb: model.GetQuizdb(),
 		},
 	}
 	h := handler.GraphQL(gen.NewExecutableSchema(cfg))

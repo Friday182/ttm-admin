@@ -21,15 +21,15 @@ import (
 // Query
 func (r *queryResolver) GetStudents(ctx context.Context, mentorEmail string) ([]*model.Student, error) {
 	var existStudents []*model.Student
-	err := r.Db.Where("mentor_email=?", mentorEmail).Find(&existStudents).Error
+	err := r.TtmDb.Where("mentor_email=?", mentorEmail).Find(&existStudents).Error
 	return existStudents, err
 }
 
 func (r *queryResolver) Student(ctx context.Context, gid string, name string) (*model.Student, error) {
 	var student model.Student
-	err := r.Db.Where("gid=?", gid).Find(&student).Error
+	err := r.TtmDb.Where("gid=?", gid).Find(&student).Error
 	if err != nil {
-		err = r.Db.Where("name=?", name).Find(&student).Error
+		err = r.TtmDb.Where("name=?", name).Find(&student).Error
 	}
 	return &student, err
 }
@@ -51,11 +51,11 @@ func (r *mutationResolver) AddStudent(ctx context.Context, mentorEmail string, n
 		return &student, errors.New("Invalid Input")
 	}
 	var mentor model.Mentor
-	err := r.Db.Where("email=?", mentorEmail).First(&mentor).Error
+	err := r.TtmDb.Where("email=?", mentorEmail).First(&mentor).Error
 	if err != nil {
 		return &student, errors.New("Mentor Not Exist")
 	}
-	err = r.Db.Where("mentor_email=? AND name=?", mentorEmail, name).First(&student).Error
+	err = r.TtmDb.Where("mentor_email=? AND name=?", mentorEmail, name).First(&student).Error
 	if gorm.IsRecordNotFoundError(err) {
 		gid := strconv.FormatInt(time.Now().UnixNano(), 36)
 		tmpAssignment := []model.KpAssignment{
@@ -163,11 +163,11 @@ func (r *mutationResolver) AddStudent(ctx context.Context, mentorEmail string, n
 			SubjectState:    byteSubject,
 			KpPlan:          byteKpPlan,
 		}
-		err = r.Db.Save(&student).Error
+		err = r.TtmDb.Save(&student).Error
 		if err == nil {
 			tmpReviseMap := model.ReviseMap{}
 			tmpReviseMap.Gid = gid
-			r.Db.Create(&tmpReviseMap)
+			r.TtmDb.Create(&tmpReviseMap)
 		}
 	} else {
 		err = errors.New("Student Exist")
@@ -179,11 +179,11 @@ func (r *mutationResolver) AddStudent(ctx context.Context, mentorEmail string, n
 func (r *mutationResolver) DelStudent(ctx context.Context, gid string) (bool, error) {
 	var student model.Student
 	var result bool = false
-	err := r.Db.Where("gid=?", gid).First(&student).Error
+	err := r.TtmDb.Where("gid=?", gid).First(&student).Error
 	if gorm.IsRecordNotFoundError(err) {
 		result = false
 	} else {
-		if err = r.Db.Delete(&student).Error; err != nil {
+		if err = r.TtmDb.Delete(&student).Error; err != nil {
 			result = false
 		} else {
 			result = true

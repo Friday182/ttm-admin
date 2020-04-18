@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// Description each Quiz
+// Quiz Description each Quiz
 type Quiz struct {
 	ID        int `gorm:"primary_key"`
 	QuizId    string
@@ -21,7 +21,7 @@ type Quiz struct {
 	Comment   string
 }
 
-// Record for each time quiz be completed
+// QuizLog Record for each time quiz be completed
 type QuizLog struct {
 	ID          int `gorm:"primary_key"`
 	CreatedAt   time.Time
@@ -42,7 +42,7 @@ type QuizLog struct {
 	Comment     string `gorm:"size:1000"`
 }
 
-// Create a QuizReport for each student, it will be updated everytime complete of a quiz
+// QuizReport Create a QuizReport for each student, it will be updated everytime complete of a quiz
 type QuizReport struct {
 	ID         int `gorm:"primary_key"`
 	CreatedAt  time.Time

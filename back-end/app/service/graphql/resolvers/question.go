@@ -17,19 +17,19 @@ var answerOptions []string = []string{"1", "2", "3", "4", "5"}
 // Query
 func (r *queryResolver) GetKpDescripitions(ctx context.Context) ([]*model.KpDescription, error) {
 	desList := []*model.KpDescription{}
-	err := r.Qdb.Find(&desList).Error
+	err := r.QuizDb.Find(&desList).Error
 	return desList, err
 }
 
 func (r *queryResolver) GetQuestions(ctx context.Context, gid string, kp string) ([]*model.Question, error) {
 	var user model.User
 	queList := []*model.Question{}
-	err := r.Db.Where("gid = ?", gid).Find(&user).Error
+	err := r.TtmDb.Where("gid = ?", gid).Find(&user).Error
 	if gorm.IsRecordNotFoundError(err) {
 		return queList, err
 	}
 
-	err = r.Qdb.Where("kp=?", kp).Order("que_idx").Limit(50).Find(&queList).Error
+	err = r.QuizDb.Where("kp=?", kp).Order("que_idx").Limit(50).Find(&queList).Error
 	return queList, err
 }
 
@@ -38,7 +38,7 @@ func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQue
 	newQue := model.Question{}
 	var user model.User
 
-	err := r.Db.Where("gid = ?", que.Gid).First(&user).Error
+	err := r.TtmDb.Where("gid = ?", que.Gid).First(&user).Error
 	if gorm.IsRecordNotFoundError(err) {
 		return false, err
 	}
@@ -54,13 +54,13 @@ func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQue
 
 	tmpStr := strings.TrimSuffix(que.UpTexts, "\n")
 	tmpArray := strings.Split(tmpStr, "\n")
-	tmpArray = remove_empty(tmpArray)
+	tmpArray = removeEmpty(tmpArray)
 	tmp, err := json.Marshal(tmpArray)
 	newQue.UpTexts = tmp
 
 	tmpStr = strings.TrimSuffix(que.DownTexts, "\n")
 	tmpArray = strings.Split(tmpStr, "\n")
-	tmpArray = remove_empty(tmpArray)
+	tmpArray = removeEmpty(tmpArray)
 	tmp, err = json.Marshal(tmpArray)
 	newQue.DownTexts = tmp
 
@@ -69,24 +69,24 @@ func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQue
 	newQue.Formula = tmp
 
 	tmpArray = strings.Split(que.Options, "||")
-	//tmpArray = remove_empty(tmpArray)
+	//tmpArray = removeEmpty(tmpArray)
 	tmp, err = json.Marshal(tmpArray)
 	newQue.Options = tmp
 
 	tmpArray = strings.Split(que.Charts, "||")
-	//tmpArray = remove_empty(tmpArray)
+	//tmpArray = removeEmpty(tmpArray)
 	tmp, err = json.Marshal(tmpArray)
 	newQue.Charts = tmp
 
 	tmpStr = strings.TrimSuffix(que.Tables, "||")
 	tmpArray = strings.Split(tmpStr, "||")
-	//tmpArray = remove_empty(tmpArray)
+	//tmpArray = removeEmpty(tmpArray)
 	tmp, err = json.Marshal(tmpArray)
 	newQue.Tables = tmp
 
 	tmpStr = strings.TrimSuffix(que.Shapes, "||")
 	tmpArray = strings.Split(tmpStr, "||")
-	tmpArray = remove_empty(tmpArray)
+	tmpArray = removeEmpty(tmpArray)
 	//temp = []string{}
 	//err = json.Unmarshal([]byte(tmpStr), &temp)
 	tmp, err = json.Marshal(tmpArray)
@@ -107,26 +107,26 @@ func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQue
 	newQue.Answers = tmp
 
 	tmpQue := model.Question{}
-	err = r.Qdb.Where("kp = ? AND que_idx = ?", que.Kp, que.QueIdx).Find(&tmpQue).Error
+	err = r.QuizDb.Where("kp = ? AND que_idx = ?", que.Kp, que.QueIdx).Find(&tmpQue).Error
 	if gorm.IsRecordNotFoundError(err) {
-		err = r.Qdb.Save(&newQue).Error
+		err = r.QuizDb.Save(&newQue).Error
 	} else {
 		newQue.ID = tmpQue.ID
-		err = r.Qdb.Save(&newQue).Error
+		err = r.QuizDb.Save(&newQue).Error
 	}
 
 	quiz := model.Quiz{}
-	err = r.Qdb.Where("quiz_id = ?", que.Kp).Find(&quiz).Error
+	err = r.QuizDb.Where("quiz_id = ?", que.Kp).Find(&quiz).Error
 	if err == nil {
 		if quiz.Status != "WIP" {
 			quiz.Status = "WIP"
-			r.Qdb.Save(&quiz)
+			r.QuizDb.Save(&quiz)
 		}
 	}
 	return true, nil
 }
 
-func remove_empty (s []string) []string {
+func removeEmpty(s []string) []string {
 	var r []string
 	for _, str := range s {
 		if str != "" {

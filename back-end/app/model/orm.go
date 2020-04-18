@@ -11,42 +11,44 @@ import (
 )
 
 var (
-	db  *gorm.DB
-	qdb *gorm.DB
-	err error
+	ttmDb  *gorm.DB
+	queDb  *gorm.DB
+	quizDb *gorm.DB
+	err    error
 )
 
+// ConnectDb to init database
 func ConnectDb() error {
 	d, err := gorm.Open("sqlite3", "../../ttm-go/ttm.sqlite3")
 	if err != nil {
 		d, err = gorm.Open("sqlite3", "../ttmnow/ttm.sqlite3")
 	}
-	// db, err := gorm.Open("postgres", "host=127.0.0.1 port=5432 user=postgres dbname=ttm password=123456 sslmode=disable")
+	// ttmDb, err := gorm.Open("postgres", "host=127.0.0.1 port=5432 user=postgres dbname=ttm password=123456 sslmode=disable")
 	if err != nil {
 		log.Println("[ORM] Error: ", err)
 		panic("[ORM] Connect Database Failed ")
 	} else {
-		db = d
+		ttmDb = d
 	}
 
 	q, err := gorm.Open("sqlite3", "./quiz.sqlite3")
 	if err != nil {
-		q, err = gorm.Open("sqlite3", "./quiz.sqlite3")
+		q, err = gorm.Open("sqlite3", "../ttmnow/quiz.sqlite3")
 	}
-	// db, err := gorm.Open("postgres", "host=127.0.0.1 port=5432 user=postgres dbname=ttm password=123456 sslmode=disable")
+	// ttmDb, err := gorm.Open("postgres", "host=127.0.0.1 port=5432 user=postgres dbname=ttm password=123456 sslmode=disable")
 	if err != nil {
 		log.Println("[ORM] Error: ", err)
 		panic("[ORM] Connect Database Failed ")
 	} else {
-		qdb = q
+		quizDb = q
 	}
 
 	//mode := setting.database.mode
 	mode := "debug"
 
 	if mode != "producton" {
-		db.LogMode(true)
-		qdb.LogMode(true)
+		ttmDb.LogMode(true)
+		quizDb.LogMode(true)
 	}
 
 	log.Println("[ORM] Database is ready.")
@@ -54,10 +56,12 @@ func ConnectDb() error {
 	return nil
 }
 
-func GetDb() *gorm.DB {
-	return db
+// GetTtmDb to export ttm main database
+func GetTtmDb() *gorm.DB {
+	return ttmDb
 }
 
-func GetQdb() *gorm.DB {
-	return qdb
+// GetQuizdb to export quiz database
+func GetQuizdb() *gorm.DB {
+	return quizDb
 }

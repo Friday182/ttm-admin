@@ -35,14 +35,14 @@ func AddMentor(email string, pw string) error {
 	u.Email = email
 	u.Password = pw
 
-	// email is the unique key in this table, db will validate it
-	err := db.Save(&u).Error
+	// email is the unique key in this table, ttmDb will validate it
+	err := ttmDb.Save(&u).Error
 	return err
 }
 
 func ValidMentor(email string, pw string) bool {
 	u := Mentor{}
-	if db.Where(Mentor{Email: email, Password: pw}).Find(&u).RecordNotFound() {
+	if ttmDb.Where(Mentor{Email: email, Password: pw}).Find(&u).RecordNotFound() {
 		return false
 	}
 	return true

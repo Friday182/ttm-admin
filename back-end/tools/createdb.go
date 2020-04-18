@@ -4,8 +4,8 @@ import (
 	"github.com/jinzhu/gorm"
 	// _ "github.com/jinzhu/gorm/dialects/mysql"
 	// _ "github.com/jinzhu/gorm/dialects/postgres"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/friday182/ttm-admin/app/model"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
 func main() {
@@ -13,7 +13,7 @@ func main() {
 	createQuestionDb()
 }
 
-func createTtmDb () {
+func createTtmDb() {
 	ttm, err := gorm.Open("sqlite3", "../ttm.sqlite3")
 	if err != nil {
 		return
@@ -34,7 +34,7 @@ func createTtmDb () {
 		&model.QuizReport{},
 		&model.ReviseMap{},
 	}
-	
+
 	ttm.DropTableIfExists(tables...)
 	ttm.CreateTable(tables...)
 
@@ -51,12 +51,12 @@ func createTtmDb () {
 	ttm.Save(&admin)
 }
 
-func createQuestionDb () {
-	db, err := gorm.Open("sqlite3", "../qdb.sqlite3")
+func createQuestionDb() {
+	ttmDb, err := gorm.Open("sqlite3", "../qdb.sqlite3")
 	if err != nil {
 		return
 	}
-	defer db.Close()
+	defer ttmDb.Close()
 
 	tables := []interface{}{
 		&model.Question{},
@@ -65,6 +65,6 @@ func createQuestionDb () {
 		&model.KpMap{},
 	}
 
-	db.DropTableIfExists(tables...)
-	db.CreateTable(tables...)
+	ttmDb.DropTableIfExists(tables...)
+	ttmDb.CreateTable(tables...)
 }

@@ -17,7 +17,7 @@ import (
 // Query
 func (r *queryResolver) GetUsers(ctx context.Context, role string) ([]*model.User, error) {
 	userList := []*model.User{}
-	err := r.Db.Where("role = ?", role).Find(&userList).Error
+	err := r.TtmDb.Where("role = ?", role).Find(&userList).Error
 	return userList, err
 }
 
@@ -27,7 +27,7 @@ func (r *mutationResolver) AddUser(ctx context.Context, user generated.AddUserIn
 	for {
 		user.Username = user.Name + grand.Digits(3)
 		user.Password = grand.Digits(4)
-		err := r.Db.Where("username = ?", user.Username).Find(&newUser).Error
+		err := r.TtmDb.Where("username = ?", user.Username).Find(&newUser).Error
 		if gorm.IsRecordNotFoundError(err) {
 			newUser.Username = user.Username
 			newUser.Password = user.Password
@@ -39,7 +39,7 @@ func (r *mutationResolver) AddUser(ctx context.Context, user generated.AddUserIn
 			newUser.Gid = strconv.FormatInt(time.Now().UnixNano(), 36)
 			newUser.LastLoginTime = time.Now()
 
-			err = r.Db.Save(&newUser).Error
+			err = r.TtmDb.Save(&newUser).Error
 
 			return true, err
 		}
@@ -49,11 +49,11 @@ func (r *mutationResolver) AddUser(ctx context.Context, user generated.AddUserIn
 func (r *mutationResolver) DelUser(ctx context.Context, gid string) (bool, error) {
 	var user model.User
 	var result bool = false
-	err := r.Db.Where("gid=?", gid).First(&user).Error
+	err := r.TtmDb.Where("gid=?", gid).First(&user).Error
 	if gorm.IsRecordNotFoundError(err) {
 		result = false
 	} else {
-		if err = r.Db.Delete(&user).Error; err != nil {
+		if err = r.TtmDb.Delete(&user).Error; err != nil {
 			result = false
 		} else {
 			result = true
@@ -65,11 +65,11 @@ func (r *mutationResolver) DelUser(ctx context.Context, gid string) (bool, error
 
 func (r *mutationResolver) UserLogin(ctx context.Context, username string, password string) (*model.User, error) {
 	var user model.User
-	if r.Db.Where("username = ? AND password = ?", username, password).Find(&user).RecordNotFound() {
+	if r.TtmDb.Where("username = ? AND password = ?", username, password).Find(&user).RecordNotFound() {
 		return &user, errors.New("failed")
 	} else {
 		user.LastLoginTime = time.Now()
-		r.Db.Save(&user)
+		r.TtmDb.Save(&user)
 
 		return &user, nil
 	}

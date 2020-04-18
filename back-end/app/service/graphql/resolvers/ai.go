@@ -43,7 +43,7 @@ type DetailsLog struct {
 /*
 func (r *queryResolver) CheckNewLog(ctx context.Context, gid string) (bool, error) {
 	var student model.Student
-	err := r.Db.Where("gid = ?", gid).First(&student).Error
+	err := r.TtmDb.Where("gid = ?", gid).First(&student).Error
 	if gorm.IsRecordNotFoundError(err) {
 		return false, err
 	}
@@ -54,29 +54,29 @@ func (r *queryResolver) GetTaskLogs(ctx context.Context, gid string, startDate s
 	var logs []*model.TaskLog
 	output := generated.TaskLogOutput{}
 	var student model.Student
-	err := r.Db.Where("gid = ?", gid).First(&student).Error
+	err := r.TtmDb.Where("gid = ?", gid).First(&student).Error
 	if gorm.IsRecordNotFoundError(err) {
 		return &output, err
 	}
 	if student.LogUpdated == true {
-		err := r.Db.Where("gid = ? AND id > ?", gid, 0).Limit(100).Find(&logs).Error
+		err := r.TtmDb.Where("gid = ? AND id > ?", gid, 0).Limit(100).Find(&logs).Error
 		if err != nil {
 			return &output, err
 		}
 		student.LogUpdated = false
-		r.Db.Save(&student)
+		r.TtmDb.Save(&student)
 		output.Override = true
 	} else {
 		output.Override = false
 		if startDate == "" {
 			// Get logs by startId and numLog
-			err := r.Db.Where("gid = ? AND id > ?", gid, startID).Limit(numLog).Find(&logs).Error
+			err := r.TtmDb.Where("gid = ? AND id > ?", gid, startID).Limit(numLog).Find(&logs).Error
 			if err != nil {
 				return &output, err
 			}
 		} else {
 			t1, _ := time.Parse(time.RFC3339, startDate)
-			err := r.Db.Where("gid = ? AND create_at >= ?", gid, t1).Limit(numLog).Find(&logs).Error
+			err := r.TtmDb.Where("gid = ? AND create_at >= ?", gid, t1).Limit(numLog).Find(&logs).Error
 			if err != nil {
 				return &output, err
 			}
@@ -90,16 +90,16 @@ func (r *queryResolver) GetTaskLogs(ctx context.Context, gid string, startDate s
 // Mutation
 
 func (r *mutationResolver) DelTaskLog(ctx context.Context, logID int) (bool, error) {
-	// Create scoped clean db interface
+	// Create scoped clean ttmDb interface
 	log := &model.TaskLog{}
-	if err := r.Db.Where("id=?", logID).First(log).Error; err != nil {
+	if err := r.TtmDb.Where("id=?", logID).First(log).Error; err != nil {
 		return false, err
 	}
 	var student model.Student
-	if err := r.Db.Where("gid = ?", log.Gid).First(&student).Error; err == nil {
-		r.Db.Model(&student).Update("log_updated", true)
+	if err := r.TtmDb.Where("gid = ?", log.Gid).First(&student).Error; err == nil {
+		r.TtmDb.Model(&student).Update("log_updated", true)
 	}
-	if err := r.Db.Delete(log).Error; err != nil {
+	if err := r.TtmDb.Delete(log).Error; err != nil {
 		return false, err
 	}
 	return true, nil
@@ -107,7 +107,7 @@ func (r *mutationResolver) DelTaskLog(ctx context.Context, logID int) (bool, err
 
 func updateReviseForward(r *mutationResolver, kpSts *model.KpState, ok bool) error {
 	ReviseM := model.ReviseMap{}
-	r.Db.Where("gid=?", kpSts.Gid).First(&ReviseM)
+	r.TtmDb.Where("gid=?", kpSts.Gid).First(&ReviseM)
 	// Create or update the Map
 	ReviseM.Gid = kpSts.Gid
 	ReviseM.Name = kpSts.Name
@@ -157,7 +157,7 @@ func updateReviseForward(r *mutationResolver, kpSts *model.KpState, ok bool) err
 		tmpRUnit = append(tmpRUnit, tmpUnit)
 	}
 	ReviseM.ReviseList, _ = json.Marshal(tmpRUnit)
-	r.Db.Save(&ReviseM)
+	r.TtmDb.Save(&ReviseM)
 
 	return nil
 }

@@ -110,7 +110,7 @@ func LoginResponse(r *ghttp.Request, code int, token string, expire time.Time) {
 	var mentor model.Mentor
 	username := r.GetPostString("username")
 	passwd := r.GetPostString("password")
-	tmpDb := model.GetDb()
+	tmpDb := model.GetTtmDb()
 	
 	err := tmpDb.Where("email = ? AND password = ?", username, passwd).Find(&mentor).Error
 	if gorm.IsRecordNotFoundError(err) {

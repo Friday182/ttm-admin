@@ -12,8 +12,8 @@ import (
 // THIS CODE IS A STARTING POINT ONLY. IT WILL NOT BE UPDATED WITH SCHEMA CHANGES.
 
 type Resolver struct {
-	Db *gorm.DB
-	Qdb *gorm.DB
+	TtmDb  *gorm.DB
+	QuizDb *gorm.DB
 }
 
 func (r *Resolver) Mentor() generated.MentorResolver {
@@ -47,6 +47,7 @@ func (r *mentorResolver) Contacts(ctx context.Context, obj *model.Mentor) ([]str
 }
 
 type mutationResolver struct{ *Resolver }
+
 /*
 func (r *mutationResolver) UserLogin(ctx context.Context, username string, password string) (*model.User, error) {
 	panic("not implemented")
@@ -77,6 +78,7 @@ func (r *mutationResolver) DelStudent(ctx context.Context, gid string) (bool, er
 }
 */
 type queryResolver struct{ *Resolver }
+
 /*
 func (r *queryResolver) GetUsers(ctx context.Context, role string) ([]*model.User, error) {
 	panic("not implemented")
@@ -113,7 +115,6 @@ func (r *queryResolver) GetKpDescripitions(ctx context.Context) ([]*model.KpDesc
 }
 */
 type questionResolver struct{ *Resolver }
-
 
 func (r *questionResolver) UpTexts(ctx context.Context, obj *model.Question) ([]string, error) {
 	tmp := []string{}

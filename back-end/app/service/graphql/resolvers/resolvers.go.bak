@@ -11,8 +11,8 @@ import (
 // THIS CODE IS A STARTING POINT ONLY. IT WILL NOT BE UPDATED WITH SCHEMA CHANGES.
 
 type Resolver struct {
-	Db *gorm.DB
-	Qdb *gorm.DB
+	TtmDb *gorm.DB
+	QuizDb *gorm.DB
 }
 
 func (r *Resolver) Mentor() generated.MentorResolver {
