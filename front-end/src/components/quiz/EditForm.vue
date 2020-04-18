@@ -299,10 +299,8 @@ export default {
         tmpOrgJson = newVal.Charts
       } else if (newVal.QuestionType === 'M_SHAPE') {
         tmpOrgJson = newVal.Shapes
-      } else if (newVal.QuestionType === 'M_COM') {
-        tmpOrgJson = newVal.Formula
-      } else {
-        tmpOrgJson = [{}]
+      } else if (newVal.QuestionType === 'M_CLK') {
+        tmpOrgJson = newVal.Clocks
       }
       for (let i = 0; i < tmpOrgJson.length; i++) {
         tmpJson.push(JSON.parse(tmpOrgJson[i]))
