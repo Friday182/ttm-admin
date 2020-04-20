@@ -69,12 +69,12 @@ func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQue
 	newQue.Formula = tmp
 
 	tmpArray = strings.Split(que.Options, "||")
-	//tmpArray = removeEmpty(tmpArray)
 	tmp, err = json.Marshal(tmpArray)
 	newQue.Options = tmp
 
-	tmpArray = strings.Split(que.Charts, "||")
-	//tmpArray = removeEmpty(tmpArray)
+	tmpStr = strings.TrimSuffix(que.Charts, "||")
+	tmpArray = strings.Split(tmpStr, "||")
+	tmpArray = removeEmpty(tmpArray)
 	tmp, err = json.Marshal(tmpArray)
 	newQue.Charts = tmp
 

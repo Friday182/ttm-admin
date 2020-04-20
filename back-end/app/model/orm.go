@@ -12,7 +12,6 @@ import (
 
 var (
 	ttmDb  *gorm.DB
-	queDb  *gorm.DB
 	quizDb *gorm.DB
 	err    error
 )
@@ -61,7 +60,7 @@ func GetTtmDb() *gorm.DB {
 	return ttmDb
 }
 
-// GetQuizdb to export quiz database
-func GetQuizdb() *gorm.DB {
+// GetQuizDb to export quiz database
+func GetQuizDb() *gorm.DB {
 	return quizDb
 }

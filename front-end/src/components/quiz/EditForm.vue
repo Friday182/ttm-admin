@@ -1,5 +1,43 @@
 <template>
   <q-card>
+    <q-card-section class="q-ml-md">
+      <div class="row">
+        <q-btn
+          label="Copy"
+          no-caps
+          color="primary"
+          style="font: 120% Arial bold"
+          @click="copyQuestion()"
+        />
+        <q-btn
+          class="q-ml-md"
+          label="Paste"
+          no-caps
+          color="primary"
+          :disable="tmpQue"
+          style="font: 120% Arial bold"
+          @click="pasteQuestion()"
+        />
+        <q-btn
+          class="q-ml-md"
+          label="Clear"
+          no-caps
+          color="primary"
+          :disable="tmpQue"
+          style="font: 120% Arial bold"
+          @click="clearForm()"
+        />
+        <q-space />
+        <q-btn
+          label="Save Question"
+          no-caps
+          color="primary"
+          style="font: 120% Arial bold"
+          @click="saveQuestion()"
+        />
+      </div>
+    </q-card-section>
+    <q-separator />
     <q-card-section>
       <div class="row q-ml-md">
         <div class="col-3 q-mr-sm">
@@ -172,8 +210,34 @@
         @input="updateCurrentQuestion"
       />
     </q-card-section>
+    <q-separator />
     <q-card-section class="q-ml-md">
       <div class="row">
+        <q-btn
+          label="Copy"
+          no-caps
+          color="primary"
+          style="font: 120% Arial bold"
+          @click="copyQuestion()"
+        />
+        <q-btn
+          class="q-ml-md"
+          label="Paste"
+          no-caps
+          color="primary"
+          :disable="tmpQue"
+          style="font: 120% Arial bold"
+          @click="pasteQuestion()"
+        />
+        <q-btn
+          class="q-ml-md"
+          label="Clear"
+          no-caps
+          color="primary"
+          :disable="tmpQue"
+          style="font: 120% Arial bold"
+          @click="clearForm()"
+        />
         <q-space />
         <q-btn
           label="Save Question"
@@ -181,14 +245,6 @@
           color="primary"
           style="font: 120% Arial bold"
           @click="saveQuestion()"
-        />
-        <q-btn
-          class="q-ml-xl"
-          label="Clear"
-          no-caps
-          color="primary"
-          style="font: 120% Arial bold"
-          @click="clearForm()"
         />
       </div>
     </q-card-section>
@@ -226,6 +282,7 @@ export default {
       inOption5: '',
       inAnswer: '',
       inTags: ['MA24'],
+      tmpQue: true,
       usedSeconds: 0,
       vjsonOptions: {
       },
@@ -395,11 +452,28 @@ export default {
             }
           } else {
             console.log('reponse error', response.errors)
+            this.alertError()
           }
         })
         .catch(error => {
           console.log(error)
+          this.alertError()
         })
+    },
+    alertError () {
+      const dialog = this.$q.dialog({
+        title: 'Error',
+        message: 'Question Save Failed ! ! !',
+        html: false,
+        ok: {
+          push: true
+        }
+      }).onDismiss(() => {
+        clearTimeout(timer)
+      })
+      const timer = setTimeout(() => {
+        dialog.hide()
+      }, 2000)
     },
     onJsonChange (value) {
       console.log('value:', value)
@@ -419,17 +493,17 @@ export default {
           'style': 'width: 40%',
           'separator': 'cell',
           'columns': [
-            { 'name': 'na', 'label': '', 'field': 'na' },
-            { 'name': 'square', 'label': 'Square', 'field': 'square' },
-            { 'name': 'circle', 'label': 'Circle', 'field': 'circle' }
+            { 'name': 'col1', 'label': '', 'field': 'col1' },
+            { 'name': 'col2', 'label': 'col2', 'field': 'col2' },
+            { 'name': 'col3', 'label': 'col3', 'field': 'col3' }
           ],
           'tableData': [
-            { 'na': 'Black', 'square': '4', 'circle': '6' },
-            { 'na': 'White', 'square': '7', 'circle': '5' }
+            { 'col1': 'Black', 'col2': '4', 'col3': '6' },
+            { 'col1': 'White', 'col2': '7', 'col3': '5' }
           ]
         })
       } else if (this.inQueType === 'M_CHART') {
-        this.inJsonText.push({
+        /* this.inJsonText.push({
           'xAxis': {
             'type': 'value',
             'min': 0,
@@ -452,6 +526,57 @@ export default {
             'type': 'line',
             'data': [ [0, 0], [5, 800] ]
           }
+        }) */
+        this.inJsonText.push({
+          'grid': {
+            'bottom': 10,
+            'right': 10,
+            'containLabel': true
+          },
+          'xAxis': {
+            'type': 'value',
+            'min': -6,
+            'max': 5,
+            'splitNumber': 11,
+            'splitLine': {
+              'show': true,
+              'lineStyle': {
+                'color': '#999',
+                'type': 'dashed'
+              }
+            },
+            'axisTick': {
+              'show': true,
+              'length': 10
+            },
+            'axisLine': {
+            }
+          },
+          'yAxis': {
+            'type': 'value',
+            'min': -3,
+            'max': 4,
+            'splitNumber': 7,
+            'splitLine': {
+              'show': true,
+              'lineStyle': {
+                'color': '#999',
+                'type': 'dashed'
+              }
+            },
+            'axisTick': {
+              'show': true,
+              'length': 10
+            },
+            'axisLine': {
+              'show': true
+            }
+          },
+          'series': {
+            'type': 'scatter',
+            'data': [ [ -3, 3 ] ],
+            'symbolSize': 15
+          }
         })
       } else if (this.inQueType === 'M_CLK') {
         this.inJsonText[0] = [{
@@ -469,6 +594,10 @@ export default {
         this.inJsonText.push({
           'type': 'circle',
           'config': { 'x': 100, 'y': 30, 'radius': 15, 'stroke': 'black' }
+        })
+        this.inJsonText.push({
+          'type': 'text',
+          'config': { 'x': 420, 'y': 110, 'text': 'ABC', 'fontSize': 15, 'fill': 'blue' }
         })
       } else if (this.inQueType === 'M_COM') {
         this.inJsonText = []
@@ -572,7 +701,66 @@ export default {
         )
       }
     },
+    copyQuestion () {
+      localStorage.setItem('tmpQue', JSON.stringify(this.currentQuestion))
+      this.tmpQue = false
+    },
+    pasteQuestion () {
+      if (localStorage.getItem('tmpQue')) {
+        let que = JSON.parse(localStorage.getItem('tmpQue'))
+        this.doSetCurrentQuestion(
+          {
+            Kp: this.QuizId,
+            QueIdx: this.inQueIdx,
+            StdSec: que.StdSec,
+            QuestionType: que.QuestionType,
+            AnswerType: que.AnswerType,
+            UpTexts: que.UpTexts,
+            DownTexts: que.DownTexts,
+            Formula: que.Formula,
+            Options: que.Options,
+            Tags: que.Tags,
+            Answers: que.Answers,
+            Charts: que.Charts,
+            Clocks: que.Clocks,
+            Tables: que.Tables,
+            Shapes: que.Shapes,
+            AnswerText: '',
+            Helper: false,
+            Imgs: [],
+            Tips: [],
+            Choice: ''
+          }
+        )
+      }
+    },
     clearForm () {
+      this.doSetCurrentQuestion(
+        {
+          Kp: this.QuizId,
+          QueIdx: this.inQueIdx,
+          StdSec: 30,
+          QuestionType: 'M_COM',
+          AnswerType: 'SC',
+          UpTexts: [],
+          DownTexts: [],
+          Formula: [],
+          Options: [],
+          Tags: [],
+          Answers: [],
+          Charts: [],
+          Clocks: [],
+          Tables: [],
+          Shapes: [],
+          AnswerText: '',
+          Helper: false,
+          Imgs: [],
+          Tips: [],
+          Choice: ''
+        }
+      )
+      localStorage.removeItem('tmpQue')
+      this.tmpQue = true
     }
   }
 }
