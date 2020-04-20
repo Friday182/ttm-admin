@@ -34,6 +34,25 @@
         />
       </template>
       <q-td
+        slot="body-cell-Approver"
+        slot-scope="props"
+        :props="props"
+      >
+        <q-btn
+          v-if="props.row.Approver=='NA'"
+          no-caps
+          dense
+          color="blue"
+          label="Approval"
+          @click="toApprovalQuiz(props.row.QuizId)"
+        />
+        <q-btn
+          v-else
+          flat
+          label="props.row.Approver"
+        />
+      </q-td>
+      <q-td
         slot="body-cell-edit"
         slot-scope="props"
         :props="props"
@@ -223,6 +242,9 @@ export default {
       } else {
         console.log('NO enough quiz')
       }
+    },
+    toApprovalQuiz (opt) {
+
     },
     toDeleteQuiz (opt) {
       this.$apollo
