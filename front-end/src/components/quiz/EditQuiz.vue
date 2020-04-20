@@ -15,8 +15,8 @@
             <q-btn
               color="bg-blue-10"
               no-caps
+              disable
               class="q-mx-lg glossy"
-              @click="addQuestion"
             >
               {{ quizId }}
             </q-btn>

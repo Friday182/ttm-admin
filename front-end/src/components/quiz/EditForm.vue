@@ -71,12 +71,12 @@
         </div>
         <div class="col-3 q-mr-sm">
           <q-select
-            v-model="inAnsType"
+            v-model="inType"
             outlined
             dense
-            label="Answer Type"
-            :options="ansTypeOptions"
-            @input="updateCurrentQuestion"
+            label="Types"
+            :options="typeOptions"
+            @input="updateQuestionType"
           />
         </div>
       </div>
@@ -270,6 +270,7 @@ export default {
       inStdSec: '30',
       inQueType: 'M_COM',
       inAnsType: 'SC',
+      inType: 'Line Chart',
       inComment: '',
       inUpText: '',
       inDownText: '',
@@ -290,6 +291,7 @@ export default {
       queTypeOptions: ['M_COM', 'M_TABLE', 'M_SHAPE', 'M_CHART'],
       ansTypeOptions: ['SC', 'IT', 'TF', 'MC'],
       answerOptions: ['Option A', 'Option B', 'Option C', 'Option D', 'Option E'],
+      typeOptions: ['Bar Chart', 'Pie Chart', 'Line Chart', 'Coordinate Chart'],
       kpOptions: ['MA24', 'MC16', 'MF5'],
       exampleTable: [{
         tableTitle: '',
@@ -503,81 +505,142 @@ export default {
           ]
         })
       } else if (this.inQueType === 'M_CHART') {
-        /* this.inJsonText.push({
-          'xAxis': {
-            'type': 'value',
-            'min': 0,
-            'max': 5,
-            'splitNumber': 5,
-            'name': 'Cups of flour',
-            'nameLocation': 'middle',
-            'nameGap': 40
-          },
-          'yAxis': {
-            'type': 'value',
-            'min': 0,
-            'max': 800,
-            'splitNumber': 4,
-            'name': 'Weight of flour (g)',
-            'nameLocation': 'middle',
-            'nameGap': 40
-          },
-          'series': {
-            'type': 'line',
-            'data': [ [0, 0], [5, 800] ]
-          }
-        }) */
-        this.inJsonText.push({
-          'grid': {
-            'bottom': 10,
-            'right': 10,
-            'containLabel': true
-          },
-          'xAxis': {
-            'type': 'value',
-            'min': -6,
-            'max': 5,
-            'splitNumber': 11,
-            'splitLine': {
-              'show': true,
-              'lineStyle': {
-                'color': '#999',
-                'type': 'dashed'
+        if (this.inType === 'Line Chart') {
+          this.inJsonText.push({
+            'xAxis': {
+              'type': 'value',
+              'min': 0,
+              'max': 5,
+              'splitNumber': 5,
+              'name': 'Cups of flour',
+              'nameLocation': 'middle',
+              'nameGap': 40
+            },
+            'yAxis': {
+              'type': 'value',
+              'min': 0,
+              'max': 800,
+              'splitNumber': 4,
+              'name': 'Weight of flour (g)',
+              'nameLocation': 'middle',
+              'nameGap': 40
+            },
+            'series': {
+              'type': 'line',
+              'data': [ [0, 0], [5, 800] ]
+            }
+          })
+        } else if (this.inType === 'Bar Chart') {
+          this.inJsonText.push({
+            'xAxis': {
+              'type': 'category',
+              'min': 0,
+              'max': 5,
+              'splitNumber': 5,
+              'name': 'Sports',
+              'nameLocation': 'middle',
+              'nameGap': 40,
+              'data': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            },
+            'yAxis': {
+              'type': 'value',
+              'min': 0,
+              'max': 400,
+              'splitNumber': 4,
+              'name': 'Numbers',
+              'nameLocation': 'middle',
+              'nameGap': 40
+            },
+            'series': {
+              'type': 'bar',
+              'barWidth': 40,
+              'data': [120, 200, 150, 80, 70, 110, 130]
+            }
+          })
+        } else if (this.inType === 'Pie Chart') {
+          this.inJsonText.push({
+            'legend': {
+              'orient': 'vertical',
+              'left': 10,
+              'data': ['6 marks', '7 marks', '8 marks', '9 marks', '10 marks']
+            },
+            'series': [{
+              'type': 'pie',
+              'radius': '100%',
+              'center': ['50%', '50%'],
+              'data': [
+                { 'name': '6 marks', 'value': 8 },
+                { 'name': '7 marks', 'value': 10 },
+                { 'name': '8 marks', 'value': 8 },
+                { 'name': '9 marks', 'value': 8 },
+                { 'name': '10 marks', 'value': 8 }
+              ],
+              'animation': false,
+              'label': {
+                'show': true,
+                'color': 'black',
+                'position': 'inside',
+                'bleedMargin': 5
+              },
+              'left': '20%',
+              'right': '20%',
+              'top': '20%',
+              'bottom': '20%'
+            }]
+          })
+        } else if (this.inType === 'Coordinate Chart') {
+          this.inJsonText.push({
+            'grid': {
+              'bottom': 10,
+              'right': 10,
+              'containLabel': true
+            },
+            'xAxis': {
+              'type': 'value',
+              'min': -6,
+              'max': 5,
+              'splitNumber': 11,
+              'splitLine': {
+                'show': true,
+                'lineStyle': {
+                  'color': '#999',
+                  'type': 'dashed'
+                }
+              },
+              'axisTick': {
+                'show': true,
+                'length': 10
+              },
+              'axisLine': {
               }
             },
-            'axisTick': {
-              'show': true,
-              'length': 10
-            },
-            'axisLine': {
-            }
-          },
-          'yAxis': {
-            'type': 'value',
-            'min': -3,
-            'max': 4,
-            'splitNumber': 7,
-            'splitLine': {
-              'show': true,
-              'lineStyle': {
-                'color': '#999',
-                'type': 'dashed'
+            'yAxis': {
+              'type': 'value',
+              'min': -3,
+              'max': 4,
+              'splitNumber': 7,
+              'splitLine': {
+                'show': true,
+                'lineStyle': {
+                  'color': '#999',
+                  'type': 'dashed'
+                }
+              },
+              'axisTick': {
+                'show': true,
+                'length': 10
+              },
+              'axisLine': {
+                'show': true
               }
             },
-            'axisTick': {
-              'show': true,
-              'length': 10
-            },
-            'axisLine': {
-              'show': true
+            'series': {
+              'type': 'scatter',
+              'data': [ [ -3, 3 ] ],
+              'symbolSize': 15
             }
-          },
-          'series': {
-            'type': 'scatter',
-            'data': [ [ -3, 3 ] ],
-            'symbolSize': 15
-          }
-        })
+          })
+        }
       } else if (this.inQueType === 'M_CLK') {
         this.inJsonText[0] = [{
           'type': 'Not Available'
