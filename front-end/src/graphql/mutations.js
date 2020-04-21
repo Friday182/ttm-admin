@@ -50,11 +50,12 @@ mutation AddQuiz($QuizId: String!, $Grade: Int!, $Desc: String!, $Operator: Stri
   )
 }`
 
-export const DEL_QUIZ_MUTATION = gql`
-mutation DelQuiz($Gid: String!, $QuizId: String!) {
-  DelQuiz(
+export const UPDATE_QUIZ_MUTATION = gql`
+mutation UpdateQuiz($Gid: String!, $QuizId: String!, $Status: String!) {
+  UpdateQuiz(
     gid: $Gid,
     quizId: $QuizId,
+    status: $Status,
   )
 }`
 

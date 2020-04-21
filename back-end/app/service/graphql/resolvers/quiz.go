@@ -89,3 +89,90 @@ func (r *mutationResolver) DelQuiz(ctx context.Context, gid string, quizID strin
 	}
 	return false, err
 }
+
+func (r *mutationResolver) UpdateQuiz(ctx context.Context, gid string, quizID string, status string) (bool, error) {
+	q := model.Quiz{}
+	user := model.User{}
+
+	err := r.TtmDb.Where("gid = ?", gid).First(&user).Error
+	if err != nil {
+		return false, err
+	}
+	err = r.QuizDb.Where("quiz_id=?", quizID).First(&q).Error
+	if err != nil {
+		return false, err
+	}
+
+	if status == "Delete" {
+		if user.Role != "admin" && user.Role != "staff" {
+			return false, errors.New("No right to delete quiz")
+		}
+		if q.Status == "NA" {
+			if err = r.QuizDb.Delete(&q).Error; err == nil {
+				return true, nil
+			}
+		}
+		return false, err
+	} else if status == "Finish" {
+		if q.Operator == user.Username {
+			q.Status = "Finish"
+			err = r.QuizDb.Save(&q).Error
+			return true, err
+		}
+		return false, errors.New("No valid operator")
+	} else if status == "Ready" {
+		if user.Role == "operator" {
+			return false, errors.New("No right to approval")
+		}
+		if q.Status != "Ready" {
+			q.Status = "Ready"
+			err = r.QuizDb.Save(&q).Error
+		}
+		return true, err
+	}
+
+	return false, errors.New("No successful")
+}
+
+func (r *mutationResolver) FinishQuiz(ctx context.Context, gid string, quizID string) (bool, error) {
+	q := model.Quiz{}
+	user := model.User{}
+
+	err := r.TtmDb.Where("gid = ?", gid).First(&user).Error
+	if gorm.IsRecordNotFoundError(err) {
+		return false, err
+	}
+	err = r.QuizDb.Where("quiz_id=?", quizID).First(&q).Error
+	if err == nil {
+		if q.Operator == user.Username {
+			q.Status = "Finish"
+			err = r.QuizDb.Save(&q).Error
+			return true, err
+		} else {
+			return false, errors.New("No valid operator")
+		}
+	}
+	return false, err
+}
+
+func (r *mutationResolver) ApprovalQuiz(ctx context.Context, gid string, quizID string) (bool, error) {
+	q := model.Quiz{}
+	user := model.User{}
+
+	err := r.TtmDb.Where("gid = ?", gid).First(&user).Error
+	if gorm.IsRecordNotFoundError(err) {
+		return false, err
+	}
+	if user.Role == "operator" {
+		return false, errors.New("No right to approval")
+	}
+	err = r.QuizDb.Where("quiz_id=?", quizID).First(&q).Error
+	if err == nil {
+		if q.Status != "Ready" {
+			q.Status = "Ready"
+			err = r.QuizDb.Save(&q).Error
+			return true, err
+		}
+	}
+	return false, err
+}

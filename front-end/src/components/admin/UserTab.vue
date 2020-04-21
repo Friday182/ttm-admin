@@ -73,7 +73,7 @@ export default {
   props: {
     role: {
       type: String,
-      default: ''
+      default: 'operator'
     }
   },
   data () {
@@ -190,6 +190,7 @@ export default {
     }
   },
   mounted () {
+    console.log('usertab mounted')
     this.fetchUser()
   },
   methods: {

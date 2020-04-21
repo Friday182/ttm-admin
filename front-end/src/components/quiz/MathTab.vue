@@ -39,18 +39,30 @@
         :props="props"
       >
         <q-btn
-          v-if="props.row.Approver=='NA'"
+          v-if="props.row.Status=='WIP'"
+          no-caps
+          dense
+          color="blue"
+          label="Finish"
+          @click="toUpdateQuiz(props.row.QuizId, 'Finish')"
+        />
+        <q-btn
+          v-else-if="props.row.Status=='Finish'"
           no-caps
           dense
           color="blue"
           label="Approval"
-          @click="toApprovalQuiz(props.row.QuizId)"
+          @click="toUpdateQuiz(props.row.QuizId, 'Ready')"
         />
         <q-btn
-          v-else
+          v-else-if="props.row.Status=='Ready'"
           flat
-          label="props.row.Approver"
-        />
+          no-caps
+          dense
+          color="blue"
+        >
+          {{ props.row.Approver }}
+        </q-btn>
       </q-td>
       <q-td
         slot="body-cell-edit"
@@ -72,7 +84,7 @@
           v-if="props.row.Status=='NA'"
           flat
           icon="delete"
-          @click="toDeleteQuiz(props.row.QuizId)"
+          @click="toUpdateQuiz(props.row.QuizId, 'Delete')"
         />
       </q-td>
       <template v-slot:no-data="{ icon, message, filter }">
@@ -98,7 +110,7 @@
 <script type="text/javascript">
 import { mapGetters, mapMutations } from 'vuex'
 import { GET_QUIZ_QUERY } from '../../graphql/queries'
-import { DEL_QUIZ_MUTATION } from '../../graphql/mutations'
+import { UPDATE_QUIZ_MUTATION } from '../../graphql/mutations'
 
 export default {
   name: 'MathQuizTable',
@@ -243,25 +255,25 @@ export default {
         console.log('NO enough quiz')
       }
     },
-    toApprovalQuiz (opt) {
-
-    },
-    toDeleteQuiz (opt) {
+    toUpdateQuiz (qid, status) {
       this.$apollo
         .mutate({
-          mutation: DEL_QUIZ_MUTATION,
+          mutation: UPDATE_QUIZ_MUTATION,
           variables: {
             Gid: this.currentUser.Gid,
-            QuizId: opt
+            QuizId: qid,
+            Status: status
           }
         })
         .then(response => {
           if (!response.errors) {
-            if (response.data.DelQuiz) {
-              console.log('Del quiz successful')
-              this.removeQuiz({
-                QuizId: opt
-              })
+            if (response.data.UpdateQuiz) {
+              console.log('Update quiz successful')
+              if (status === 'Delete') {
+                this.removeQuiz({
+                  QuizId: qid
+                })
+              }
             }
           } else {
             console.log('reponse error', response.errors)

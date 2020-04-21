@@ -5,6 +5,9 @@ type Mutation {
   DelQuiz(gid: String!, quizId: String!): Boolean!
   AddQuestion(que: AddQuestionInput!): Boolean!
   AddStudent(mentorEmail: String!, name: String! age: Int!): Student!
+  ApprovalQuiz(gid: String!, quizId: String!): Boolean!
+  FinishQuiz(gid: String!, quizId: String!): Boolean!
+  UpdateQuiz(gid: String!, quizId: String!, status: String!): Boolean!
 
   DelUser(gid: String!): Boolean!
   DelTaskLog(logID: Int!): Boolean!

@@ -203,6 +203,8 @@
         outlined
         v-model="inTags"
         multiple
+        map-options
+        emit-value
         :options="kpOptions"
         use-chips
         stack-label
@@ -292,7 +294,23 @@ export default {
       ansTypeOptions: ['SC', 'IT', 'TF', 'MC'],
       answerOptions: ['Option A', 'Option B', 'Option C', 'Option D', 'Option E'],
       typeOptions: ['Bar Chart', 'Pie Chart', 'Line Chart', 'Coordinate Chart'],
-      kpOptions: ['MA24', 'MC16', 'MF5'],
+      kpOptions: [
+        { label: 'DataHandling', value: 'MF6' },
+        { label: 'Algebra', value: 'MC31' },
+        { label: 'TimesTable', value: 'MA24' },
+        { label: 'Multiplication', value: 'MA39' },
+        { label: 'Division', value: 'MA51' },
+        { label: 'FourOperator', value: 'MA54' },
+        { label: 'MinusNumber', value: 'MA61' },
+        { label: 'Fraction', value: 'MB22' },
+        { label: 'Decimal', value: 'MB37' },
+        { label: 'Ratio&Percentage', value: 'MB43' },
+        { label: 'Measurement', value: 'MD20' },
+        { label: 'Shapes', value: 'ME4' },
+        { label: 'Rounding', value: 'MH6' },
+        { label: 'Average&Mean', value: 'MH12' },
+        { label: 'Time&Date', value: 'MI11' }
+      ],
       exampleTable: [{
         tableTitle: '',
         columns: ['columns'],

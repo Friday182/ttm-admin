@@ -92,16 +92,19 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AddQuestion func(childComplexity int, que AddQuestionInput) int
-		AddQuiz     func(childComplexity int, quiz AddQuizInput) int
-		AddStudent  func(childComplexity int, mentorEmail string, name string, age int) int
-		AddUser     func(childComplexity int, user AddUserInput) int
-		DelMentor   func(childComplexity int, email string) int
-		DelQuiz     func(childComplexity int, gid string, quizID string) int
-		DelStudent  func(childComplexity int, gid string) int
-		DelTaskLog  func(childComplexity int, logID int) int
-		DelUser     func(childComplexity int, gid string) int
-		UserLogin   func(childComplexity int, username string, password string) int
+		AddQuestion  func(childComplexity int, que AddQuestionInput) int
+		AddQuiz      func(childComplexity int, quiz AddQuizInput) int
+		AddStudent   func(childComplexity int, mentorEmail string, name string, age int) int
+		AddUser      func(childComplexity int, user AddUserInput) int
+		ApprovalQuiz func(childComplexity int, gid string, quizID string) int
+		DelMentor    func(childComplexity int, email string) int
+		DelQuiz      func(childComplexity int, gid string, quizID string) int
+		DelStudent   func(childComplexity int, gid string) int
+		DelTaskLog   func(childComplexity int, logID int) int
+		DelUser      func(childComplexity int, gid string) int
+		FinishQuiz   func(childComplexity int, gid string, quizID string) int
+		UpdateQuiz   func(childComplexity int, gid string, quizID string, status string) int
+		UserLogin    func(childComplexity int, username string, password string) int
 	}
 
 	Query struct {
@@ -280,6 +283,9 @@ type MutationResolver interface {
 	DelQuiz(ctx context.Context, gid string, quizID string) (bool, error)
 	AddQuestion(ctx context.Context, que AddQuestionInput) (bool, error)
 	AddStudent(ctx context.Context, mentorEmail string, name string, age int) (*model.Student, error)
+	ApprovalQuiz(ctx context.Context, gid string, quizID string) (bool, error)
+	FinishQuiz(ctx context.Context, gid string, quizID string) (bool, error)
+	UpdateQuiz(ctx context.Context, gid string, quizID string, status string) (bool, error)
 	DelUser(ctx context.Context, gid string) (bool, error)
 	DelTaskLog(ctx context.Context, logID int) (bool, error)
 	DelMentor(ctx context.Context, email string) (bool, error)
@@ -622,6 +628,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddUser(childComplexity, args["user"].(AddUserInput)), true
 
+	case "Mutation.ApprovalQuiz":
+		if e.complexity.Mutation.ApprovalQuiz == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_ApprovalQuiz_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ApprovalQuiz(childComplexity, args["gid"].(string), args["quizId"].(string)), true
+
 	case "Mutation.DelMentor":
 		if e.complexity.Mutation.DelMentor == nil {
 			break
@@ -681,6 +699,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DelUser(childComplexity, args["gid"].(string)), true
+
+	case "Mutation.FinishQuiz":
+		if e.complexity.Mutation.FinishQuiz == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_FinishQuiz_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.FinishQuiz(childComplexity, args["gid"].(string), args["quizId"].(string)), true
+
+	case "Mutation.UpdateQuiz":
+		if e.complexity.Mutation.UpdateQuiz == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_UpdateQuiz_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateQuiz(childComplexity, args["gid"].(string), args["quizId"].(string), args["status"].(string)), true
 
 	case "Mutation.UserLogin":
 		if e.complexity.Mutation.UserLogin == nil {
@@ -1907,6 +1949,9 @@ type QuizReport {
   DelQuiz(gid: String!, quizId: String!): Boolean!
   AddQuestion(que: AddQuestionInput!): Boolean!
   AddStudent(mentorEmail: String!, name: String! age: Int!): Student!
+  ApprovalQuiz(gid: String!, quizId: String!): Boolean!
+  FinishQuiz(gid: String!, quizId: String!): Boolean!
+  UpdateQuiz(gid: String!, quizId: String!, status: String!): Boolean!
 
   DelUser(gid: String!): Boolean!
   DelTaskLog(logID: Int!): Boolean!
@@ -2088,6 +2133,28 @@ func (ec *executionContext) field_Mutation_AddUser_args(ctx context.Context, raw
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_ApprovalQuiz_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["gid"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["gid"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["quizId"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["quizId"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_DelMentor_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2163,6 +2230,58 @@ func (ec *executionContext) field_Mutation_DelUser_args(ctx context.Context, raw
 		}
 	}
 	args["gid"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_FinishQuiz_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["gid"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["gid"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["quizId"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["quizId"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_UpdateQuiz_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["gid"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["gid"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["quizId"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["quizId"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["status"]; ok {
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["status"] = arg2
 	return args, nil
 }
 
@@ -3903,6 +4022,138 @@ func (ec *executionContext) _Mutation_AddStudent(ctx context.Context, field grap
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalNStudent2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐStudent(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_ApprovalQuiz(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_ApprovalQuiz_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ApprovalQuiz(rctx, args["gid"].(string), args["quizId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_FinishQuiz(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_FinishQuiz_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().FinishQuiz(rctx, args["gid"].(string), args["quizId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_UpdateQuiz(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_UpdateQuiz_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateQuiz(rctx, args["gid"].(string), args["quizId"].(string), args["status"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_DelUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -10776,6 +11027,21 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "AddStudent":
 			out.Values[i] = ec._Mutation_AddStudent(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "ApprovalQuiz":
+			out.Values[i] = ec._Mutation_ApprovalQuiz(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "FinishQuiz":
+			out.Values[i] = ec._Mutation_FinishQuiz(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "UpdateQuiz":
+			out.Values[i] = ec._Mutation_UpdateQuiz(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
