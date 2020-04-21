@@ -50,6 +50,7 @@
           v-else-if="props.row.Status=='Finish'"
           no-caps
           dense
+          :disable="!addQuizActive"
           color="blue"
           label="Approval"
           @click="toUpdateQuiz(props.row.QuizId, 'Ready')"
@@ -72,6 +73,7 @@
         <q-btn
           flat
           icon="edit"
+          :disable="props.row.Status=='Ready' || props.row.Status=='Finish'"
           @click="toEditQuiz(props.row.QuizId)"
         />
       </q-td>

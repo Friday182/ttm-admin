@@ -65,7 +65,7 @@ func (r *mutationResolver) AddQuiz(ctx context.Context, quiz generated.AddQuizIn
 
 		return true, err
 	}
-	return false, errors.New("Quiz already exist!")
+	return false, errors.New("Quiz already exist")
 }
 
 func (r *mutationResolver) DelQuiz(ctx context.Context, gid string, quizID string) (bool, error) {
@@ -126,6 +126,7 @@ func (r *mutationResolver) UpdateQuiz(ctx context.Context, gid string, quizID st
 		}
 		if q.Status != "Ready" {
 			q.Status = "Ready"
+			q.Approver = user.Username
 			err = r.QuizDb.Save(&q).Error
 		}
 		return true, err
