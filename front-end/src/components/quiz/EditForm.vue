@@ -1,256 +1,296 @@
 <template>
-  <q-card>
-    <q-card-section class="q-ml-md">
-      <div class="row">
-        <q-btn
-          label="Copy"
-          no-caps
-          color="primary"
-          style="font: 120% Arial bold"
-          @click="copyQuestion()"
-        />
-        <q-btn
-          class="q-ml-md"
-          label="Paste"
-          no-caps
-          color="primary"
-          :disable="tmpQue"
-          style="font: 120% Arial bold"
-          @click="pasteQuestion()"
-        />
-        <q-btn
-          class="q-ml-md"
-          label="Clear"
-          no-caps
-          color="primary"
-          :disable="tmpQue"
-          style="font: 120% Arial bold"
-          @click="clearForm()"
-        />
-        <q-space />
-        <q-btn
-          label="Save Question"
-          no-caps
-          color="primary"
-          style="font: 120% Arial bold"
-          @click="saveQuestion()"
-        />
-      </div>
-    </q-card-section>
-    <q-separator />
-    <q-card-section>
-      <div class="row q-ml-md">
-        <div class="col-3 q-mr-sm">
-          <q-input
-            v-model="inQueIdx"
-            outlined
-            dense
-            disable
-            label="Question Index"
-          />
-        </div>
-        <div class="col-2 q-mr-sm">
-          <q-input
-            v-model="inStdSec"
-            outlined
-            dense
-            type="number"
-            label="Std Second"
-            @input="updateCurrentQuestion"
-          />
-        </div>
-        <div class="col-3 q-mr-sm">
-          <q-select
-            v-model="inQueType"
-            outlined
-            dense
-            label="Question Type"
-            :options="queTypeOptions"
-            @input="updateQuestionType"
-          />
-        </div>
-        <div class="col-3 q-mr-sm">
-          <q-select
-            v-model="inType"
-            outlined
-            dense
-            label="Types"
-            :options="typeOptions"
-            @input="updateQuestionType"
-          />
-        </div>
-      </div>
-    </q-card-section>
-    <q-card-section class="q-ml-md">
-      <q-input
-        v-model="inUpText"
-        outlined
-        type="textarea"
-        label="Up Text"
-      >
-        <template v-slot:append>
+  <div>
+    <q-card>
+      <q-card-section class="q-ml-md">
+        <div class="row">
           <q-btn
-            round
-            dense
-            color="blue"
-            icon="send"
-            @click="updateCurrentQuestion"
+            label="Copy"
+            no-caps
+            color="primary"
+            style="font: 120% Arial bold"
+            @click="copyQuestion()"
           />
-        </template>
-      </q-input>
-    </q-card-section>
-    <q-card-section class="q-ml-md">
-      <q-input
-        v-model="inFormula"
-        outlined
-        label="Formula"
-      >
-        <template v-slot:append>
           <q-btn
-            round
-            dense
-            color="blue"
-            icon="send"
-            @click="updateCurrentQuestion"
+            class="q-ml-md"
+            label="Paste"
+            no-caps
+            color="primary"
+            :disable="tmpQue"
+            style="font: 120% Arial bold"
+            @click="pasteQuestion()"
           />
-        </template>
-      </q-input>
-    </q-card-section>
-    <q-card-section class="q-ml-md">
-      <q-btn
-        class="q-mb-xs"
-        color="blue"
-        icon="send"
-        label="Save"
-        @click="updateCurrentQuestion"
-      />
-      <v-jsoneditor
-        v-model="inJsonText"
-        :plus="false"
-        height="600px"
-        :options="vjsonOptions"
-      />
-    </q-card-section>
-    <q-card-section class="q-ml-md">
-      <q-input
-        v-model="inDownText"
-        outlined
-        type="textarea"
-        label="Down Text"
-      >
-        <template v-slot:append>
           <q-btn
-            round
-            dense
-            color="blue"
-            icon="send"
-            @click="updateCurrentQuestion"
+            class="q-ml-md"
+            label="Clear"
+            no-caps
+            color="primary"
+            :disable="tmpQue"
+            style="font: 120% Arial bold"
+            @click="clearForm()"
           />
-        </template>
-      </q-input>
-    </q-card-section>
-    <q-card-section class="q-ml-md">
-      <q-input
-        v-model="inOption1"
-        outlined
-        label="Option A"
-        @input="updateCurrentQuestion"
-      />
-      <q-input
-        v-model="inOption2"
-        class="q-mt-xs"
-        outlined
-        label="Option B"
-        @input="updateCurrentQuestion"
-      />
-      <q-input
-        v-model="inOption3"
-        class="q-mt-xs"
-        outlined
-        label="Option C"
-        @input="updateCurrentQuestion"
-      />
-      <q-input
-        v-model="inOption4"
-        class="q-mt-xs"
-        outlined
-        label="Option D"
-        @input="updateCurrentQuestion"
-      />
-      <q-input
-        v-model="inOption5"
-        class="q-mt-xs"
-        outlined
-        label="Option E"
-        @input="updateCurrentQuestion"
-      />
-    </q-card-section>
-    <q-card-section class="q-ml-md">
-      <div class="row">
-        <div class="col-3">
-          <q-select
-            v-model="inAnswer"
-            outlined
-            dense
-            label="Answer"
-            :options="answerOptions"
+          <q-space />
+          <q-btn
+            label="Save Question"
+            no-caps
+            color="primary"
+            style="font: 120% Arial bold"
+            @click="saveQuestion()"
           />
         </div>
-      </div>
-    </q-card-section>
-    <q-card-section class="q-ml-md">
-      <q-select
-        outlined
-        v-model="inTags"
-        multiple
-        map-options
-        emit-value
-        :options="kpOptions"
-        use-chips
-        stack-label
-        label="KP Dependency"
-        @input="updateCurrentQuestion"
-      />
-    </q-card-section>
-    <q-separator />
-    <q-card-section class="q-ml-md">
-      <div class="row">
+      </q-card-section>
+      <q-separator />
+      <q-card-section>
+        <div class="row q-ml-md">
+          <div class="col-3 q-mr-sm">
+            <q-input
+              v-model="inQueIdx"
+              outlined
+              dense
+              disable
+              label="Question Index"
+            />
+          </div>
+          <div class="col-2 q-mr-sm">
+            <q-input
+              v-model="inStdSec"
+              outlined
+              dense
+              type="number"
+              label="Std Second"
+              @input="updateCurrentQuestion"
+            />
+          </div>
+          <div class="col-3 q-mr-sm">
+            <q-select
+              v-model="inQueType"
+              outlined
+              dense
+              label="Question Type"
+              :options="queTypeOptions"
+              @input="updateQuestionType"
+            />
+          </div>
+          <div class="col-3 q-mr-sm">
+            <q-select
+              v-model="inType"
+              outlined
+              dense
+              label="Types"
+              :options="typeOptions"
+              @input="updateQuestionType"
+            />
+          </div>
+        </div>
+      </q-card-section>
+      <q-card-section class="q-ml-md">
+        <q-input
+          v-model="inUpText"
+          outlined
+          type="textarea"
+          label="Up Text"
+        >
+          <template v-slot:append>
+            <q-btn
+              round
+              dense
+              color="blue"
+              icon="send"
+              @click="updateCurrentQuestion"
+            />
+          </template>
+        </q-input>
+      </q-card-section>
+      <q-card-section class="q-ml-md">
+        <q-input
+          v-model="inFormula"
+          outlined
+          label="Formula"
+        >
+          <template v-slot:append>
+            <q-btn
+              round
+              dense
+              color="blue"
+              icon="send"
+              @click="updateCurrentQuestion"
+            />
+          </template>
+        </q-input>
+      </q-card-section>
+      <q-card-section class="q-ml-md">
         <q-btn
-          label="Copy"
-          no-caps
-          color="primary"
-          style="font: 120% Arial bold"
-          @click="copyQuestion()"
+          class="q-mb-xs"
+          color="blue"
+          icon="send"
+          label="Save"
+          @click="updateCurrentQuestion"
         />
-        <q-btn
-          class="q-ml-md"
-          label="Paste"
-          no-caps
-          color="primary"
-          :disable="tmpQue"
-          style="font: 120% Arial bold"
-          @click="pasteQuestion()"
+        <v-jsoneditor
+          v-model="inJsonText"
+          :plus="false"
+          height="600px"
+          :options="vjsonOptions"
         />
-        <q-btn
-          class="q-ml-md"
-          label="Clear"
-          no-caps
-          color="primary"
-          :disable="tmpQue"
-          style="font: 120% Arial bold"
-          @click="clearForm()"
+      </q-card-section>
+      <q-card-section class="q-ml-md">
+        <q-input
+          v-model="inDownText"
+          outlined
+          type="textarea"
+          label="Down Text"
+        >
+          <template v-slot:append>
+            <q-btn
+              round
+              dense
+              color="blue"
+              icon="send"
+              @click="updateCurrentQuestion"
+            />
+          </template>
+        </q-input>
+      </q-card-section>
+      <q-card-section class="q-ml-md">
+        <q-input
+          v-model="inOption1"
+          outlined
+          label="Option A"
+          @input="updateCurrentQuestion"
         />
-        <q-space />
-        <q-btn
-          label="Save Question"
-          no-caps
-          color="primary"
-          style="font: 120% Arial bold"
-          @click="saveQuestion()"
+        <q-input
+          v-model="inOption2"
+          class="q-mt-xs"
+          outlined
+          label="Option B"
+          @input="updateCurrentQuestion"
         />
-      </div>
-    </q-card-section>
-  </q-card>
+        <q-input
+          v-model="inOption3"
+          class="q-mt-xs"
+          outlined
+          label="Option C"
+          @input="updateCurrentQuestion"
+        />
+        <q-input
+          v-model="inOption4"
+          class="q-mt-xs"
+          outlined
+          label="Option D"
+          @input="updateCurrentQuestion"
+        />
+        <q-input
+          v-model="inOption5"
+          class="q-mt-xs"
+          outlined
+          label="Option E"
+          @input="updateCurrentQuestion"
+        />
+      </q-card-section>
+      <q-card-section class="q-ml-md">
+        <div class="row">
+          <div class="col-3">
+            <q-select
+              v-model="inAnswer"
+              outlined
+              dense
+              label="Answer"
+              :options="answerOptions"
+            />
+          </div>
+        </div>
+      </q-card-section>
+      <q-card-section class="q-ml-md">
+        <div class="row">
+          <div class="col-2 bg-cyan-1">
+            <q-btn
+              color="primary"
+              label="Select KPs"
+              dense
+              no-caps
+            >
+              <q-menu fit anchor="top right" self="bottom middle">
+                <q-list dense style="min-width: 100px">
+                  <q-item
+                    v-for="(item, key) in kpOptions"
+                    :key="key"
+                    clickable
+                  >
+                    <q-item-section class="text-deep-orange"> {{ item.label }} </q-item-section>
+                    <q-item-section side>
+                      <q-icon name="keyboard_arrow_right" />
+                    </q-item-section>
+                    <q-menu anchor="top right" self="top left">
+                      <q-list>
+                        <q-item
+                          v-for="(child, key) in item.children"
+                          :key="key"
+                          dense
+                          clickable
+                          v-close-popup
+                          @click="addInTags(child.value)"
+                        >
+                          <q-item-section class="text-blue">{{ child.label }}</q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-menu>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-btn>
+          </div>
+          <div class="col-4 bg-cyan-1">
+            <q-chip
+              v-for="item in inTags"
+              :key="item"
+              removable
+              color="primary"
+              text-color="white"
+              :label="item"
+              @remove="removeTag(item)"
+            />
+          </div>
+        </div>
+      </q-card-section>
+      <q-separator />
+      <q-card-section class="q-ml-md">
+        <div class="row">
+          <q-btn
+            label="Copy"
+            no-caps
+            color="primary"
+            style="font: 120% Arial bold"
+            @click="copyQuestion()"
+          />
+          <q-btn
+            class="q-ml-md"
+            label="Paste"
+            no-caps
+            color="primary"
+            :disable="tmpQue"
+            style="font: 120% Arial bold"
+            @click="pasteQuestion()"
+          />
+          <q-btn
+            class="q-ml-md"
+            label="Clear"
+            no-caps
+            color="primary"
+            :disable="tmpQue"
+            style="font: 120% Arial bold"
+            @click="clearForm()"
+          />
+          <q-space />
+          <q-btn
+            label="Save Question"
+            no-caps
+            color="primary"
+            style="font: 120% Arial bold"
+            @click="saveQuestion()"
+          />
+        </div>
+      </q-card-section>
+    </q-card>
+  </div>
 </template>
 
 <script>
@@ -284,7 +324,7 @@ export default {
       inOption4: '',
       inOption5: '',
       inAnswer: '',
-      inTags: ['MA24'],
+      inTags: [],
       tmpQue: true,
       usedSeconds: 0,
       vjsonOptions: {
@@ -294,7 +334,32 @@ export default {
       ansTypeOptions: ['SC', 'IT', 'TF', 'MC'],
       answerOptions: ['Option A', 'Option B', 'Option C', 'Option D', 'Option E'],
       typeOptions: ['Bar Chart', 'Pie Chart', 'Line Chart', 'Coordinate Chart'],
+      elprops: {
+        multiple: true,
+        expandTrigger: 'hover'
+      },
       kpOptions: [
+        {
+          value: '1',
+          label: 'Basic Calculation',
+          children: [
+            { value: 'MA1', label: 'Plus' },
+            { value: 'MA2', label: 'Minus' },
+            { value: 'MA3', label: 'Multiple' },
+            { value: 'MA4', label: 'Division' }
+          ]
+        },
+        {
+          value: '2',
+          label: 'DataHandling',
+          children: [
+            { value: 'MF1', label: 'Bar Chart' },
+            { value: 'MF2', label: 'Line Chart' },
+            { value: 'MF3', label: 'Table' }
+          ]
+        }
+      ],
+      kpOptionsOld: [
         { label: 'DataHandling', value: 'MF6' },
         { label: 'Algebra', value: 'MC31' },
         { label: 'TimesTable', value: 'MA24' },
@@ -497,6 +562,18 @@ export default {
     },
     onJsonChange (value) {
       console.log('value:', value)
+    },
+    addInTags: function (tag) {
+      console.log('added tag: ', tag)
+      this.inTags.push(tag)
+    },
+    removeTag: function (tag) {
+      console.log('remove tag:', tag)
+      for (let i = 0; i < this.inTags.length; i++) {
+        if (this.inTags[i] === tag) {
+          this.inTags.splice(i, 1)
+        }
+      }
     },
     updateSecs: function () {
       this.usedSeconds++
