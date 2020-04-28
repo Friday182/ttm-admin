@@ -214,12 +214,18 @@
                     v-for="(item, key) in kpOptions"
                     :key="key"
                     clickable
+                    @mouseover.native="setOver(item.value, true)"
+                    @mouseout.native="setOver(item.value, false)"
                   >
                     <q-item-section class="text-deep-orange"> {{ item.label }} </q-item-section>
                     <q-item-section side>
                       <q-icon name="keyboard_arrow_right" />
                     </q-item-section>
-                    <q-menu anchor="top right" self="top left">
+                    <q-menu
+                      v-model="item.active"
+                      anchor="top right"
+                      self="top left"
+                    >
                       <q-list>
                         <q-item
                           v-for="(child, key) in item.children"
@@ -297,6 +303,7 @@
 import VJsoneditor from 'v-jsoneditor'
 import { ADD_QUESTION_MUTATION } from '../../graphql/mutations'
 import { mapMutations, mapGetters, mapActions } from 'vuex'
+import { debounce } from 'quasar'
 
 export default {
   name: 'AddQuiz',
@@ -342,6 +349,8 @@ export default {
         {
           value: '1',
           label: 'Basic Calculation',
+          over: false,
+          active: false,
           children: [
             { value: 'MA1', label: 'Plus' },
             { value: 'MA2', label: 'Minus' },
@@ -352,6 +361,8 @@ export default {
         {
           value: '2',
           label: 'DataHandling',
+          over: false,
+          active: false,
           children: [
             { value: 'MF1', label: 'Bar Chart' },
             { value: 'MF2', label: 'Line Chart' },
@@ -537,18 +548,18 @@ export default {
             }
           } else {
             console.log('reponse error', response.errors)
-            this.alertError()
+            this.alertError('Question Save Failed ! ! !')
           }
         })
         .catch(error => {
           console.log(error)
-          this.alertError()
+          this.alertError('Question Save Failed ! ! !')
         })
     },
-    alertError () {
+    alertError (msg) {
       const dialog = this.$q.dialog({
         title: 'Error',
-        message: 'Question Save Failed ! ! !',
+        message: msg,
         html: false,
         ok: {
           push: true
@@ -558,14 +569,27 @@ export default {
       })
       const timer = setTimeout(() => {
         dialog.hide()
-      }, 2000)
+      }, 3000)
     },
     onJsonChange (value) {
       console.log('value:', value)
     },
     addInTags: function (tag) {
       console.log('added tag: ', tag)
-      this.inTags.push(tag)
+      if (this.inTags.length < 3) {
+        let isNew = true
+        for (let i = 0; i < this.inTags.length; i++) {
+          if (this.inTags[i] === tag) {
+            isNew = false
+            break
+          }
+        }
+        if (isNew === true) {
+          this.inTags.push(tag)
+        }
+      } else {
+        this.alertError('Maximum 3 tags!')
+      }
     },
     removeTag: function (tag) {
       console.log('remove tag:', tag)
@@ -575,6 +599,19 @@ export default {
         }
       }
     },
+    checkOver: function (idx, isHover) {
+      let tmp = parseInt(idx) - 1
+      console.log('idx to tmp:', tmp)
+      if (this.kpOptions[tmp].over) {
+        this.kpOptions[tmp].active = true
+      }
+    },
+    setOver (idx, isHover) {
+      let tmp = parseInt(idx) - 1
+      this.kpOptions[tmp].over = isHover
+      this.debounceFunc(idx, isHover)
+    },
+    debounceFunc: debounce(function (idx, isHover) { this.checkOver(idx, isHover) }, 300),
     updateSecs: function () {
       this.usedSeconds++
     },
