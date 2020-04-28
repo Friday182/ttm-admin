@@ -200,8 +200,8 @@
         </div>
       </q-card-section>
       <q-card-section class="q-ml-md">
-        <div class="row">
-          <div class="col-2 bg-cyan-1">
+        <div class="row bg-cyan-1">
+          <div class="col-2">
             <q-btn
               color="primary"
               label="Select KPs"
@@ -244,7 +244,7 @@
               </q-menu>
             </q-btn>
           </div>
-          <div class="col-4 bg-cyan-1">
+          <div class="col-5">
             <q-chip
               v-for="item in inTags"
               :key="item"
