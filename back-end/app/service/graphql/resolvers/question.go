@@ -97,10 +97,10 @@ func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQue
 	newQue.Clocks = tmp
 
 	tmpStr = strings.TrimSuffix(que.Tags, "||")
-	tmpArray = strings.Split(tmpStr, "||")
-	tmp, err = json.Marshal(tmpArray)
+	tmpTags := strings.Split(tmpStr, "||")
+	tmp, err = json.Marshal(tmpTags)
 	newQue.Tags = tmp
-
+	
 	// Check Answer is valid
 	tmpArray = strings.Split(que.Answers, "||")
 	tmp, err = json.Marshal(tmpArray)
@@ -120,8 +120,35 @@ func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQue
 	if err == nil {
 		if quiz.Status != "WIP" {
 			quiz.Status = "WIP"
-			r.QuizDb.Save(&quiz)
 		}
+		// update quiz details
+		tmpDetails := model.QuizDetails{}
+		err = json.Unmarshal(quiz.Details, &tmpDetails)
+		for i := 0; i < len(tmpTags); i++ {
+			if strings.Contains(tmpTags[i], "MA") {
+				tmpDetails.Ma++
+			} else if strings.Contains(tmpTags[i], "MB") {
+				tmpDetails.Mb++
+			} else if strings.Contains(tmpTags[i], "MC") {
+				tmpDetails.Mc++
+			} else if strings.Contains(tmpTags[i], "MD") {
+				tmpDetails.Md++
+			} else if strings.Contains(tmpTags[i], "ME") {
+				tmpDetails.Me++
+			} else if strings.Contains(tmpTags[i], "MF") {
+				tmpDetails.Mf++
+			} else if strings.Contains(tmpTags[i], "MG") {
+				tmpDetails.Mg++
+			} else if strings.Contains(tmpTags[i], "MH") {
+				tmpDetails.Mh++
+			} else if strings.Contains(tmpTags[i], "MI") {
+				tmpDetails.Mi++
+			} else if strings.Contains(tmpTags[i], "MJ") {
+				tmpDetails.Mj++
+			}
+		}
+		quiz.Details, _ = json.Marshal(tmpDetails)
+		r.QuizDb.Save(&quiz)
 	}
 	return true, nil
 }

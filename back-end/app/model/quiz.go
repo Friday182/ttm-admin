@@ -19,6 +19,7 @@ type Quiz struct {
 	Operator  string
 	Approver  string
 	Comment   string
+	Details   []byte  // list of QuizDetails
 }
 
 // QuizLog Record for each time quiz be completed
@@ -57,4 +58,18 @@ type QuizReport struct {
 	QuizList   []byte // string array of quiz idx
 	Feedback   string `gorm:"size:1000"`
 	Comment    string `gorm:"size:1000"`
+}
+
+// QuizDetails quiz question statistics
+type QuizDetails struct{
+	Ma int
+	Mb int
+	Mc int
+	Md int
+	Me int
+	Mf int
+	Mg int
+	Mh int
+	Mi int
+	Mj int
 }

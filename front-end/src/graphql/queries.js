@@ -12,6 +12,18 @@ export const GET_QUIZ_QUERY = gql`query GetQuizMsg($gid: String!){
     Comment
     CreatedAt
     UpdatedAt
+    Details {
+      Ma
+      Mb
+      Mc
+      Md
+      Me
+      Mf
+      Mg
+      Mh
+      Mi
+      Mj
+    }
   }
 }`
 

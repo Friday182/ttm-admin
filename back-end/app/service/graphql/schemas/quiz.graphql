@@ -11,6 +11,7 @@ type Quiz {
 	Approver:  String!
   CreatedAt: Time!
 	UpdatedAt: Time
+  Details:   QuizDetails!
 }
 
 input AddQuizInput {
@@ -55,4 +56,17 @@ type QuizReport {
   QuizList:   [String!]!
 	Feedback:   String!
 	Comment:    String!
+}
+
+type QuizDetails {
+  Ma: Int!
+  Mb: Int!
+  Mc: Int!
+  Md: Int!
+  Me: Int!
+  Mf: Int!
+  Mg: Int!
+  Mh: Int!
+  Mi: Int!
+  Mj: Int!
 }

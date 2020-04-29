@@ -23,6 +23,9 @@ func (r *Resolver) Query() generated.QueryResolver {
 func (r *Resolver) Question() generated.QuestionResolver {
 	return &questionResolver{r}
 }
+func (r *Resolver) Quiz() generated.QuizResolver {
+	return &quizResolver{r}
+}
 func (r *Resolver) QuizLog() generated.QuizLogResolver {
 	return &quizLogResolver{r}
 }
@@ -153,6 +156,12 @@ func (r *questionResolver) Imgs(ctx context.Context, obj *model.Question) ([]str
 	panic("not implemented")
 }
 func (r *questionResolver) Tips(ctx context.Context, obj *model.Question) ([]string, error) {
+	panic("not implemented")
+}
+
+type quizResolver struct{ *Resolver }
+
+func (r *quizResolver) Details(ctx context.Context, obj *model.Quiz) (*generated.QuizDetails, error) {
 	panic("not implemented")
 }
 

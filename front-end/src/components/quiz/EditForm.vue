@@ -360,6 +360,45 @@ export default {
         },
         {
           value: '2',
+          label: 'Decimal & Fraction',
+          over: false,
+          active: false,
+          children: [
+            { value: 'MB20', label: 'Fraction' },
+            { value: 'MB35', label: 'Decimal' }
+          ]
+        },
+        {
+          value: '3',
+          label: 'Algebra',
+          over: false,
+          active: false
+        },
+        {
+          value: '4',
+          label: 'Measurement',
+          over: false,
+          active: false,
+          children: [
+            { value: 'MD1', label: 'Angle' },
+            { value: 'MD23', label: 'Perimeter' },
+            { value: 'MD20', label: 'Area' },
+            { value: 'MD24', label: 'Volume' },
+            { value: 'MD29', label: 'Speed' }
+          ]
+        },
+        {
+          value: '5',
+          label: 'Shapes',
+          over: false,
+          active: false,
+          children: [
+            { value: 'ME1', label: '2D Shape' },
+            { value: 'ME23', label: '3D Shape' }
+          ]
+        },
+        {
+          value: '6',
           label: 'DataHandling',
           over: false,
           active: false,
@@ -367,6 +406,29 @@ export default {
             { value: 'MF1', label: 'Bar Chart' },
             { value: 'MF2', label: 'Line Chart' },
             { value: 'MF3', label: 'Table' }
+          ]
+        },
+        {
+          value: '7',
+          label: 'Time & Date',
+          over: false,
+          active: false,
+          children: [
+            { value: 'MI1', label: 'Time Calculation' },
+            { value: 'MI23', label: 'Date Calculation' }
+          ]
+        },
+        {
+          value: '8',
+          label: 'Misc',
+          over: false,
+          active: false,
+          children: [
+            { value: 'MH17', label: 'Prime Number' },
+            { value: 'MH14', label: 'Romen Number' },
+            { value: 'MH6', label: 'Rounding' },
+            { value: 'MH15', label: 'Factor & Ratio' },
+            { value: 'MH18', label: 'Percentage' }
           ]
         }
       ],

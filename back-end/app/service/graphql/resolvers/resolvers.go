@@ -28,6 +28,9 @@ func (r *Resolver) Query() generated.QueryResolver {
 func (r *Resolver) Question() generated.QuestionResolver {
 	return &questionResolver{r}
 }
+func (r *Resolver) Quiz() generated.QuizResolver {
+	return &quizResolver{r}
+}
 func (r *Resolver) QuizLog() generated.QuizLogResolver {
 	return &quizLogResolver{r}
 }
@@ -175,6 +178,14 @@ func (r *questionResolver) Tips(ctx context.Context, obj *model.Question) ([]str
 	tmp := []string{}
 	err := json.Unmarshal(obj.Tips, &tmp)
 	return tmp, err
+}
+
+type quizResolver struct{ *Resolver }
+
+func (r *quizResolver) Details(ctx context.Context, obj *model.Quiz) (*generated.QuizDetails, error) {
+	tmp := generated.QuizDetails{}
+	err := json.Unmarshal(obj.Details, &tmp)
+	return &tmp, err
 }
 
 type quizLogResolver struct{ *Resolver }

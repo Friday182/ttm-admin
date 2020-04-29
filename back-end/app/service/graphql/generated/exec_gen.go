@@ -40,6 +40,7 @@ type ResolverRoot interface {
 	Mutation() MutationResolver
 	Query() QueryResolver
 	Question() QuestionResolver
+	Quiz() QuizResolver
 	QuizLog() QuizLogResolver
 	QuizReport() QuizReportResolver
 	Student() StudentResolver
@@ -149,6 +150,7 @@ type ComplexityRoot struct {
 		Comment   func(childComplexity int) int
 		CreatedAt func(childComplexity int) int
 		Desc      func(childComplexity int) int
+		Details   func(childComplexity int) int
 		Grade     func(childComplexity int) int
 		ID        func(childComplexity int) int
 		Operator  func(childComplexity int) int
@@ -156,6 +158,19 @@ type ComplexityRoot struct {
 		Status    func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
 		UsedCount func(childComplexity int) int
+	}
+
+	QuizDetails struct {
+		Ma func(childComplexity int) int
+		Mb func(childComplexity int) int
+		Mc func(childComplexity int) int
+		Md func(childComplexity int) int
+		Me func(childComplexity int) int
+		Mf func(childComplexity int) int
+		Mg func(childComplexity int) int
+		Mh func(childComplexity int) int
+		Mi func(childComplexity int) int
+		Mj func(childComplexity int) int
 	}
 
 	QuizLog struct {
@@ -318,6 +333,9 @@ type QuestionResolver interface {
 
 	Imgs(ctx context.Context, obj *model.Question) ([]string, error)
 	Tips(ctx context.Context, obj *model.Question) ([]string, error)
+}
+type QuizResolver interface {
+	Details(ctx context.Context, obj *model.Quiz) (*QuizDetails, error)
 }
 type QuizLogResolver interface {
 	ResultList(ctx context.Context, obj *model.QuizLog) ([]string, error)
@@ -1031,6 +1049,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Quiz.Desc(childComplexity), true
 
+	case "Quiz.Details":
+		if e.complexity.Quiz.Details == nil {
+			break
+		}
+
+		return e.complexity.Quiz.Details(childComplexity), true
+
 	case "Quiz.Grade":
 		if e.complexity.Quiz.Grade == nil {
 			break
@@ -1079,6 +1104,76 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Quiz.UsedCount(childComplexity), true
+
+	case "QuizDetails.Ma":
+		if e.complexity.QuizDetails.Ma == nil {
+			break
+		}
+
+		return e.complexity.QuizDetails.Ma(childComplexity), true
+
+	case "QuizDetails.Mb":
+		if e.complexity.QuizDetails.Mb == nil {
+			break
+		}
+
+		return e.complexity.QuizDetails.Mb(childComplexity), true
+
+	case "QuizDetails.Mc":
+		if e.complexity.QuizDetails.Mc == nil {
+			break
+		}
+
+		return e.complexity.QuizDetails.Mc(childComplexity), true
+
+	case "QuizDetails.Md":
+		if e.complexity.QuizDetails.Md == nil {
+			break
+		}
+
+		return e.complexity.QuizDetails.Md(childComplexity), true
+
+	case "QuizDetails.Me":
+		if e.complexity.QuizDetails.Me == nil {
+			break
+		}
+
+		return e.complexity.QuizDetails.Me(childComplexity), true
+
+	case "QuizDetails.Mf":
+		if e.complexity.QuizDetails.Mf == nil {
+			break
+		}
+
+		return e.complexity.QuizDetails.Mf(childComplexity), true
+
+	case "QuizDetails.Mg":
+		if e.complexity.QuizDetails.Mg == nil {
+			break
+		}
+
+		return e.complexity.QuizDetails.Mg(childComplexity), true
+
+	case "QuizDetails.Mh":
+		if e.complexity.QuizDetails.Mh == nil {
+			break
+		}
+
+		return e.complexity.QuizDetails.Mh(childComplexity), true
+
+	case "QuizDetails.Mi":
+		if e.complexity.QuizDetails.Mi == nil {
+			break
+		}
+
+		return e.complexity.QuizDetails.Mi(childComplexity), true
+
+	case "QuizDetails.Mj":
+		if e.complexity.QuizDetails.Mj == nil {
+			break
+		}
+
+		return e.complexity.QuizDetails.Mj(childComplexity), true
 
 	case "QuizLog.Comment":
 		if e.complexity.QuizLog.Comment == nil {
@@ -1896,6 +1991,7 @@ type Quiz {
 	Approver:  String!
   CreatedAt: Time!
 	UpdatedAt: Time
+  Details:   QuizDetails!
 }
 
 input AddQuizInput {
@@ -1940,6 +2036,19 @@ type QuizReport {
   QuizList:   [String!]!
 	Feedback:   String!
 	Comment:    String!
+}
+
+type QuizDetails {
+  Ma: Int!
+  Mb: Int!
+  Mc: Int!
+  Md: Int!
+  Me: Int!
+  Mf: Int!
+  Mg: Int!
+  Mh: Int!
+  Mi: Int!
+  Mj: Int!
 }
 `},
 	&ast.Source{Name: "schemas/schema.graphql", Input: `type Mutation {
@@ -6002,6 +6111,413 @@ func (ec *executionContext) _Quiz_UpdatedAt(ctx context.Context, field graphql.C
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Quiz_Details(ctx context.Context, field graphql.CollectedField, obj *model.Quiz) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Quiz",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Quiz().Details(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*QuizDetails)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNQuizDetails2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐQuizDetails(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _QuizDetails_Ma(ctx context.Context, field graphql.CollectedField, obj *QuizDetails) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "QuizDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Ma, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _QuizDetails_Mb(ctx context.Context, field graphql.CollectedField, obj *QuizDetails) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "QuizDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mb, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _QuizDetails_Mc(ctx context.Context, field graphql.CollectedField, obj *QuizDetails) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "QuizDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mc, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _QuizDetails_Md(ctx context.Context, field graphql.CollectedField, obj *QuizDetails) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "QuizDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Md, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _QuizDetails_Me(ctx context.Context, field graphql.CollectedField, obj *QuizDetails) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "QuizDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Me, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _QuizDetails_Mf(ctx context.Context, field graphql.CollectedField, obj *QuizDetails) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "QuizDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mf, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _QuizDetails_Mg(ctx context.Context, field graphql.CollectedField, obj *QuizDetails) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "QuizDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mg, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _QuizDetails_Mh(ctx context.Context, field graphql.CollectedField, obj *QuizDetails) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "QuizDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mh, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _QuizDetails_Mi(ctx context.Context, field graphql.CollectedField, obj *QuizDetails) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "QuizDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mi, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _QuizDetails_Mj(ctx context.Context, field graphql.CollectedField, obj *QuizDetails) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "QuizDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mj, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _QuizLog_ID(ctx context.Context, field graphql.CollectedField, obj *model.QuizLog) (ret graphql.Marshaler) {
@@ -11480,55 +11996,141 @@ func (ec *executionContext) _Quiz(ctx context.Context, sel ast.SelectionSet, obj
 		case "ID":
 			out.Values[i] = ec._Quiz_ID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "QuizId":
 			out.Values[i] = ec._Quiz_QuizId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "UsedCount":
 			out.Values[i] = ec._Quiz_UsedCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "Grade":
 			out.Values[i] = ec._Quiz_Grade(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "Desc":
 			out.Values[i] = ec._Quiz_Desc(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "Comment":
 			out.Values[i] = ec._Quiz_Comment(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "Status":
 			out.Values[i] = ec._Quiz_Status(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "Operator":
 			out.Values[i] = ec._Quiz_Operator(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "Approver":
 			out.Values[i] = ec._Quiz_Approver(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "CreatedAt":
 			out.Values[i] = ec._Quiz_CreatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "UpdatedAt":
 			out.Values[i] = ec._Quiz_UpdatedAt(ctx, field, obj)
+		case "Details":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Quiz_Details(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var quizDetailsImplementors = []string{"QuizDetails"}
+
+func (ec *executionContext) _QuizDetails(ctx context.Context, sel ast.SelectionSet, obj *QuizDetails) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.RequestContext, sel, quizDetailsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("QuizDetails")
+		case "Ma":
+			out.Values[i] = ec._QuizDetails_Ma(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Mb":
+			out.Values[i] = ec._QuizDetails_Mb(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Mc":
+			out.Values[i] = ec._QuizDetails_Mc(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Md":
+			out.Values[i] = ec._QuizDetails_Md(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Me":
+			out.Values[i] = ec._QuizDetails_Me(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Mf":
+			out.Values[i] = ec._QuizDetails_Mf(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Mg":
+			out.Values[i] = ec._QuizDetails_Mg(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Mh":
+			out.Values[i] = ec._QuizDetails_Mh(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Mi":
+			out.Values[i] = ec._QuizDetails_Mi(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "Mj":
+			out.Values[i] = ec._QuizDetails_Mj(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -12559,6 +13161,20 @@ func (ec *executionContext) marshalNQuiz2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadm
 		return graphql.Null
 	}
 	return ec._Quiz(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNQuizDetails2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐQuizDetails(ctx context.Context, sel ast.SelectionSet, v QuizDetails) graphql.Marshaler {
+	return ec._QuizDetails(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNQuizDetails2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋserviceᚋgraphqlᚋgeneratedᚐQuizDetails(ctx context.Context, sel ast.SelectionSet, v *QuizDetails) graphql.Marshaler {
+	if v == nil {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._QuizDetails(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNQuizLog2githubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuizLog(ctx context.Context, sel ast.SelectionSet, v model.QuizLog) graphql.Marshaler {

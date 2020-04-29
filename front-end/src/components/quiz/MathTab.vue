@@ -16,12 +16,30 @@
       fixed-center
       bordered
       dense
+      :pagination.sync="pagination"
       :loading="loading"
     >
       <template v-slot:top="props">
         <div class="col-2 q-table__title">
           Avaialble Quizzes
         </div>
+        <q-btn-toggle
+          v-model="mathType"
+          class="q-mb-md my-custom-toggle"
+          push
+          no-caps
+          outlined
+          rounded
+          unelevated
+          toggle-color="primary"
+          color="q-blue-10"
+          text-color="primary"
+          size="md"
+          :options="[
+            {label: 'Lists', value: 'lists'},
+            {label: 'Details', value: 'details'}
+          ]"
+        />
         <q-space />
         <q-btn
           class="q-ml-md"
@@ -125,24 +143,14 @@ export default {
       loading: true,
       editQuizActive: false,
       quizId: '',
-      skipQueryGetQuiz: true,
+      pagination: {
+        page: 0,
+        rowsPerPage: 20
+      },
+      mathType: 'lists',
       columns: [
-        {
-          name: 'QuizId',
-          required: true,
-          align: 'center',
-          label: 'Quiz Id',
-          field: 'QuizId',
-          sortable: true
-        },
-        {
-          name: 'Grade',
-          required: true,
-          align: 'center',
-          label: 'Grade',
-          field: 'Grade',
-          sortable: true
-        },
+        { name: 'QuizId', required: true, align: 'center', label: 'Quiz Id', field: 'QuizId', sortable: true },
+        { name: 'Grade', align: 'center', label: 'Grade', field: 'Grade', sortable: true },
         {
           name: 'Desc',
           align: 'center',
@@ -184,7 +192,15 @@ export default {
           label: 'Delete Quiz',
           field: 'delete',
           sortable: false
-        }
+        },
+        { name: 'Ma', align: 'center', label: 'Basic Calculation', field: 'Ma', sortable: true },
+        { name: 'Mb', align: 'center', label: 'Decimal & Fraction', field: 'Mb', sortable: true },
+        { name: 'Mc', align: 'center', label: 'Algebra', field: 'Mc', sortable: true },
+        { name: 'Md', align: 'center', label: 'Measurement', field: 'Md', sortable: true },
+        { name: 'Me', align: 'center', label: 'Shape & Space', field: 'Me', sortable: true },
+        { name: 'Mf', align: 'center', label: 'Data Handling', field: 'Mf', sortable: true },
+        { name: 'Mh', align: 'center', label: 'Misc', field: 'Mh', sortable: true },
+        { name: 'Mi', align: 'center', label: 'Time & Date', field: 'Mi', sortable: true }
       ]
     }
   },
@@ -193,7 +209,28 @@ export default {
     ...mapGetters('quiz', ['getQuizList']),
     tableData: function () {
       console.log('quiz list = ', this.getQuizList)
-      return this.getQuizList
+      let tmp = []
+      for (let i = 0; i < this.getQuizList.length; i++) {
+        tmp.push({
+          QuizId: this.getQuizList[i].QuizId,
+          Grade: this.getQuizList[i].Grade,
+          Desc: this.getQuizList[i].Desc,
+          Operator: this.getQuizList[i].Operator,
+          Status: this.getQuizList[i].Status,
+          Approver: this.getQuizList[i].Approver,
+          Ma: this.getQuizList[i].Details.Ma,
+          Mb: this.getQuizList[i].Details.Mb,
+          Mc: this.getQuizList[i].Details.Mc,
+          Md: this.getQuizList[i].Details.Md,
+          Me: this.getQuizList[i].Details.Me,
+          Mf: this.getQuizList[i].Details.Mf,
+          Mg: this.getQuizList[i].Details.Mg,
+          Mh: this.getQuizList[i].Details.Mh,
+          Mi: this.getQuizList[i].Details.Mi,
+          Mj: this.getQuizList[i].Details.Mj
+        })
+      }
+      return tmp
     },
     addQuizActive: function () {
       if (this.currentUser.Role) {
@@ -204,10 +241,14 @@ export default {
       return false
     },
     visibleColumns: function () {
-      if (this.addQuizActive === true) {
-        return ['QuizId', 'Grade', 'Desc', 'Operator', 'Status', 'Approver', 'edit', 'delete']
+      if (this.mathType === 'lists') {
+        if (this.addQuizActive === true) {
+          return ['QuizId', 'Grade', 'Desc', 'Operator', 'Status', 'Approver', 'edit', 'delete']
+        } else {
+          return ['QuizId', 'Grade', 'Desc', 'Operator', 'Status', 'Approver', 'edit']
+        }
       } else {
-        return ['QuizId', 'Grade', 'Desc', 'Operator', 'Status', 'Approver', 'edit']
+        return ['QuizId', 'Ma', 'Mb', 'Mc', 'Md', 'Me', 'Mf', 'Mh', 'Mi']
       }
     }
   },
@@ -289,5 +330,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="sass" scoped>
+.my-custom-toggle
+  border: 1px solid #027be3
 </style>

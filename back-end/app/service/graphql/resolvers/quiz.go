@@ -4,6 +4,7 @@ package resolvers
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 
 	//"time"
@@ -53,6 +54,9 @@ func (r *mutationResolver) AddQuiz(ctx context.Context, quiz generated.AddQuizIn
 	newQuiz := model.Quiz{}
 	err := r.QuizDb.Where("quiz_id = ?", quiz.QuizID).Find(&newQuiz).Error
 	if gorm.IsRecordNotFoundError(err) {
+		tmpQuizDetails := model.QuizDetails{
+			Ma: 0, Mb: 0, Mc: 0, Md: 0, Me: 0, Mf: 0, Mg: 0, Mh: 0, Mi: 0, Mj: 0,
+		}
 		newQuiz.QuizId = quiz.QuizID
 		newQuiz.Grade = quiz.Grade
 		newQuiz.UsedCount = 0
@@ -61,6 +65,7 @@ func (r *mutationResolver) AddQuiz(ctx context.Context, quiz generated.AddQuizIn
 		newQuiz.Status = "NA"
 		newQuiz.Operator = quiz.Operator
 		newQuiz.Approver = "NA"
+		newQuiz.Details, _ = json.Marshal(tmpQuizDetails)
 		err = r.QuizDb.Save(&newQuiz).Error
 
 		return true, err
@@ -81,11 +86,7 @@ func (r *mutationResolver) DelQuiz(ctx context.Context, gid string, quizID strin
 	}
 	err = r.QuizDb.Where("quiz_id=?", quizID).First(&q).Error
 	if err == nil {
-		if err = r.QuizDb.Delete(&q).Error; err != nil {
-			return false, err
-		} else {
-			return true, nil
-		}
+		err = r.QuizDb.Delete(&q).Error
 	}
 	return false, err
 }

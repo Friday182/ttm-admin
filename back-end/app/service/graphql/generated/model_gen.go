@@ -68,6 +68,19 @@ type KpAssignment struct {
 	Desc   string `json:"Desc"`
 }
 
+type QuizDetails struct {
+	Ma int `json:"Ma"`
+	Mb int `json:"Mb"`
+	Mc int `json:"Mc"`
+	Md int `json:"Md"`
+	Me int `json:"Me"`
+	Mf int `json:"Mf"`
+	Mg int `json:"Mg"`
+	Mh int `json:"Mh"`
+	Mi int `json:"Mi"`
+	Mj int `json:"Mj"`
+}
+
 type QuizUnit struct {
 	QuizID  string `json:"QuizId"`
 	Done    bool   `json:"Done"`
