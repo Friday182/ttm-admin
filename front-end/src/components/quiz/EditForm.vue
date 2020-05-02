@@ -117,7 +117,10 @@
           </template>
         </q-input>
       </q-card-section>
-      <q-card-section class="q-ml-md">
+      <q-card-section
+        v-if="isMq"
+        class="q-ml-md"
+      >
         <q-btn
           class="q-mb-xs"
           color="blue"
@@ -336,8 +339,6 @@ export default {
       usedSeconds: 0,
       vjsonOptions: {
       },
-      skipQueryAddQuiz: true,
-      queTypeOptions: ['M_COM', 'M_TABLE', 'M_SHAPE', 'M_CHART'],
       ansTypeOptions: ['SC', 'IT', 'TF', 'MC'],
       answerOptions: ['Option A', 'Option B', 'Option C', 'Option D', 'Option E'],
       typeOptions: ['Bar Chart', 'Pie Chart', 'Line Chart', 'Coordinate Chart'],
@@ -381,6 +382,7 @@ export default {
           active: false,
           children: [
             { value: 'MD1', label: 'Angle' },
+            { value: 'MD4', label: 'Money' },
             { value: 'MD23', label: 'Perimeter' },
             { value: 'MD20', label: 'Area' },
             { value: 'MD24', label: 'Volume' },
@@ -432,23 +434,6 @@ export default {
           ]
         }
       ],
-      kpOptionsOld: [
-        { label: 'DataHandling', value: 'MF6' },
-        { label: 'Algebra', value: 'MC31' },
-        { label: 'TimesTable', value: 'MA24' },
-        { label: 'Multiplication', value: 'MA39' },
-        { label: 'Division', value: 'MA51' },
-        { label: 'FourOperator', value: 'MA54' },
-        { label: 'MinusNumber', value: 'MA61' },
-        { label: 'Fraction', value: 'MB22' },
-        { label: 'Decimal', value: 'MB37' },
-        { label: 'Ratio&Percentage', value: 'MB43' },
-        { label: 'Measurement', value: 'MD20' },
-        { label: 'Shapes', value: 'ME4' },
-        { label: 'Rounding', value: 'MH6' },
-        { label: 'Average&Mean', value: 'MH12' },
-        { label: 'Time&Date', value: 'MI11' }
-      ],
       exampleTable: [{
         tableTitle: '',
         columns: ['columns'],
@@ -471,6 +456,20 @@ export default {
     ...mapGetters('currentUser', ['currentUser']),
     editQuestion: function () {
       return this.currentQuestion
+    },
+    queTypeOptions: function () {
+      if (this.kp.indexOf('MQ_') >= 0) {
+        return ['M_COM', 'M_TABLE', 'M_SHAPE', 'M_CHART']
+      } else {
+        return ['E_TEXT', 'E_COM', 'E_FIX']
+      }
+    },
+    isMq: function () {
+      if (this.kp.indexOf('MQ_') >= 0) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   watch: {

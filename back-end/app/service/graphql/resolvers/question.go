@@ -64,6 +64,11 @@ func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQue
 	tmp, err = json.Marshal(tmpArray)
 	newQue.DownTexts = tmp
 
+	// temp add process for English text question
+	if strings.Contains(que.Kp, "EQ_") {
+		newQue.DownTexts = processEnText(tmpArray)
+	}
+
 	tmpArray = strings.Split(que.Formula, "\n")
 	tmp, err = json.Marshal(tmpArray)
 	newQue.Formula = tmp
@@ -100,7 +105,7 @@ func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQue
 	tmpTags := strings.Split(tmpStr, "||")
 	tmp, err = json.Marshal(tmpTags)
 	newQue.Tags = tmp
-	
+
 	// Check Answer is valid
 	tmpArray = strings.Split(que.Answers, "||")
 	tmp, err = json.Marshal(tmpArray)
@@ -161,4 +166,31 @@ func removeEmpty(s []string) []string {
 		}
 	}
 	return r
+}
+
+func processEnText(test []string) []byte {
+	textList := [][]string{}
+	b := []byte(" ")
+	for _, item := range test {
+		head := 0
+		tail := 0
+		for head = 0; head < len(item); head++ {
+			if head-tail > 50 && item[head] == b[0] {
+				str := item[tail:head]
+				strs := strings.Split(str, " ")
+				strs = removeEmpty(strs)
+				textList = append(textList, strs)
+				tail = head
+			}
+		}
+		if tail != head {
+			str := item[tail:head]
+			strs := strings.Split(str, " ")
+			strs = removeEmpty(strs)
+			textList = append(textList, strs)
+			tail = head
+		}
+	}
+	tmp, _ := json.Marshal(textList)
+	return tmp
 }

@@ -29,6 +29,11 @@
       <question-en-common />
     </q-card-section>
     <q-card-section
+      v-if="editQuestion.QuestionType === 'E_TEXT'"
+    >
+      <question-en-text-sc />
+    </q-card-section>
+    <q-card-section
       v-if="editQuestion.QuestionType === 'M_CHART'"
     >
       <question-math-chart />
@@ -98,6 +103,7 @@ export default {
     'answer-it': require('components/quiz/AnswerIt.vue').default,
     'answer-it-frac': require('components/quiz/AnswerItFrac.vue').default,
     'answer-tf': require('components/quiz/AnswerTf.vue').default,
+    'question-en-text-sc': require('components/quiz/QuestionEnTextSc.vue').default,
     'question-en-common': require('components/quiz/QuestionEnCommon.vue').default
   },
   props: {

@@ -211,24 +211,26 @@ export default {
       console.log('quiz list = ', this.getQuizList)
       let tmp = []
       for (let i = 0; i < this.getQuizList.length; i++) {
-        tmp.push({
-          QuizId: this.getQuizList[i].QuizId,
-          Grade: this.getQuizList[i].Grade,
-          Desc: this.getQuizList[i].Desc,
-          Operator: this.getQuizList[i].Operator,
-          Status: this.getQuizList[i].Status,
-          Approver: this.getQuizList[i].Approver,
-          Ma: this.getQuizList[i].Details.Ma,
-          Mb: this.getQuizList[i].Details.Mb,
-          Mc: this.getQuizList[i].Details.Mc,
-          Md: this.getQuizList[i].Details.Md,
-          Me: this.getQuizList[i].Details.Me,
-          Mf: this.getQuizList[i].Details.Mf,
-          Mg: this.getQuizList[i].Details.Mg,
-          Mh: this.getQuizList[i].Details.Mh,
-          Mi: this.getQuizList[i].Details.Mi,
-          Mj: this.getQuizList[i].Details.Mj
-        })
+        if (this.getQuizList[i].QuizId.indexOf('MQ_') >= 0) {
+          tmp.push({
+            QuizId: this.getQuizList[i].QuizId,
+            Grade: this.getQuizList[i].Grade,
+            Desc: this.getQuizList[i].Desc,
+            Operator: this.getQuizList[i].Operator,
+            Status: this.getQuizList[i].Status,
+            Approver: this.getQuizList[i].Approver,
+            Ma: this.getQuizList[i].Details.Ma,
+            Mb: this.getQuizList[i].Details.Mb,
+            Mc: this.getQuizList[i].Details.Mc,
+            Md: this.getQuizList[i].Details.Md,
+            Me: this.getQuizList[i].Details.Me,
+            Mf: this.getQuizList[i].Details.Mf,
+            Mg: this.getQuizList[i].Details.Mg,
+            Mh: this.getQuizList[i].Details.Mh,
+            Mi: this.getQuizList[i].Details.Mi,
+            Mj: this.getQuizList[i].Details.Mj
+          })
+        }
       }
       return tmp
     },
