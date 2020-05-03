@@ -296,7 +296,7 @@ type MutationResolver interface {
 	AddUser(ctx context.Context, user AddUserInput) (bool, error)
 	AddQuiz(ctx context.Context, quiz AddQuizInput) (bool, error)
 	DelQuiz(ctx context.Context, gid string, quizID string) (bool, error)
-	AddQuestion(ctx context.Context, que AddQuestionInput) (bool, error)
+	AddQuestion(ctx context.Context, que AddQuestionInput) (*model.Question, error)
 	AddStudent(ctx context.Context, mentorEmail string, name string, age int) (*model.Student, error)
 	ApprovalQuiz(ctx context.Context, gid string, quizID string) (bool, error)
 	FinishQuiz(ctx context.Context, gid string, quizID string) (bool, error)
@@ -2056,7 +2056,7 @@ type QuizDetails {
   AddUser(user: AddUserInput!): Boolean!
   AddQuiz(quiz: AddQuizInput!): Boolean!
   DelQuiz(gid: String!, quizId: String!): Boolean!
-  AddQuestion(que: AddQuestionInput!): Boolean!
+  AddQuestion(que: AddQuestionInput!): Question!
   AddStudent(mentorEmail: String!, name: String! age: Int!): Student!
   ApprovalQuiz(gid: String!, quizId: String!): Boolean!
   FinishQuiz(gid: String!, quizId: String!): Boolean!
@@ -4083,10 +4083,10 @@ func (ec *executionContext) _Mutation_AddQuestion(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*model.Question)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalNQuestion2ᚖgithubᚗcomᚋfriday182ᚋttmᚑadminᚋappᚋmodelᚐQuestion(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_AddStudent(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {

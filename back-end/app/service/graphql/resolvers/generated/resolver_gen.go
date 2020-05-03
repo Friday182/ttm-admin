@@ -56,7 +56,7 @@ func (r *mutationResolver) AddQuiz(ctx context.Context, quiz generated.AddQuizIn
 func (r *mutationResolver) DelQuiz(ctx context.Context, gid string, quizID string) (bool, error) {
 	panic("not implemented")
 }
-func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQuestionInput) (bool, error) {
+func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQuestionInput) (*model.Question, error) {
 	panic("not implemented")
 }
 func (r *mutationResolver) AddStudent(ctx context.Context, mentorEmail string, name string, age int) (*model.Student, error) {

@@ -82,7 +82,27 @@ mutation AddQuestion($Gid: String!, $QueIdx: Int!, $Kp: String!, $StdSec: Int!, 
       Answers: $Answers,
       Tags: $Tags
     }
-  )
+  ) {
+    QueIdx
+    Kp
+    StdSec
+    AnswerType
+    QuestionType
+    UpTexts
+    DownTexts
+    Formula
+    Options
+    Answers
+    Tags
+    Charts
+    Clocks
+    Tables
+    Shapes
+    AnswerText
+    Helper
+    Imgs
+    Tips
+  }
 }`
 
 export const ADD_TASKLOG_MUTATION = gql`

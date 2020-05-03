@@ -34,13 +34,13 @@ func (r *queryResolver) GetQuestions(ctx context.Context, gid string, kp string)
 }
 
 // Mutation
-func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQuestionInput) (bool, error) {
+func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQuestionInput) (*model.Question, error) {
 	newQue := model.Question{}
 	var user model.User
 
 	err := r.TtmDb.Where("gid = ?", que.Gid).First(&user).Error
 	if gorm.IsRecordNotFoundError(err) {
-		return false, err
+		return &newQue, err
 	}
 
 	newQue.QueIdx = que.QueIdx
@@ -155,7 +155,7 @@ func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQue
 		quiz.Details, _ = json.Marshal(tmpDetails)
 		r.QuizDb.Save(&quiz)
 	}
-	return true, nil
+	return &newQue, nil
 }
 
 func removeEmpty(s []string) []string {
@@ -168,6 +168,19 @@ func removeEmpty(s []string) []string {
 	return r
 }
 
+func processEnText(t []string) []byte {
+	strs := []string{}
+	for _, item := range t {
+		str := strings.Split(item, " ")
+		strs = append(strs, str...)
+	}
+	opt1 := checkPuncRule1(strs)
+	opt2 := checkPuncRule2(strs)
+
+	tmp, _ := json.Marshal(t)
+	return tmp
+}
+/*
 func processEnText(test []string) []byte {
 	textList := [][]string{}
 	b := []byte(" ")
@@ -192,5 +205,18 @@ func processEnText(test []string) []byte {
 		}
 	}
 	tmp, _ := json.Marshal(textList)
+	return tmp
+}
+*/
+
+// Punctuation rule 1, Capital letter
+func checkPuncRule1 (s []string) []int {
+	tmp := []int{}
+	for idx, item := range s {
+		if item[0] > 0x30 {
+			tmp = append(tmp, idx)
+		}
+	}
+
 	return tmp
 }

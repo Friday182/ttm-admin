@@ -19,30 +19,19 @@
           :key="idx"
         >
           <q-btn
+            v-for="(word,index) in item"
+            :key="idx * 10 + index"
+            :color="getColor(idx, index)"
+            :disable="noEdit"
+            size="lg"
+            no-caps
             flat
-            color="info"
+            push
+            dense
+            @click="setChoice(idx, index)"
           >
-            L {{ idx + 1 }}:
+            {{ word }}
           </q-btn>
-          <q-btn-group
-            flat
-          >
-            <q-btn
-              v-for="(word,index) in item"
-              :key="idx * 10 + index"
-              :color="getColor(idx, index)"
-              disable="noEdit"
-              size="lg"
-              no-caps
-              flat
-              push
-              outlined
-              dense
-              @click="setChoice(idx, index)"
-            >
-              {{ word }}
-            </q-btn>
-          </q-btn-group>
         </div>
       </q-card-section>
       <q-card-section>
@@ -78,8 +67,16 @@ export default {
       return (this.currentQuestion) ? this.currentQuestion.UpTexts : ''
     },
     downTexts: function () {
-      // return [['this is', 'a good', 'story to read', 'dad said.'], ['Yes, I', 'think so', ',"said Jamie.']]
-      return (this.currentQuestion) ? this.currentQuestion.DownTexts : ''
+      // return [['this', 'is', 'a', 'good', 'story', 'to', 'read', 'dad', 'said.', 'this', 'is', 'a', 'good', 'story', 'to', 'read', 'dad', 'said.', 'this', 'is', 'a', 'good', 'story', 'to', 'read', 'dad', 'said.'], ['Yes, I', 'think so', ',"said Jamie.']]
+      let tmp = []
+      if (this.currentQuestion) {
+        for (let i = 0; i < this.currentQuestion.DownTexts.length; i++) {
+          let str = this.currentQuestion.DownTexts[i].split(' ')
+          tmp.push(str)
+        }
+      }
+      return tmp
+      // return (this.currentQuestion) ? this.currentQuestion.DownTexts : ''
     }
   },
   watch: {

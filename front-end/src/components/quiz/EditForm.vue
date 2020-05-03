@@ -605,7 +605,7 @@ export default {
           if (!response.errors) {
             if (response.data.AddQuestion) {
               console.log('Add question successful')
-              this.updateCurrentQuestion(true)
+              this.setCurrentQuestion(response.data.AddQuestion)
             }
           } else {
             console.log('reponse error', response.errors)
@@ -956,6 +956,10 @@ export default {
           }
         )
       }
+    },
+    setCurrentQuestion (que) {
+      this.doSetCurrentQuestion(que)
+      this.addNewQuestion(que)
     },
     copyQuestion () {
       localStorage.setItem('tmpQue', JSON.stringify(this.currentQuestion))
