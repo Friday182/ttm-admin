@@ -77,6 +77,7 @@ module.exports = function (ctx) {
         'QPage',
         'QPageSticky',
         'QPagination',
+        'QPageScroller',
         'QRadio',
         'QRouteTab',
         'QScrollArea',

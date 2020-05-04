@@ -27,6 +27,7 @@
         row-key="id"
         :table-header-style="{ backgroundColor: 'lightblue' }"
         no-data-label="Something Wrong. Contact your mentor."
+        :pagination.sync="pagination"
         fixed-center
         bordered
         dense
@@ -75,7 +76,11 @@ export default {
   },
   data () {
     return {
-      defWidth: 'width: 30%'
+      defWidth: 'width: 30%',
+      pagination: {
+        page: 0,
+        rowsPerPage: 20
+      }
     }
   },
   computed: {

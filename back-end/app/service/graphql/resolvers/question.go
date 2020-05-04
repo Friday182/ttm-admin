@@ -174,8 +174,8 @@ func processEnText(t []string) []byte {
 		str := strings.Split(item, " ")
 		strs = append(strs, str...)
 	}
-	opt1 := checkPuncRule1(strs)
-	opt2 := checkPuncRule2(strs)
+	//opt1 := checkPuncRule1(strs)
+	//opt2 := checkPuncRule2(strs)
 
 	tmp, _ := json.Marshal(t)
 	return tmp
@@ -211,6 +211,17 @@ func processEnText(test []string) []byte {
 
 // Punctuation rule 1, Capital letter
 func checkPuncRule1 (s []string) []int {
+	tmp := []int{}
+	for idx, item := range s {
+		if item[0] > 0x30 {
+			tmp = append(tmp, idx)
+		}
+	}
+
+	return tmp
+}
+
+func checkPuncRule2 (s []string) []int {
 	tmp := []int{}
 	for idx, item := range s {
 		if item[0] > 0x30 {

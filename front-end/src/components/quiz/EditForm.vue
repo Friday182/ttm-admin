@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-card>
+    <q-card ref="cardArea">
       <q-card-section class="q-ml-md">
         <div class="row">
           <q-btn
@@ -386,6 +386,7 @@ export default {
             { value: 'MD23', label: 'Perimeter' },
             { value: 'MD20', label: 'Area' },
             { value: 'MD24', label: 'Volume' },
+            { value: 'MD24', label: 'Mass' },
             { value: 'MD29', label: 'Speed' }
           ]
         },
@@ -407,6 +408,7 @@ export default {
           children: [
             { value: 'MF1', label: 'Bar Chart' },
             { value: 'MF2', label: 'Line Chart' },
+            { value: 'MF2', label: 'Pie Chart' },
             { value: 'MF3', label: 'Table' }
           ]
         },
@@ -428,6 +430,8 @@ export default {
           children: [
             { value: 'MH17', label: 'Prime Number' },
             { value: 'MH14', label: 'Romen Number' },
+            { value: 'MH14', label: 'Number Sequence' },
+            { value: 'MH14', label: 'Average' },
             { value: 'MH6', label: 'Rounding' },
             { value: 'MH15', label: 'Factor & Ratio' },
             { value: 'MH18', label: 'Percentage' }
@@ -606,6 +610,7 @@ export default {
             if (response.data.AddQuestion) {
               console.log('Add question successful')
               this.setCurrentQuestion(response.data.AddQuestion)
+              window.scrollTo(0, 0)
             }
           } else {
             console.log('reponse error', response.errors)
@@ -842,18 +847,32 @@ export default {
         this.inJsonText.push({
           'type': 'line',
           'config': {
-            'points': [350, 50, 330, 200, 520, 150, 350, 50],
+            'points': [250, 150, 250, 250, 450, 250, 450, 150],
             'stroke': 'black',
+            'closed': true,
             'strokeWidth': 2
           }
         })
         this.inJsonText.push({
-          'type': 'circle',
-          'config': { 'x': 100, 'y': 30, 'radius': 15, 'stroke': 'black' }
+          'type': 'line',
+          'config': {
+            'points': [250, 150, 450, 150, 290, 50],
+            'stroke': 'black',
+            'closed': true,
+            'strokeWidth': 2
+          }
         })
         this.inJsonText.push({
           'type': 'text',
-          'config': { 'x': 420, 'y': 110, 'text': 'ABC', 'fontSize': 15, 'fill': 'blue' }
+          'config': { 'x': 403, 'y': 135, 'text': '28°', 'fontSize': 15, 'fill': 'blue' }
+        })
+        this.inJsonText.push({
+          'type': 'wedge',
+          'config': { 'x': 450, 'y': 150, 'radius': '50', 'angle': 30, 'rotation': 180, 'stroke': 'blue' }
+        })
+        this.inJsonText.push({
+          'type': 'circle',
+          'config': { 'x': 100, 'y': 30, 'radius': 15, 'stroke': 'black' }
         })
       } else if (this.inQueType === 'M_COM') {
         this.inJsonText = []

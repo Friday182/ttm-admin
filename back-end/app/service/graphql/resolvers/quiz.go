@@ -41,7 +41,7 @@ func (r *queryResolver) GetQuiz(ctx context.Context, gid string) ([]*model.Quiz,
 		return logs, err
 	}
 	if user.Role == "operator" {
-		err = r.QuizDb.Where("operator=?", user.Username).Find(&logs).Error
+		err = r.QuizDb.Order("id desc").Where("operator=?", user.Username).Find(&logs).Error
 	} else {
 		err = r.QuizDb.Order("id desc").Limit(100).Find(&logs).Error
 	}
