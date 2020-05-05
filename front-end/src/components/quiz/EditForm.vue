@@ -354,7 +354,6 @@ export default {
       },
       ansTypeOptions: ['SC', 'IT', 'TF', 'MC'],
       answerOptions: ['Option A', 'Option B', 'Option C', 'Option D', 'Option E'],
-      typeOptions: ['Bar Chart', 'Pie Chart', 'Line Chart', 'Coordinate Chart'],
       queStatusOptions: ['NoData', 'Review', 'Complete'],
       /* {
           label: 'Not Ready',
@@ -508,6 +507,16 @@ export default {
       } else {
         return false
       }
+    },
+    typeOptions: function () {
+      if (this.inQueType === 'M_CHART') {
+        return ['Bar Chart', 'Pie Chart', 'Line Chart', 'Coordinate Chart']
+      } else if (this.inQueType === 'M_SHAPE') {
+        return ['Square', 'Circle', 'Triangle', 'Cube', 'Cubiod', 'Text']
+      } else if (this.inQueType === 'M_TABLE') {
+        return ['Horizon', 'Vertical', 'Week', 'Month', 'Year']
+      }
+      return ['NA']
     }
   },
   watch: {
@@ -790,20 +799,62 @@ export default {
       // set json text example
       this.inJsonText = []
       if (this.inQueType === 'M_TABLE') {
-        this.inJsonText.push({
-          'tableTitle': 'Table Example',
-          'style': 'width: 40%',
-          'separator': 'cell',
-          'columns': [
-            { 'name': 'col1', 'label': '', 'field': 'col1' },
-            { 'name': 'col2', 'label': 'col2', 'field': 'col2' },
-            { 'name': 'col3', 'label': 'col3', 'field': 'col3' }
-          ],
-          'tableData': [
-            { 'col1': 'Black', 'col2': '4', 'col3': '6' },
-            { 'col1': 'White', 'col2': '7', 'col3': '5' }
-          ]
-        })
+        if (this.inType === 'Horizon') {
+          this.inJsonText.push({
+            'tableTitle': 'Table Example',
+            'style': 'width: 60%',
+            'separator': 'cell',
+            'columns': [
+              { 'name': 'col1', 'label': '', 'field': 'col1' },
+              { 'name': 'col2', 'label': 'col2', 'field': 'col2' },
+              { 'name': 'col3', 'label': 'col3', 'field': 'col3' },
+              { 'name': 'col4', 'label': 'col4', 'field': 'col4' },
+              { 'name': 'col5', 'label': 'col5', 'field': 'col5' },
+              { 'name': 'col6', 'label': 'col6', 'field': 'col6' }
+            ],
+            'tableData': [
+              { 'col1': 'Black', 'col2': '4', 'col3': '6', 'col4': '10', 'col5': '4', 'col6': '6' },
+              { 'col1': 'blue', 'col2': '4', 'col3': '6', 'col4': '10', 'col5': '4', 'col6': '6' }
+            ]
+          })
+        } else if (this.inType === 'Vertical') {
+          this.inJsonText.push({
+            'tableTitle': 'Table Example',
+            'style': 'width: 30%',
+            'separator': 'cell',
+            'columns': [
+              { 'name': 'col1', 'label': 'col1', 'field': 'col1' },
+              { 'name': 'col2', 'label': 'col2', 'field': 'col2' }
+            ],
+            'tableData': [
+              { 'col1': 'Black', 'col2': '4' },
+              { 'col1': 'White', 'col2': '7' },
+              { 'col1': 'Black', 'col2': '4' },
+              { 'col1': 'White', 'col2': '7' },
+              { 'col1': 'Black', 'col2': '4' },
+              { 'col1': 'White', 'col2': '7' }
+            ]
+          })
+        } else if (this.inType === 'Week') {
+          this.inJsonText.push({
+            'tableTitle': 'Table Example',
+            'style': 'width: 60%',
+            'separator': 'cell',
+            'columns': [
+              { 'name': 'col1', 'label': 'Monday', 'field': 'col1' },
+              { 'name': 'col2', 'label': 'Tuesday', 'field': 'col2' },
+              { 'name': 'col3', 'label': 'Wednesday', 'field': 'col3' },
+              { 'name': 'col4', 'label': 'Thursday', 'field': 'col4' },
+              { 'name': 'col5', 'label': 'Friday', 'field': 'col5' },
+              { 'name': 'col6', 'label': 'Saturday', 'field': 'col6' },
+              { 'name': 'col7', 'label': 'Sunday', 'field': 'col7' }
+            ],
+            'tableData': [
+              { 'col1': 'Black', 'col2': '4', 'col3': '6', 'col4': '10', 'col5': '4', 'col6': '6', 'col7': '7' },
+              { 'col1': 'blue', 'col2': '4', 'col3': '6', 'col4': '10', 'col5': '4', 'col6': '6', 'col7': '7' }
+            ]
+          })
+        }
       } else if (this.inQueType === 'M_CHART') {
         if (this.inType === 'Line Chart') {
           this.inJsonText.push({
@@ -946,36 +997,105 @@ export default {
           'type': 'Not Available'
         }]
       } else if (this.inQueType === 'M_SHAPE') {
-        this.inJsonText.push({
-          'type': 'line',
-          'config': {
-            'points': [250, 150, 250, 250, 450, 250, 450, 150],
-            'stroke': 'black',
-            'closed': true,
-            'strokeWidth': 2
-          }
-        })
-        this.inJsonText.push({
-          'type': 'line',
-          'config': {
-            'points': [250, 150, 450, 150, 290, 50],
-            'stroke': 'black',
-            'closed': true,
-            'strokeWidth': 2
-          }
-        })
-        this.inJsonText.push({
-          'type': 'text',
-          'config': { 'x': 403, 'y': 135, 'text': '28°', 'fontSize': 15, 'fill': 'blue' }
-        })
-        this.inJsonText.push({
-          'type': 'wedge',
-          'config': { 'x': 450, 'y': 150, 'radius': '50', 'angle': 30, 'rotation': 180, 'stroke': 'blue' }
-        })
-        this.inJsonText.push({
-          'type': 'circle',
-          'config': { 'x': 100, 'y': 30, 'radius': 15, 'stroke': 'black' }
-        })
+        if (this.inType === 'Square') {
+          this.inJsonText.push({
+            'type': 'rect',
+            'config': { 'x': 100, 'y': 100, 'width': 100, 'height': 100, 'stroke': 'black', 'strokeWidth': 2 }
+          })
+        } else if (this.inType === 'Triangle') {
+          this.inJsonText.push({
+            'type': 'line',
+            'config': {
+              'points': [250, 150, 450, 150, 290, 50],
+              'stroke': 'black',
+              'closed': true,
+              'strokeWidth': 2
+            }
+          })
+          this.inJsonText.push({
+            'type': 'text',
+            'config': { 'x': 403, 'y': 135, 'text': '28°', 'fontSize': 15, 'fill': 'blue' }
+          })
+          this.inJsonText.push({
+            'type': 'wedge',
+            'config': { 'x': 450, 'y': 150, 'radius': '50', 'angle': 30, 'rotation': 180, 'stroke': 'blue' }
+          })
+        } else if (this.inType === 'Circle') {
+          this.inJsonText.push({
+            'type': 'circle',
+            'config': { 'x': 100, 'y': 30, 'radius': 30, 'stroke': 'black', 'fill': 'lightblue' }
+          })
+        } else if (this.inType === 'Cube') {
+          this.inJsonText.push({
+            'type': 'rect',
+            'config': { 'x': 100, 'y': 100, 'width': 100, 'height': 100, 'stroke': 'black', 'strokeWidth': 2 }
+          })
+          this.inJsonText.push({
+            'type': 'rect',
+            'config': { 'x': 125, 'y': 75, 'width': 100, 'height': 100, 'stroke': 'black', 'strokeWidth': 2 }
+          })
+          this.inJsonText.push({
+            'type': 'line',
+            'config': {
+              'points': [100, 100, 125, 75, 225, 75, 200, 100],
+              'stroke': 'black',
+              'strokeWidth': 2
+            }
+          })
+          this.inJsonText.push({
+            'type': 'line',
+            'config': {
+              'points': [100, 200, 125, 175, 225, 175, 200, 200],
+              'stroke': 'black',
+              'strokeWidth': 2
+            }
+          })
+          this.inJsonText.push({
+            'type': 'text',
+            'config': { 'x': 130, 'y': 205, 'text': '15 cm', 'fontSize': 15, 'fill': 'blue' }
+          })
+          this.inJsonText.push({
+            'type': 'text',
+            'config': { 'x': 80, 'y': 180, 'text': '15 cm', 'fontSize': 15, 'fill': 'blue', 'rotation': -90 }
+          })
+        } else if (this.inType === 'Cubiod') {
+          this.inJsonText.push({
+            'type': 'rect',
+            'config': { 'x': 100, 'y': 100, 'width': 200, 'height': 100, 'stroke': 'black', 'strokeWidth': 2 }
+          })
+          this.inJsonText.push({
+            'type': 'rect',
+            'config': { 'x': 125, 'y': 75, 'width': 200, 'height': 100, 'stroke': 'black', 'strokeWidth': 2 }
+          })
+          this.inJsonText.push({
+            'type': 'line',
+            'config': {
+              'points': [100, 100, 125, 75, 325, 75, 300, 100],
+              'stroke': 'black',
+              'strokeWidth': 2
+            }
+          })
+          this.inJsonText.push({
+            'type': 'line',
+            'config': {
+              'points': [100, 200, 125, 175, 325, 175, 300, 200],
+              'stroke': 'black',
+              'strokeWidth': 2
+            }
+          })
+          this.inJsonText.push({
+            'type': 'text',
+            'config': { 'x': 130, 'y': 205, 'text': '30 cm', 'fontSize': 15, 'fill': 'blue' }
+          })
+          this.inJsonText.push({
+            'type': 'text',
+            'config': { 'x': 80, 'y': 180, 'text': '15 cm', 'fontSize': 15, 'fill': 'blue', 'rotation': -90 }
+          })
+          this.inJsonText.push({
+            'type': 'text',
+            'config': { 'x': 310, 'y': 200, 'text': '8 cm', 'fontSize': 15, 'fill': 'blue', 'rotation': -45 }
+          })
+        }
       } else if (this.inQueType === 'M_COM') {
         this.inJsonText = []
       }
