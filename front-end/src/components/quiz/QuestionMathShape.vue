@@ -7,7 +7,7 @@
       <q-card-section align="left">
         <div
           v-for="(item,key) in upTexts"
-          :key="key"
+          :key="120 + key"
         >
           {{ item }}
         </div>
@@ -15,7 +15,7 @@
       <q-card-section>
         <div
           v-for="(item,key) in formula"
-          :key="key"
+          :key="130 + key"
           align="left"
         >
           <vue-mathjax
@@ -33,54 +33,54 @@
           <v-layer>
             <v-circle
               v-for="(item,key) in configCircles"
-              :key="key"
+              :key="10 + key"
               :config="item"
             />
             <v-line
               v-for="(item,key) in configLines"
-              :key="key"
+              :key="20 + key"
               :config="item"
             />
             <v-ellipse
               v-for="(item,key) in configEllipses"
-              :key="key"
+              :key="30 + key"
               :config="item"
             />
             <v-rect
               v-for="(item,key) in configRects"
-              :key="key"
+              :key="40 + key"
               :config="item"
             />
             <v-regular-polygon
               v-for="(item,key) in configPolygons"
-              :key="key"
+              :key="50 + key"
               :config="item"
             />
             <v-arrow
               v-for="(item,key) in configArrows"
-              :key="key"
+              :key="60 + key"
               :config="item"
             />
             <v-star
               v-for="(item,key) in configStars"
-              :key="key"
+              :key="70 + key"
               :config="item"
             />
             <v-arc
               v-for="(item,key) in configArcs"
-              :key="key"
+              :key="80 + key"
               :config="item"
             />
             <v-wedge
               v-for="(item,key) in configWedges"
-              :key="key"
+              :key="90 + key"
               :config="item"
             />
           </v-layer>
           <v-layer>
             <v-text
               v-for="(item,key) in configTexts"
-              :key="key"
+              :key="100 + key"
               :config="item"
             />
           </v-layer>
@@ -89,7 +89,7 @@
       <q-card-section align="left">
         <div
           v-for="(item,key) in downTexts"
-          :key="key"
+          :key="110 + key"
         >
           {{ item }}
         </div>

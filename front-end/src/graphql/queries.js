@@ -62,5 +62,6 @@ export const TASK_QUESTIONS_QUERY = gql`query GetQuestions($gid: String!, $kp: S
     Helper
     Imgs
     Tips
+    Status
   }
 }`

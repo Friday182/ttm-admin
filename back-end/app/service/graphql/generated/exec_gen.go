@@ -138,6 +138,7 @@ type ComplexityRoot struct {
 		QueIdx       func(childComplexity int) int
 		QuestionType func(childComplexity int) int
 		Shapes       func(childComplexity int) int
+		Status       func(childComplexity int) int
 		StdSec       func(childComplexity int) int
 		Tables       func(childComplexity int) int
 		Tags         func(childComplexity int) int
@@ -985,6 +986,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Question.Shapes(childComplexity), true
+
+	case "Question.Status":
+		if e.complexity.Question.Status == nil {
+			break
+		}
+
+		return e.complexity.Question.Status(childComplexity), true
 
 	case "Question.StdSec":
 		if e.complexity.Question.StdSec == nil {
@@ -1956,6 +1964,7 @@ type Question {
 	Helper:       Boolean!
 	Imgs:         [String!]!
 	Tips:         [String!]!
+  Status:       Int!
 }
 
 
@@ -1975,7 +1984,8 @@ input AddQuestionInput {
 	Clocks:       String!
 	Tables:       String!
   Shapes:       String!
-  Tags:         String! 
+  Tags:         String!
+  Status:       Int!
 }
 `},
 	&ast.Source{Name: "schemas/quiz.graphql", Input: `
@@ -5707,6 +5717,43 @@ func (ec *executionContext) _Question_Tips(ctx context.Context, field graphql.Co
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Question_Status(ctx context.Context, field graphql.CollectedField, obj *model.Question) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Question",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Quiz_ID(ctx context.Context, field graphql.CollectedField, obj *model.Quiz) (ret graphql.Marshaler) {
@@ -11133,6 +11180,12 @@ func (ec *executionContext) unmarshalInputAddQuestionInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
+		case "Status":
+			var err error
+			it.Status, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -11971,6 +12024,11 @@ func (ec *executionContext) _Question(ctx context.Context, sel ast.SelectionSet,
 				}
 				return res
 			})
+		case "Status":
+			out.Values[i] = ec._Question_Status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

@@ -7,64 +7,69 @@
       transition-show="slide-up"
       transition-hide="slide-down"
     >
-      <div>
-        <q-card class="bg-blue-1 text-white">
-          <q-toolbar
-            class="bg-blue-10 text-white"
+      <q-splitter
+        v-model="splitterModel"
+        horizontal
+      >
+        <template v-slot:before>
+          <q-card class="bg-blue-1 text-white">
+            <q-toolbar
+              class="bg-blue-10 text-white"
+            >
+              <q-btn
+                color="bg-blue-10"
+                no-caps
+                disable
+                class="q-mx-lg glossy"
+              >
+                {{ quizId }}
+              </q-btn>
+              <q-btn
+                icon="add"
+                color="amber"
+                class="q-mx-lg glossy"
+                label="Add Question"
+                @click="addQuestion"
+              />
+              <q-space />
+              <q-btn
+                class="q-mr-lg glossy"
+                color="amber"
+              >
+                {{ usedSeconds }}
+              </q-btn>
+              <q-btn
+                icon="close"
+                color="red"
+                class="q-mx-lg glossy"
+                label="Finish"
+                @click="closeTask"
+              />
+            </q-toolbar>
+            <div class="q-pa-xs flex flex-center">
+              <q-pagination
+                v-model="slide"
+                :max="totalQue"
+                :direction-links="true"
+              />
+            </div>
+          </q-card>
+        </template>
+        <template v-slot:after>
+          <q-splitter
+            v-model="insideModel"
           >
-            <q-btn
-              color="bg-blue-10"
-              no-caps
-              disable
-              class="q-mx-lg glossy"
-            >
-              {{ quizId }}
-            </q-btn>
-            <q-btn
-              icon="add"
-              color="amber"
-              class="q-mx-lg glossy"
-              label="Add Question"
-              @click="addQuestion"
-            />
-            <q-space />
-            <q-btn
-              class="q-mr-lg glossy"
-              color="amber"
-            >
-              {{ usedSeconds }}
-            </q-btn>
-            <q-btn
-              icon="close"
-              color="red"
-              class="q-mx-lg glossy"
-              label="Finish"
-              @click="closeTask"
-            />
-          </q-toolbar>
-          <div class="q-pa-xs flex flex-center">
-            <q-pagination
-              v-model="slide"
-              :max="totalQue"
-              :direction-links="true"
-            />
-          </div>
-        </q-card>
-        <q-separator color="red" />
-        <q-splitter
-          v-model="splitterModel"
-          style="height: 100%"
-        >
-          <template v-slot:before>
-            <edit-form
-              :kp="quizId"
-            />
-          </template>
-          <template v-slot:after>
-            <render-quiz />
-          </template>
-        </q-splitter>
-      </div>
+            <template v-slot:before>
+              <edit-form
+                :kp="quizId"
+              />
+            </template>
+            <template v-slot:after>
+              <render-quiz />
+            </template>
+          </q-splitter>
+        </template>
+      </q-splitter>
     </q-dialog>
   </q-page>
 </template>
@@ -91,7 +96,8 @@ export default {
   },
   data () {
     return {
-      splitterModel: 40,
+      splitterModel: 10,
+      insideModel: 40,
       slide: 1,
       usedSeconds: 20
     }
@@ -162,7 +168,8 @@ export default {
         Helper: false,
         Imgs: [],
         Tips: [],
-        Choice: ''
+        Choice: '',
+        Status: 0
       })
       this.slide = this.allQuestions.length
     },

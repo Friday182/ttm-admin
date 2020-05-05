@@ -34,6 +34,7 @@ type AddQuestionInput struct {
 	Tables       string `json:"Tables"`
 	Shapes       string `json:"Shapes"`
 	Tags         string `json:"Tags"`
+	Status       int    `json:"Status"`
 }
 
 type AddQuizInput struct {

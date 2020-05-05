@@ -289,11 +289,23 @@
             @click="clearForm()"
           />
           <q-space />
+            <q-select
+              v-model="inQueStatus"
+              class="q-mr-md"
+              style="min-width: 130px"
+              outlined
+              dense
+              label="Question Status"
+              :options="queStatusOptions"
+              :disable="isComplete"
+              emit-value
+            />
           <q-btn
             label="Save Question"
             no-caps
             color="primary"
             style="font: 120% Arial bold"
+            :disable="isComplete"
             @click="saveQuestion()"
           />
         </div>
@@ -335,6 +347,7 @@ export default {
       inOption5: '',
       inAnswer: '',
       inTags: [],
+      inQueStatus: 'NA',
       tmpQue: true,
       usedSeconds: 0,
       vjsonOptions: {
@@ -342,6 +355,20 @@ export default {
       ansTypeOptions: ['SC', 'IT', 'TF', 'MC'],
       answerOptions: ['Option A', 'Option B', 'Option C', 'Option D', 'Option E'],
       typeOptions: ['Bar Chart', 'Pie Chart', 'Line Chart', 'Coordinate Chart'],
+      queStatusOptions: ['NoData', 'Review', 'Complete'],
+      /* {
+          label: 'Not Ready',
+          value: 0
+        },
+        {
+          label: 'Need Review',
+          value: 1
+        },
+        {
+          label: 'Complete',
+          value: 2
+        }
+      ], */
       elprops: {
         multiple: true,
         expandTrigger: 'hover'
@@ -474,6 +501,13 @@ export default {
       } else {
         return false
       }
+    },
+    isComplete: function () {
+      if (this.currentQuestion.Status === 2) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   watch: {
@@ -509,6 +543,14 @@ export default {
       this.inOption4 = newVal.Options[3]
       this.inOption5 = newVal.Options[4]
       this.inTags = newVal.Tags
+      if (newVal.Status === 2) {
+        this.inQueStatus = 'Complete'
+      } else if (newVal.Status === 1) {
+        this.inQueStatus = 'Review'
+      } else {
+        this.inQueStatus = 'NoData'
+      }
+      // this.inQueStatus = newVal.Status
       let tmpJson = []
       let tmpOrgJson = []
       if (newVal.QuestionType === 'M_TABLE') {
@@ -582,45 +624,105 @@ export default {
       // let tmpFormula = []
       // tmpFormula.push(this.inFormula)
       let tmpAnswer = this.answerOptions.indexOf(this.inAnswer) + 1
-
-      this.$apollo
-        .mutate({
-          mutation: ADD_QUESTION_MUTATION,
-          variables: {
-            Gid: this.currentUser.Gid,
-            QueIdx: parseInt(this.inQueIdx),
-            Kp: this.kp,
-            StdSec: this.inStdSec,
-            AnswerType: this.inAnsType,
-            QuestionType: this.inQueType,
-            UpTexts: this.inUpText.replace(/\n$/, ''),
-            DownTexts: this.inDownText.replace(/\n$/, ''),
-            Formula: this.inFormula.replace(/\n$/, ''),
-            Charts: tmpCharts,
-            Shapes: tmpShapes,
-            Tables: tmpTables,
-            Clocks: tmpClocks,
-            Options: tmpOption,
-            Answers: tmpAnswer.toString(),
-            Tags: tmpTags
-          }
+      let tmpStatus = 0
+      if (this.inQueStatus === 'Review') {
+        tmpStatus = 1
+      } else if (this.inQueStatus === 'Complete') {
+        tmpStatus = 2
+      }
+      if (this.editQuestion.Status === 1) {
+        this.$q.dialog({
+          title: 'Confirm',
+          message: 'Are you sure to override this exist question!?',
+          cancel: true,
+          persistent: true
+        }).onOk(() => {
+          console.log('>>>> OK')
+          this.$apollo
+            .mutate({
+              mutation: ADD_QUESTION_MUTATION,
+              variables: {
+                Gid: this.currentUser.Gid,
+                QueIdx: parseInt(this.inQueIdx),
+                Kp: this.kp,
+                StdSec: this.inStdSec,
+                AnswerType: this.inAnsType,
+                QuestionType: this.inQueType,
+                UpTexts: this.inUpText.replace(/\n$/, ''),
+                DownTexts: this.inDownText.replace(/\n$/, ''),
+                Formula: this.inFormula.replace(/\n$/, ''),
+                Charts: tmpCharts,
+                Shapes: tmpShapes,
+                Tables: tmpTables,
+                Clocks: tmpClocks,
+                Options: tmpOption,
+                Answers: tmpAnswer.toString(),
+                Tags: tmpTags,
+                Status: tmpStatus
+              }
+            })
+            .then(response => {
+              if (!response.errors) {
+                if (response.data.AddQuestion) {
+                  console.log('Add question successful')
+                  this.setCurrentQuestion(response.data.AddQuestion)
+                  window.scrollTo(0, 0)
+                }
+              } else {
+                console.log('reponse error', response.errors)
+                this.alertError('Question Save Failed ! ! !')
+              }
+            })
+            .catch(error => {
+              console.log(error)
+              this.alertError('Question Save Failed ! ! !')
+            })
+        }).onCancel(() => {
+          // console.log('>>>> Cancel')
+        }).onDismiss(() => {
+          // console.log('I am triggered on both OK and Cancel')
         })
-        .then(response => {
-          if (!response.errors) {
-            if (response.data.AddQuestion) {
-              console.log('Add question successful')
-              this.setCurrentQuestion(response.data.AddQuestion)
-              window.scrollTo(0, 0)
+      } else {
+        this.$apollo
+          .mutate({
+            mutation: ADD_QUESTION_MUTATION,
+            variables: {
+              Gid: this.currentUser.Gid,
+              QueIdx: parseInt(this.inQueIdx),
+              Kp: this.kp,
+              StdSec: this.inStdSec,
+              AnswerType: this.inAnsType,
+              QuestionType: this.inQueType,
+              UpTexts: this.inUpText.replace(/\n$/, ''),
+              DownTexts: this.inDownText.replace(/\n$/, ''),
+              Formula: this.inFormula.replace(/\n$/, ''),
+              Charts: tmpCharts,
+              Shapes: tmpShapes,
+              Tables: tmpTables,
+              Clocks: tmpClocks,
+              Options: tmpOption,
+              Answers: tmpAnswer.toString(),
+              Tags: tmpTags,
+              Status: tmpStatus
             }
-          } else {
-            console.log('reponse error', response.errors)
+          })
+          .then(response => {
+            if (!response.errors) {
+              if (response.data.AddQuestion) {
+                console.log('Add question successful')
+                this.setCurrentQuestion(response.data.AddQuestion)
+                window.scrollTo(0, 0)
+              }
+            } else {
+              console.log('reponse error', response.errors)
+              this.alertError('Question Save Failed ! ! !')
+            }
+          })
+          .catch(error => {
+            console.log(error)
             this.alertError('Question Save Failed ! ! !')
-          }
-        })
-        .catch(error => {
-          console.log(error)
-          this.alertError('Question Save Failed ! ! !')
-        })
+          })
+      }
     },
     alertError (msg) {
       const dialog = this.$q.dialog({

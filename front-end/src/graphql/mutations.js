@@ -62,7 +62,7 @@ mutation UpdateQuiz($Gid: String!, $QuizId: String!, $Status: String!) {
 export const ADD_QUESTION_MUTATION = gql`
 mutation AddQuestion($Gid: String!, $QueIdx: Int!, $Kp: String!, $StdSec: Int!, $AnswerType: String!, $QuestionType: String!,
   $UpTexts: String!, $DownTexts: String!, $Formula: String!, $Charts: String!, $Shapes: String!, $Tables: String!, $Clocks: String!,
-  $Options: String!, $Answers: String!, $Tags: String!) {
+  $Options: String!, $Answers: String!, $Tags: String!, $Status: Int!) {
   AddQuestion(
     que: {
       Gid: $Gid,
@@ -80,7 +80,8 @@ mutation AddQuestion($Gid: String!, $QueIdx: Int!, $Kp: String!, $StdSec: Int!, 
       Clocks: $Clocks,
       Options: $Options,
       Answers: $Answers,
-      Tags: $Tags
+      Tags: $Tags,
+      Status: $Status
     }
   ) {
     QueIdx
@@ -102,6 +103,7 @@ mutation AddQuestion($Gid: String!, $QueIdx: Int!, $Kp: String!, $StdSec: Int!, 
     Helper
     Imgs
     Tips
+    Status
   }
 }`
 

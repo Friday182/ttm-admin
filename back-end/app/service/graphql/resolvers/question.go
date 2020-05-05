@@ -111,6 +111,8 @@ func (r *mutationResolver) AddQuestion(ctx context.Context, que generated.AddQue
 	tmp, err = json.Marshal(tmpArray)
 	newQue.Answers = tmp
 
+	// Set question status
+	newQue.Status = que.Status
 	tmpQue := model.Question{}
 	err = r.QuizDb.Where("kp = ? AND que_idx = ?", que.Kp, que.QueIdx).Find(&tmpQue).Error
 	if gorm.IsRecordNotFoundError(err) {

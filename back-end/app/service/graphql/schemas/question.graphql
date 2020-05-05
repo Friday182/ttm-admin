@@ -29,6 +29,7 @@ type Question {
 	Helper:       Boolean!
 	Imgs:         [String!]!
 	Tips:         [String!]!
+  Status:       Int!
 }
 
 
@@ -48,5 +49,6 @@ input AddQuestionInput {
 	Clocks:       String!
 	Tables:       String!
   Shapes:       String!
-  Tags:         String! 
+  Tags:         String!
+  Status:       Int!
 }

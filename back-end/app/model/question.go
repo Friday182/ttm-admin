@@ -36,4 +36,5 @@ type Question struct {
 	Tags         []byte		// for quiz
 	AnswerText   string		// for quiz to show the real answer
 	Tips         []byte		// Not used yet
+	Status       int			// 0 = not finish, 1 = need review, 2 = complete
 }
