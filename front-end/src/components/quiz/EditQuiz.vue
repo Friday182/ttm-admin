@@ -9,6 +9,8 @@
     >
       <q-splitter
         v-model="splitterModel"
+        unit="px"
+        :limits="[94, 1024]"
         horizontal
       >
         <template v-slot:before>
@@ -96,7 +98,7 @@ export default {
   },
   data () {
     return {
-      splitterModel: 10,
+      splitterModel: 15,
       insideModel: 40,
       slide: 1,
       usedSeconds: 20
