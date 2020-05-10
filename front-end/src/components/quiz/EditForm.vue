@@ -399,7 +399,11 @@ export default {
           value: '3',
           label: 'Algebra',
           over: false,
-          active: false
+          active: false,
+          children: [
+            { value: 'MC20', label: 'Normal' },
+            { value: 'MC33', label: 'Advanced' }
+          ]
         },
         {
           value: '4',
@@ -489,7 +493,7 @@ export default {
     },
     queTypeOptions: function () {
       if (this.kp.indexOf('MQ_') >= 0) {
-        return ['M_COM', 'M_TABLE', 'M_SHAPE', 'M_CHART']
+        return ['M_COM', 'M_TABLE', 'M_SHAPE', 'M_CHART', 'M_LIST']
       } else {
         return ['E_TEXT', 'E_COM', 'E_FIX']
       }
